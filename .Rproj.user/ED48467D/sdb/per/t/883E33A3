@@ -1,0 +1,17 @@
+{
+    "contents" : "\nrm(list=ls())\nsetwd(\"~/1.CEDAR/3_Studies !!/23-CBM2/3-Code\")\nsource('AggScenarios6.R')   \n\nlibrary(dplyr)\nlibrary(stringr)\nlibrary(data.table)\nlibrary(sqldf)\n#library(tcltk)\nlibrary(tcltk2)\n\n\nsetwd(\"V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012_England\") #source folder\n\ntodos<-list.files(pattern=\"[0-9].csv\")\ntodos <-c('baseline.csv',todos)\nnfiles <-length(todos)\n\n############   CALCULATE from BASELINE: Individuals\nbl <- read.csv('baseline.csv')\nbl.indiv <- as.data.frame(unique(bl$IndividualID))\ncolnames(bl.indiv) <- 'IndividualID'\n\n\n########## DATA FRAMES for RESULTS (individuals added)\ncarMiles   <- bl.indiv\ncarMilesR   <-bl.indiv\ncarMilesCycled  <-bl.indiv\nmilesCycled.pers  <-bl.indiv\nMETh           <-bl.indiv\nMEThincr      <-bl.indiv\nMMETh       <-bl.indiv\nCO2.Tm      <-bl.indiv\nTripDisIncSW    <-bl.indiv\nTripTotalTime1  <-bl.indiv\ntimeSaved.Total.h   <-bl.indiv\nnewcyclists       <-bl.indiv\ncyclist.potential   <-bl.indiv\ntrips.bike.perc   <-bl.indiv\n\n\n\n#################### CALCULATE from BASELINE: f.carMiles0 - f.METh0 - f.TripTotalTime0........\n\ncarMiles0 <- sqldf ('SELECT IndividualID,sum([TripDisIncSW]) as [carMiles0] FROM bl WHERE [bl].[MainMode_B04ID] IN (3,4,5,12) GROUP BY IndividualID')\ncarMiles0 <- left_join(bl.indiv, carMiles0, by='IndividualID')\n\ncarMilesR0 <- sqldf ('SELECT IndividualID,0 as [carMilesR0] FROM bl GROUP BY IndividualID')\n#carMilesR0 <- left_join(bl.indiv, carMilesR0, by='IndividualID')\n\nMETh0 <-  sqldf ('SELECT IndividualID, sum(METh) AS METh0 FROM bl GROUP BY IndividualID')\nTripTotalTime0 <- sqldf ('SELECT IndividualID, sum(TripTotalTime)AS TripTotalTime0 FROM bl GROUP BY IndividualID')\n\n\n############### LOOP all SCENARIOS................\n\n#for (i1 in (1:nfiles)) {  #reading scenarios for aggregates\n  for (i1 in (1:5)) {  #reading scenarios for aggregates\n  \n  #DATA AGGREGATES\n  AggScenarios6(todos[i1])\n  \n  #ifelse(i1==1,df <-info,df<-rbind(df,info))   #consolidates content\n  \n  if ((i1%%1)==0) {message('no files: ',i1)}\n  \n                      }  #END main loop\n\n",
+    "created" : 1444905616802.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2970450342",
+    "id" : "883E33A3",
+    "lastKnownWriteTime" : 1444906221,
+    "path" : "~/GitHub/CBM2.0/6_CBM2_ScenarioAggregates.R",
+    "project_path" : "6_CBM2_ScenarioAggregates.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
