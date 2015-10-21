@@ -116,11 +116,11 @@ if (baseline[k,'Cycled']==1)  {  #already cycling, TDR applied > Pcyc=1 + get MM
 #baseline <-setDT(baseline)[,cyclist:=as.numeric(max(Cycled)),by=IndividualID]
 #baseline <-as.data.frame(baseline)
 
-nombre <-paste("IIyear.MS",MS1,"_TDR",TDR1,"_ebik",ebikes1,"_eq" ,equity1,".csv",sep="")
-blsave <-baseline[,colnames('IndividualID','now_cycle','METh','MMETh','TripTotalTime1','TripTravelTime1','mMETs')]
+nombre <- paste("IIyear.MS",MS1,"_TDR",TDR1,"_ebik",ebikes1,"_eq" ,equity1,".csv",sep="")
+# Fixed a bug: replaced colnames with c
+blsave <- baseline[,c('IndividualID','now_cycle','METh','MMETh','TripTotalTime1','TripTravelTime1','mMETs')]
 
-write.csv(blsave,file=nombre)
-
+write.csv(blsave,file=paste(scenarioFolderNameAndPath, nombre, sep = "\\"), row.names=F)
 
 cat(nombre,'\n',' done !!','\n') 
 
