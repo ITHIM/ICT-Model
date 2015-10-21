@@ -8,7 +8,7 @@ library(data.table)
 library(sqldf)
 
 #setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios")
-setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012")
+#setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012")
 
 #DF for results
 todos<-list.files(pattern="[0-9].csv")
@@ -72,33 +72,33 @@ for (i1 in (1:nfiles)) {  #reading files for aggregates
 
 
 #mode origin of cycling, global
-write.csv(BD_mode,file='BD_mode.csv')
+write.csv(BD_mode,file='BD_mode.csv', row.names=F)
 
 #time histograms
-write.csv(BD_timehist,file='BD_timehist.csv')
-write.csv(BD_timehist.male,file= 'BD_timehist-male.csv')
-write.csv(BD_timehist.female,file= 'BD_timehist-female.csv')
+write.csv(BD_timehist,file='BD_timehist.csv', row.names=F)
+write.csv(BD_timehist.male,file= 'BD_timehist-male.csv', row.names=F)
+write.csv(BD_timehist.female,file= 'BD_timehist-female.csv', row.names=F)
 #-----
-write.csv(BD_timehist.caraccess,file= 'BD_timehist-caraccess.csv')
-write.csv(BD_timehist.noncaraccess,file= 'BD_timehist-noncaraccess.csv')
+write.csv(BD_timehist.caraccess,file= 'BD_timehist-caraccess.csv', row.names=F)
+write.csv(BD_timehist.noncaraccess,file= 'BD_timehist-noncaraccess.csv', row.names=F)
 
 #mode origin of cycling, breakdowns
-write.csv(BD_mode.fastertrips,file='BD_mode-fastertrips.csv')
-write.csv(BD_mode.slowertrips,file='BD_mode-slowertrips.csv')
+write.csv(BD_mode.fastertrips,file='BD_mode-fastertrips.csv', row.names=F)
+write.csv(BD_mode.slowertrips,file='BD_mode-slowertrips.csv', row.names=F)
 
-write.csv(BD_mode.male,file='BD_mode-male.csv')
-write.csv(BD_mode.female,file='BD_mode-female.csv')
+write.csv(BD_mode.male,file='BD_mode-male.csv', row.names=F)
+write.csv(BD_mode.female,file='BD_mode-female.csv', row.names=F)
 
-write.csv(BD_mode.white,file='BD_mode-white.csv')
-write.csv(BD_mode.nonwhite,file='BD_mode-nonwhite.csv')
+write.csv(BD_mode.white,file='BD_mode-white.csv', row.names=F)
+write.csv(BD_mode.nonwhite,file='BD_mode-nonwhite.csv', row.names=F)
 
-write.csv(BD_mode.caraccess,file='BD_mode.caraccess.csv')
-write.csv(BD_mode.noncaraccess,file='BD_mode.noncaraccess.csv')
+write.csv(BD_mode.caraccess,file='BD_mode.caraccess.csv', row.names=F)
+write.csv(BD_mode.noncaraccess,file='BD_mode.noncaraccess.csv', row.names=F)
 
 #mode shares: global & by car access
-write.csv(BD_share,file='BD_share.csv')
+write.csv(BD_share,file='BD_share.csv', row.names=F)
 
-write.csv(BD_share.caraccess,file='BD_share-caraccess.csv')
-write.csv(BD_share.noncaraccess,file='BD_share-noncaraccess.csv')
+write.csv(BD_share.caraccess,file='BD_share-caraccess.csv', row.names=F)
+write.csv(BD_share.noncaraccess,file='BD_share-noncaraccess.csv', row.names=F)
 
 cat('All done !')

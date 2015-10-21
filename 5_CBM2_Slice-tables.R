@@ -1,6 +1,6 @@
 
 #setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios") #source folder
-setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012") #source folder
+#setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012") #source folder
 rm(list=ls())
 
 
@@ -180,7 +180,7 @@ trips.age.eb1eq1  <- subset(aggr,TDR==1 &  equity==1 & ebike==1, select=c(MS,equ
 
 setwd('./tables')
 lst <- mget(todos)
-lapply(seq_along(lst), function(i) write.csv(lst[[i]], file=paste(todos[i], '.csv', sep='')))
+lapply(seq_along(lst), function(i) write.csv(lst[[i]], file=paste(todos[i], '.csv', sep='', row.names=F)))
 
 
 
