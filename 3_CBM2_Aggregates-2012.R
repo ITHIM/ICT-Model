@@ -1,4 +1,4 @@
-setwd("//me-filer1/home$/au232/My Documents/1.CEDAR/3_Studies !!/23-CBM2/3-Code")
+#setwd("//me-filer1/home$/au232/My Documents/1.CEDAR/3_Studies !!/23-CBM2/3-Code")
 rm(list=ls())
 source('AggCalc.R')   
 
@@ -8,7 +8,7 @@ library(data.table)
 library(sqldf)
 
 #setwd('C:/Temp/Test/Scenarios2012')
-setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012_England") #source folder
+#setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012_England") #source folder
 
 #read baseline & add short walks
 baseline <-read.csv('baseline.csv',header=T,as.is=T)
@@ -22,7 +22,7 @@ baseline <-read.csv('baseline.csv',header=T,as.is=T)
 # baseline <- baseline[order(baseline$IndividualID),]     #re-ordering by individuals
 # rm(shortwalks,dfsw)
 
-fnotrips  <-read.csv('V:/Studies/MOVED/HealthImpact/CBM2/People_w_NoTrips2012_ENG_v5.csv',header=T,as.is=T)
+fnotrips  <-read.csv('People_w_NoTrips2012_ENG_v5.csv',header=T,as.is=T)
 
 #DF for results
 df <- data.frame()
@@ -116,6 +116,6 @@ colnames(df) <-c('FileName','MS','TDR','ebike','equity',
                  'nopeopleWithTrips','People.with.NoTrips')
 
 
-write.csv(df,file='CBM_aggr_II.csv')
+write.csv(df,file='CBM_aggr_II.csv', row.names=F)
 
 cat('All done !')
