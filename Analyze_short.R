@@ -3,7 +3,6 @@ Analyze_short <- function (fname,iter)   {
 #get the basics
      if (fname=='baseline.csv') 
      {MS<-1
-      TDR <- 1
       equity<-0
       ebike <-0}     #baseline special case
      
@@ -11,7 +10,6 @@ Analyze_short <- function (fname,iter)   {
           params <-str_extract_all(fname, "([0-9]+(?:\\.[0-9]+)?)")
           params <-as.numeric(params[[1]] )
           MS <- as.integer(params[1])+1
-          TDR <-as.numeric(gsub("^.*?(?:\\d+(?:\\.\\d+)?).*?(\\d+(?:\\.\\d+)?).*$","\\1",fname,perl=TRUE))
           ebike <- as.integer(params[3])
           equity <- as.integer(params[4])
                }   #rest of files      
@@ -305,7 +303,7 @@ result <-summarise(f.gr,cases=n())   #check w. alternative formula
 total <- sum(result$cases)   
 
 result$cases <-round(100*result$cases/total,1)
-result <- cbind(fname,MS,TDR,equity,ebike,result)
+result <- cbind(fname,MS,equity,ebike,result)
 ifelse(iter==1, BD_share <<-result, BD_share <<-rbind(BD_share,result) )
 
 #5.1 MODE SHARE by CAR-ACCESS
@@ -315,7 +313,7 @@ result <-summarise(f.gr,cases=n())
 total <- sum(result$cases)
 
 result$cases <-round(100*result$cases/total,1)
-result <- cbind(fname,MS,TDR,equity,ebike,result)
+result <- cbind(fname,MS,equity,ebike,result)
 ifelse(iter==1, BD_share.caraccess <<-result, BD_share.caraccess <<-rbind(BD_share.caraccess,result) )
 
 #NO car access
@@ -324,7 +322,7 @@ result <-summarise(f.gr,cases=n())
 total <- sum(result$cases)
 
 result$cases <-round(100*result$cases/total,1)
-result <- cbind(fname,MS,TDR,equity,ebike,result)
+result <- cbind(fname,MS,equity,ebike,result)
 ifelse(iter==1, BD_share.noncaraccess <<-result, BD_share.noncaraccess <<-rbind(BD_share.noncaraccess,result) )
 
 

@@ -95,7 +95,7 @@ for (i1 in (1:nfiles)) {  #reading files for aggregates
                      }  #END main loop
 
 rownames(df) <- NULL
-colnames(df) <-c('FileName','MS','TDR','ebike','equity',
+colnames(df) <-c('FileName','MS','ebike','equity',
                  'carMiles','carMilesR','carMiles.pers','carMilesR.pers','carMilesCycled',
                  'milesCycled.pers','milesCycled.male', 'milesCycled.female', 
                  'milesCycled.white', 'milesCycled.nonwhite',

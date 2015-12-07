@@ -29,28 +29,28 @@ todos <-c('cyclist.eq0','cyclist.eq1','cyclist.eb1','cyclist.eb1eq1',
           'modeshare.eq0.TDR1','modeshare.eq1.TDR1','modeshare.eb1.TDR1','modeshare.eb1eq1.TDR1',
           'modeshare.eq0.TDR.7','modeshare.eq1.TDR.7','modeshare.eb1.TDR.7','modeshare.eb1eq1.TDR.7',
           
-          'whichmode.TDR1.eq0','whichmode.TDR1.eq1','whichmode.TDR1.eb1','whichmode.TDR1.eb1eq1',
+          'whichmode.eq0','whichmode.eq1','whichmode.eb1','whichmode.eb1eq1',
           
-          'timeSavedCyclists.TDR1.perc',
+          'timeSavedCyclists.perc',
           'timehist.eq0','timehist.eq1','timehist.eb1','timehist.eb1eq1',
           
           
           'cyclist.males','cyclist.females',
           'milesCycled.male','milesCycled.female',
           
-          'whichmode.TDR1.males','whichmode.TDR1.females',
+          'whichmode.males','whichmode.females',
           
           
           'cyclist.white.perc','cyclist.nonwhite.perc',
           'milesCycled.white','milesCycled.nonwhite',
           'people.nocar.white','people.nocar.nonwhite',
-          'whichmode.TDR1.white','whichmode.TDR1.nonwhite',
+          'whichmode.white','whichmode.nonwhite',
           
           
           'cyclist.caraccess.perc','cyclist.noncaraccess.perc',
           'milesCycled.caraccess','milesCycled.noncaraccess',
           'nocar.caraccess','nocar.noncaraccess',
-          'whichmode.TDR1.caraccess','whichmode.TDR1.noncaraccess',
+          'whichmode.caraccess','whichmode.noncaraccess',
           
           
           'cyclshare.nssec.eq0','cyclshare.nssec.eq1','cyclshare.nssec.eb1','cyclshare.nssec.eb1eq1',
@@ -62,120 +62,115 @@ todos <-c('cyclist.eq0','cyclist.eq1','cyclist.eb1','cyclist.eb1eq1',
 
 
 #SCENARIOS breakdown
-cyclist.eq0 <-  subset(aggr,equity==0 & ebike==0,select=c(MS,TDR,cyclists.perc) )
-cyclist.eq1 <-  subset( aggr,equity==1 & ebike==0,select=c(MS,TDR,cyclists.perc) )
-cyclist.eb1 <-  subset( aggr,equity==0 & ebike==1,select=c(MS,TDR,cyclists.perc) )
-cyclist.eb1eq1 <- subset(aggr,equity==1 & ebike==1,select=c(MS,TDR,cyclists.perc) )
+cyclist.eq0 <-  subset(aggr,equity==0 & ebike==0,select=c(MS,cyclists.perc) )
+cyclist.eq1 <-  subset( aggr,equity==1 & ebike==0,select=c(MS,cyclists.perc) )
+cyclist.eb1 <-  subset( aggr,equity==0 & ebike==1,select=c(MS,cyclists.perc) )
+cyclist.eb1eq1 <- subset(aggr,equity==1 & ebike==1,select=c(MS,cyclists.perc) )
 
 # %CO2 reduction
-CO2R.perc.eq0 <- subset(aggr,equity==0 & ebike==0, select=c(MS,TDR,CO2R.perc) )
-CO2R.perc.eq1 <- subset(aggr,equity==1 & ebike==0,select=c(MS,TDR,CO2R.perc) )
-CO2R.perc.eb1 <- subset(aggr,equity==0 & ebike==1,select=c(MS,TDR,CO2R.perc) )
-CO2R.perc.eb1eq1 <- subset(aggr,equity==1 & ebike==1,select=c(MS,TDR,CO2R.perc) )
+CO2R.perc.eq0 <- subset(aggr,equity==0 & ebike==0, select=c(MS,CO2R.perc) )
+CO2R.perc.eq1 <- subset(aggr,equity==1 & ebike==0,select=c(MS,CO2R.perc) )
+CO2R.perc.eb1 <- subset(aggr,equity==0 & ebike==1,select=c(MS,CO2R.perc) )
+CO2R.perc.eb1eq1 <- subset(aggr,equity==1 & ebike==1,select=c(MS,CO2R.perc) )
 
 #no car trips
-nocarTrips.people.eq0 <- subset(aggr,equity==0 & ebike==0, select=c(MS,TDR,nocarTrips.people.perc) )
-nocarTrips.people.eq1 <- subset(aggr,equity==1 & ebike==0,select=c(MS,TDR,nocarTrips.people.perc) )
-nocarTrips.people.eb1 <- subset(aggr,equity==0 & ebike==1,select=c(MS,TDR,nocarTrips.people.perc) )
-nocarTrips.people.eb1eq1 <- subset(aggr,equity==1 & ebike==1,select=c(MS,TDR,nocarTrips.people.perc) )
+nocarTrips.people.eq0 <- subset(aggr,equity==0 & ebike==0, select=c(MS,nocarTrips.people.perc) )
+nocarTrips.people.eq1 <- subset(aggr,equity==1 & ebike==0,select=c(MS,nocarTrips.people.perc) )
+nocarTrips.people.eb1 <- subset(aggr,equity==0 & ebike==1,select=c(MS,nocarTrips.people.perc) )
+nocarTrips.people.eb1eq1 <- subset(aggr,equity==1 & ebike==1,select=c(MS,nocarTrips.people.perc) )
 
 # bicycle miles
-milesCycled.eq0 <- subset(aggr,equity==0 & ebike==0, select=c(MS,TDR,milesCycled.pers) )
-milesCycled.eq1 <- subset(aggr,equity==1 & ebike==0,select=c(MS,TDR,milesCycled.pers) )
-milesCycled.eb1 <- subset(aggr,equity==0 & ebike==1,select=c(MS,TDR,milesCycled.pers) )
-milesCycled.eb1eq1 <- subset(aggr,equity==1 & ebike==1,select=c(MS,TDR,milesCycled.pers) )
+milesCycled.eq0 <- subset(aggr,equity==0 & ebike==0, select=c(MS,milesCycled.pers) )
+milesCycled.eq1 <- subset(aggr,equity==1 & ebike==0,select=c(MS,milesCycled.pers) )
+milesCycled.eb1 <- subset(aggr,equity==0 & ebike==1,select=c(MS,milesCycled.pers) )
+milesCycled.eb1eq1 <- subset(aggr,equity==1 & ebike==1,select=c(MS,milesCycled.pers) )
 
 #mode share
- modeshare.eq0.TDR1 <- subset(bd_share,TDR==1 & equity==0 & ebike==0 )
- modeshare.eq1.TDR1 <- subset(bd_share,TDR==1 & equity==1 & ebike==0 )
- modeshare.eb1.TDR1 <- subset(bd_share,TDR==1 & equity==0 & ebike==1 )
- modeshare.eb1eq1.TDR1 <- subset(bd_share,TDR==1 & equity==1 & ebike==1 )
- 
- modeshare.eq0.TDR.7  <- subset(bd_share,TDR==0.7 & equity==0 & ebike==0 )
- modeshare.eq1.TDR.7 <- subset(bd_share,TDR==0.7 & equity==1 & ebike==0 )
- modeshare.eb1.TDR.7 <- subset(bd_share,TDR==0.7 & equity==0 & ebike==1 )
- modeshare.eb1eq1.TDR.7 <- subset(bd_share,TDR==0.7 & equity==1 & ebike==1 )
+ modeshare.eq0 <- subset(bd_share,equity==0 & ebike==0 )
+ modeshare.eq1 <- subset(bd_share,equity==1 & ebike==0 )
+ modeshare.eb1 <- subset(bd_share,equity==0 & ebike==1 )
+ modeshare.eb1eq1 <- subset(bd_share,equity==1 & ebike==1 )
 
 #which mode trips are coming from by scenario
-whichmode.TDR1.eq0 <- subset(bd_mode,TDR==1 & equity==0 & ebike==0 )
-whichmode.TDR1.eq1 <-subset(bd_mode,TDR==1 & equity==1 & ebike==0 )
-whichmode.TDR1.eb1 <-subset(bd_mode,TDR==1 & equity==0 & ebike==1 )
-whichmode.TDR1.eb1eq1 <- subset(bd_mode,TDR==1 & equity==1 & ebike==1 )
+whichmode.eq0 <- subset(bd_mode,equity==0 & ebike==0 )
+whichmode.eq1 <-subset(bd_mode,equity==1 & ebike==0 )
+whichmode.eb1 <-subset(bd_mode,equity==0 & ebike==1 )
+whichmode.eb1eq1 <- subset(bd_mode,equity==1 & ebike==1 )
 # 
-# # time savings   %, TDR=1 
-timeSavedCyclists.TDR1.perc <- subset(aggr,TDR=1, select=c(MS,equity,ebike,timeSavedCyclists.perc) )
+# # time savings   %
+timeSavedCyclists.perc <- subset(aggr,select=c(MS,equity,ebike,timeSavedCyclists.perc) )
 
-# # time histogram   %, TDR=1
-timehist.eq0 <- subset(bd_timehist,TDR=1 & equity==0 & ebike==0 ,select=c(MS,cases) )
-timehist.eq1 <- subset(bd_timehist,TDR=1 & equity==1 & ebike==0 ,select=c(MS,cases) )
-timehist.eb1 <- subset(bd_timehist,TDR=1 & equity==0 & ebike==1 ,select=c(MS,cases) )
-timehist.eb1eq1 <- subset(bd_timehist,TDR=1 & equity==1 & ebike==1 ,select=c(MS,cases) )
+# # time histogram   %
+timehist.eq0 <- subset(bd_timehist,equity==0 & ebike==0 ,select=c(MS,cases) )
+timehist.eq1 <- subset(bd_timehist,equity==1 & ebike==0 ,select=c(MS,cases) )
+timehist.eb1 <- subset(bd_timehist,equity==0 & ebike==1 ,select=c(MS,cases) )
+timehist.eb1eq1 <- subset(bd_timehist,equity==1 & ebike==1 ,select=c(MS,cases) )
 
 
 ################SEX
-cyclist.males  <- subset(aggr,TDR==1, select=c(MS,equity,ebike,cyclist.male.perc) )
-cyclist.females <- subset(aggr,TDR==1, select=c(MS,equity,ebike,cyclist.female.perc) )
+cyclist.males  <- subset(aggr,select=c(MS,equity,ebike,cyclist.male.perc) )
+cyclist.females <- subset(aggr,select=c(MS,equity,ebike,cyclist.female.perc) )
 
-people.nocar.male <- subset(aggr,TDR==1, select=c(MS,equity,ebike,nocar.males.perc) )
-people.nocar.female <- subset(aggr,TDR==1, select=c(MS,equity,ebike,nocar.females.perc) )
+people.nocar.male <- subset(aggr, select=c(MS,equity,ebike,nocar.males.perc) )
+people.nocar.female <- subset(aggr, select=c(MS,equity,ebike,nocar.females.perc) )
 
-milesCycled.male <- subset(aggr,TDR==1, select=c(MS,equity,ebike,milesCycled.male) )
-milesCycled.female <- subset(aggr,TDR==1, select=c(MS,equity,ebike,milesCycled.female) ) 
+milesCycled.male <- subset(aggr, select=c(MS,equity,ebike,milesCycled.male) )
+milesCycled.female <- subset(aggr, select=c(MS,equity,ebike,milesCycled.female) ) 
 
 ##which mode
-whichmode.TDR1.males <- subset(bd_mode.male,TDR==1, select=c(MS,equity,ebike,modefinal,cases) )
-whichmode.TDR1.females <- subset(bd_mode.female,TDR==1, select=c(MS,equity,ebike,modefinal,cases) )
+whichmode.males <- subset(bd_mode.male, select=c(MS,equity,ebike,modefinal,cases) )
+whichmode.females <- subset(bd_mode.female, select=c(MS,equity,ebike,modefinal,cases) )
 
 ##########
 
 ################ETHNICITY
 
-cyclist.white.perc <- subset(aggr,TDR==1, select=c(MS,equity,ebike,cyclist.white.perc) )
-cyclist.nonwhite.perc <- subset(aggr,TDR==1, select=c(MS,equity,ebike,cyclist.nonwhite.perc) )
+cyclist.white.perc <- subset(aggr, select=c(MS,equity,ebike,cyclist.white.perc) )
+cyclist.nonwhite.perc <- subset(aggr, select=c(MS,equity,ebike,cyclist.nonwhite.perc) )
     
-milesCycled.white <- subset(aggr,TDR==1, select=c(MS,equity,ebike,milesCycled.white) )
-milesCycled.nonwhite <- subset(aggr,TDR==1, select=c(MS,equity,ebike,milesCycled.nonwhite) )
+milesCycled.white <- subset(aggr, select=c(MS,equity,ebike,milesCycled.white) )
+milesCycled.nonwhite <- subset(aggr, select=c(MS,equity,ebike,milesCycled.nonwhite) )
 
 # % people with no car trips
-people.nocar.white <- subset(aggr,TDR==1, select=c(MS,equity,ebike,nocar.white.perc) )
-people.nocar.nonwhite <- subset(aggr,TDR==1, select=c(MS,equity,ebike,nocar.nonwhite.perc) )
+people.nocar.white <- subset(aggr, select=c(MS,equity,ebike,nocar.white.perc) )
+people.nocar.nonwhite <- subset(aggr, select=c(MS,equity,ebike,nocar.nonwhite.perc) )
 
 #which mode     
-whichmode.TDR1.white  <- subset(bd_mode.white,TDR==1, select=c(MS,equity,ebike,modefinal,cases) )
-whichmode.TDR1.nonwhite  <- subset(bd_mode.nonwhite,TDR==1, select=c(MS,equity,ebike,modefinal,cases) )
+whichmode.white  <- subset(bd_mode.white, select=c(MS,equity,ebike,modefinal,cases) )
+whichmode.nonwhite  <- subset(bd_mode.nonwhite, select=c(MS,equity,ebike,modefinal,cases) )
 
 
 ################CAR ACCESS
-cyclist.caraccess.perc <- subset(aggr,TDR==1, select=c(MS,equity,ebike,cyclist.caraccess.perc) )
-cyclist.noncaraccess.perc  <- subset(aggr,TDR==1, select=c(MS,equity,ebike,cyclist.noncaraccess.perc) )
+cyclist.caraccess.perc <- subset(aggr, select=c(MS,equity,ebike,cyclist.caraccess.perc) )
+cyclist.noncaraccess.perc  <- subset(aggr, select=c(MS,equity,ebike,cyclist.noncaraccess.perc) )
 
-milesCycled.caraccess <- subset(aggr,TDR==1, select=c(MS,equity,ebike,milesCycled.caraccess) )
-milesCycled.noncaraccess  <- subset(aggr,TDR==1, select=c(MS,equity,ebike,milesCycled.caraccess) )
+milesCycled.caraccess <- subset(aggr, select=c(MS,equity,ebike,milesCycled.caraccess) )
+milesCycled.noncaraccess  <- subset(aggr, select=c(MS,equity,ebike,milesCycled.caraccess) )
 
-nocar.caraccess <-  subset(aggr,TDR==1, select=c(MS,equity,ebike,nocar.caraccess) )
-nocar.noncaraccess <-  subset(aggr,TDR==1, select=c(MS,equity,ebike,nocar.noncaraccess) )
+nocar.caraccess <-  subset(aggr, select=c(MS,equity,ebike,nocar.caraccess) )
+nocar.noncaraccess <-  subset(aggr, select=c(MS,equity,ebike,nocar.noncaraccess) )
 
 
 #which mode     
-whichmode.TDR1.caraccess  <- subset(bd_mode.caraccess,TDR==1, select=c(MS,equity,ebike,modefinal,cases) )
-whichmode.TDR1.noncaraccess  <- subset(bd_mode.noncaraccess,TDR==1, select=c(MS,equity,ebike,modefinal,cases) )
+whichmode.caraccess  <- subset(bd_mode.caraccess, select=c(MS,equity,ebike,modefinal,cases) )
+whichmode.noncaraccess  <- subset(bd_mode.noncaraccess, select=c(MS,equity,ebike,modefinal,cases) )
 
 
 ###################NS-SEC
-cyclshare.nssec.eq0 <- subset(aggr,TDR==1 & equity==0 & ebike==0, select=c(MS,cyclist.nssec1.perc,cyclist.nssec2.perc,
+cyclshare.nssec.eq0 <- subset(aggr,equity==0 & ebike==0, select=c(MS,cyclist.nssec1.perc,cyclist.nssec2.perc,
                                     cyclist.nssec3.perc,cyclist.nssec4.perc,cyclist.nssec5.perc) )
-cyclshare.nssec.eq1  <- subset(aggr,TDR==1 & equity==1 & ebike==0, select=c(MS,equity,ebike,cyclist.nssec1.perc,cyclist.nssec2.perc,
+cyclshare.nssec.eq1  <- subset(aggr,equity==1 & ebike==0, select=c(MS,equity,ebike,cyclist.nssec1.perc,cyclist.nssec2.perc,
                                                 cyclist.nssec3.perc,cyclist.nssec4.perc,cyclist.nssec5.perc) )
-cyclshare.nssec.eb1  <- subset(aggr,TDR==1 &  equity==0 & ebike==1, select=c(MS,equity,ebike,cyclist.nssec1.perc,cyclist.nssec2.perc,
+cyclshare.nssec.eb1  <- subset(aggr, equity==0 & ebike==1, select=c(MS,equity,ebike,cyclist.nssec1.perc,cyclist.nssec2.perc,
                                                 cyclist.nssec3.perc,cyclist.nssec4.perc,cyclist.nssec5.perc) )
-cyclshare.nssec.eb1eq1  <- subset(aggr,TDR==1 &  equity==1 & ebike==1, select=c(MS,equity,ebike,cyclist.nssec1.perc,cyclist.nssec2.perc,
+cyclshare.nssec.eb1eq1  <- subset(aggr, equity==1 & ebike==1, select=c(MS,equity,ebike,cyclist.nssec1.perc,cyclist.nssec2.perc,
                                                    cyclist.nssec3.perc,cyclist.nssec4.perc,cyclist.nssec5.perc) )
 
 ###### AGE
-trips.age.eq0 <- subset(aggr,TDR==1 & equity==0 & ebike==0, select=c(MS,equity, ebike,trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc) )
-trips.age.eq1  <- subset(aggr,TDR==1 & equity==1 & ebike==0, select=c(MS,equity, ebike,trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc) )
-trips.age.eb1  <- subset(aggr,TDR==1 &  equity==0 & ebike==1, select=c(MS,equity, ebike,trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc) )
-trips.age.eb1eq1  <- subset(aggr,TDR==1 &  equity==1 & ebike==1, select=c(MS,equity, ebike,trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc) )
+trips.age.eq0 <- subset(aggr,equity==0 & ebike==0, select=c(MS,equity, ebike,trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc) )
+trips.age.eq1  <- subset(aggr,equity==1 & ebike==0, select=c(MS,equity, ebike,trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc) )
+trips.age.eb1  <- subset(aggr, equity==0 & ebike==1, select=c(MS,equity, ebike,trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc) )
+trips.age.eb1eq1  <- subset(aggr, equity==1 & ebike==1, select=c(MS,equity, ebike,trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc) )
 
 
 setwd('./tables')

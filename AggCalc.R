@@ -4,7 +4,6 @@ AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
      #get file parameters
      if (fname=='baseline.csv') 
      {MS<-0
-     TDR <- 1
      equity<-0
      ebike <-0}     #baseline special case
           
@@ -12,7 +11,6 @@ AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
      params <-str_extract_all(fname, "([0-9]+(?:\\.[0-9]+)?)")
      params <-as.numeric(params[[1]] )
      MS <- as.integer(params[1])
-     TDR <-as.numeric(gsub("^.*?(?:\\d+(?:\\.\\d+)?).*?(\\d+(?:\\.\\d+)?).*$","\\1",fname,perl=TRUE))
      ebike <- as.integer(params[3]) 
      equity <- as.integer(params[4])
          }   #rest of files 
@@ -21,25 +19,25 @@ AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
      
           
      #1-MILES
-     carMiles <-TDR * sum(f[(f$MainMode_B04ID %in% c(3,4,5,12)) & (f$now_cycle==0 & f$Cycled==0),'TripDisIncSW'])
+     carMiles <-sum(f[(f$MainMode_B04ID %in% c(3,4,5,12)) & (f$now_cycle==0 & f$Cycled==0),'TripDisIncSW'])
      carMiles <-round(carMiles,2)
      carMilesR <- round(carMiles0 - carMiles,2)
      carMiles.pers <- round(carMiles/(nopeople + notripspeople),1)
      carMilesR.pers <- round((carMiles0 - carMiles)/(nopeople + notripspeople),1)
-     carMilesCycled <- TDR * sum(f[(f$MainMode_B04ID %in% c(3,4,5,12)) & (f$now_cycle==1 | f$Cycled==1),'TripDisIncSW']) #no need for Cycled=1!
+     carMilesCycled <- sum(f[(f$MainMode_B04ID %in% c(3,4,5,12)) & (f$now_cycle==1 | f$Cycled==1),'TripDisIncSW']) #no need for Cycled=1!
      carMilesCycled <-round(carMilesCycled,1)
      
-     milesCycled <- (TDR * sum(f[(f$now_cycle==1|f$Cycled==1),'TripDisIncSW']))/(nopeople + notripspeople)
+     milesCycled <- (sum(f[(f$now_cycle==1|f$Cycled==1),'TripDisIncSW']))/(nopeople + notripspeople)
      milesCycled <- round(milesCycled,2)
      
-     milesCycled.male <- round((TDR * sum(f[(f$now_cycle==1|f$Cycled==1) & f$Sex=='Male','TripDisIncSW']))/(no.males + no.males.wotrips),2)
-     milesCycled.female <- round((TDR * sum(f[(f$now_cycle==1|f$Cycled==1) & f$Sex=='Female','TripDisIncSW']))/(no.females + no.females.wotrips),2)
+     milesCycled.male <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$Sex=='Male','TripDisIncSW']))/(no.males + no.males.wotrips),2)
+     milesCycled.female <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$Sex=='Female','TripDisIncSW']))/(no.females + no.females.wotrips),2)
      
-     milesCycled.white <- round((TDR * sum(f[(f$now_cycle==1|f$Cycled==1) & f$EthGroupTS_B02ID==1,'TripDisIncSW']))/(no.white + no.white.wotrips),2)
-     milesCycled.nonwhite <- round( (TDR * sum(f[(f$now_cycle==1|f$Cycled==1) & f$EthGroupTS_B02ID==2,'TripDisIncSW']))/(no.nonwhite + no.nonwhite.wotrips),2)
+     milesCycled.white <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$EthGroupTS_B02ID==1,'TripDisIncSW']))/(no.white + no.white.wotrips),2)
+     milesCycled.nonwhite <- round( (sum(f[(f$now_cycle==1|f$Cycled==1) & f$EthGroupTS_B02ID==2,'TripDisIncSW']))/(no.nonwhite + no.nonwhite.wotrips),2)
      
-     milesCycled.caraccess <- round((TDR * sum(f[(f$now_cycle==1|f$Cycled==1) & f$CarAccess_B01ID %in% c(1,2,3,4),'TripDisIncSW']))/(no.caraccess + no.caraccess.wotrips),2)
-     milesCycled.noncaraccess <- round((TDR * sum(f[(f$now_cycle==1|f$Cycled==1) & f$CarAccess_B01ID %in% c(5,6),'TripDisIncSW']))/(no.noncaraccess + no.noncaraccess.wotrips),2)
+     milesCycled.caraccess <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$CarAccess_B01ID %in% c(1,2,3,4),'TripDisIncSW']))/(no.caraccess + no.caraccess.wotrips),2)
+     milesCycled.noncaraccess <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$CarAccess_B01ID %in% c(5,6),'TripDisIncSW']))/(no.noncaraccess + no.noncaraccess.wotrips),2)
           
      #2-co2
      CO2 <- round(carMiles * 1.61 * 1.50 * 1e-4,2)
@@ -63,7 +61,7 @@ AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
      timeSavedCyclists <- round(100 * TripTotalTime1.cyclist/TripTotalTime.cyclist,1)  
      #total in h, saved by cyclists
      
-     TripDisIncSW <- round(TDR * sum(f$TripDisIncSW),0)
+     TripDisIncSW <- round(sum(f$TripDisIncSW),0)
           
      #5-CYCLISTS & RATES
      nocyclists <-length(unique(f$IndividualID[(f$now_cycle==1 | f$Cycled==1)])) #real cyclists     
@@ -184,7 +182,7 @@ AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
    
           
      # WRAPPING     
-     info <<-c(fname,MS,TDR,ebike,equity,
+     info <<-c(fname,MS,ebike,equity,
                carMiles,carMilesR,carMiles.pers,carMilesR.pers,carMilesCycled,
                milesCycled, milesCycled.male, milesCycled.female, 
                milesCycled.white, milesCycled.nonwhite,

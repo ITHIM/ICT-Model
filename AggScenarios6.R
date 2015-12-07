@@ -7,7 +7,6 @@ AggScenarios6 <- function(fname)  {
 #get the basics
   if (fname=='baseline.csv')  {
     MS<-1
-    TDR <- 1
     equity<-0
     ebike <-0    }                  #baseline special case
   
@@ -15,7 +14,6 @@ AggScenarios6 <- function(fname)  {
     params <-str_extract_all(fname, "([0-9]+(?:\\.[0-9]+)?)")
     params <-as.numeric(params[[1]] )
     MS <- as.integer(params[1])+1
-    TDR <-as.numeric(gsub("^.*?(?:\\d+(?:\\.\\d+)?).*?(\\d+(?:\\.\\d+)?).*$","\\1",fname,perl=TRUE))
     ebike <- as.integer(params[3])
     equity <- as.integer(params[4])
               }   #rest of files        
@@ -30,7 +28,7 @@ f <-read.csv(file=fname)
 f.carMiles  <- sqldf ('SELECT IndividualID,sum(TripDisIncSW) FROM f WHERE ([MainMode_B04ID] IN (3,4,5,12) 
 AND ([now_cycle]=0 AND [Cycled]=0) ) GROUP BY IndividualID')
 
-f.carMiles[,2] <- TDR * f.carMiles[,2]
+f.carMiles[,2] <- f.carMiles[,2]
 f.carMiles <- left_join(bl.indiv,f.carMiles,by='IndividualID')
 colnames(f.carMiles)[2] <- fname #rename column
 
@@ -45,7 +43,7 @@ carMilesR <<- cbind(carMilesR,f.carMilesR[,2])
 f.carMilesCycled <- sqldf ('SELECT IndividualID,sum(TripDisIncSW) AS carMilesCycled FROM f WHERE (f.[MainMode_B04ID] IN (3,4,5,12) 
 AND (f.[now_cycle]==1 AND f.[Cycled]==0) ) GROUP BY IndividualID')
 
-#f.carMilesCycled[,2] <- TDR * f.carMilesCycled[,2]  GIVES ERROR
+#f.carMilesCycled[,2] <- f.carMilesCycled[,2]  GIVES ERROR
 f.carMilesCycled <- left_join(bl.indiv,f.carMilesCycled, by='IndividualID')
 colnames(f.carMilesCycled)[2] <- fname
 
@@ -55,7 +53,7 @@ carMilesCycled <<- cbind(carMilesCycled,f.carMilesCycled[,2])
 f.milesCycled <- sqldf ('SELECT IndividualID,sum(TripDisIncSW) AS milesCycled FROM f WHERE f.[now_cycle]=1 OR f.[Cycled]=1  
                          GROUP BY IndividualID')
 
-f.milesCycled [,2] <- TDR * f.milesCycled[,2]
+f.milesCycled [,2] <- f.milesCycled[,2]
 f.milesCycled  <- left_join(bl.indiv,f.milesCycled,by='IndividualID')
 
 milesCycled.pers <<- cbind(milesCycled.pers,f.milesCycled[,2])
@@ -85,10 +83,10 @@ CO2.Tm <<-cbind(CO2.Tm, 1.61 * 1.50 * 1e-1 * f.carMiles[,2])    #this is KG !! N
 # 9-TripDisIncSW     
 f.TripDisIncSW <- sqldf('select IndividualID, sum(TripDisIncSW) FROM f GROUP BY IndividualID')
 
-f.TripDisIncSW[,2] <- TDR * f.TripDisIncSW[,2]
+f.TripDisIncSW[,2] <- f.TripDisIncSW[,2]
 colnames(f.TripDisIncSW)[2] <- fname
 
-TripDisIncSW  <<- cbind(TripDisIncSW,TDR * f.TripDisIncSW)
+TripDisIncSW  <<- cbind(TripDisIncSW,f.TripDisIncSW)
 
 # 10-TripTotalTime1   
 f.TripTotalTime1 <- sqldf('select IndividualID, sum(TripTotalTime1) FROM f GROUP BY IndividualID')
