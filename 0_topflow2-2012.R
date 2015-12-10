@@ -53,9 +53,10 @@ rm(shortwalks,df)
 #1 sample before running scenarios -
 # hsematch <- read.csv('indivHSE-NTS_2012_v1_AnonymousID.csv',header=T)
 # hsematch <- read.csv('indivHSE-NTS_2012_v1.csv',header=T)
-hsematch <- read.csv('hsematchonlymmets.csv',header=T)
 
-
+#hsematch <- read.csv('hsematchonlymmets.csv',header=T)
+# Replace hsematch by including a two different columns for mmets
+hsematch <- read.csv('hsematchOnly2mmets.csv',header=T)
 
 #hsematch <- hsematch[,c(8,9)]  #keep only first and last column > IndivID, mMETs
 hse1 <- setDT(hsematch)[,if(.N<1) .SD else .SD[sample(.N,1,replace=F)],by=ID]
@@ -104,8 +105,8 @@ i <- c(1,2,4,8,16,32,64)
 # j <- c(1,0.9,0.8,0.7)
 
 m <- c(0,1)   #ebikes 
-n <-c(0,1)   #equity
-num=1
+n <- c(0,1)   #equity
+num = 1
 
 for (ebikes in m) {
   for (equity in n) {

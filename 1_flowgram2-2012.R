@@ -98,7 +98,7 @@ flowgram <-function(baseline, MS1,ebikes1,equity1) {
   nombre <- paste("MS",MS1,"_ebik",ebikes1,"_eq" ,equity1,sep="")
   
   # Fixed a bug: replaced colnames with c
-  blsave <- baseline[,c('ID','now_cycle','METh','MMETh','TripTotalTime1','TripTravelTime1','mMETs')]
+  blsave <- baseline[,c('ID','now_cycle','METh','MMETh','TripTotalTime1','TripTravelTime1','health_mmets', 'physical_activity_mmets')]
   
   # write.csv(blsave,file=paste(scenarioFolderNameAndPath, nombre, sep = "\\"), row.names=F)
   cat("size: ", nrow(blsave), " - ", nombre,'\n',' done !!','\n') 
