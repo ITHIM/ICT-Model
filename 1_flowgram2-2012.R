@@ -20,11 +20,6 @@ flowgram <-function(baseline, MS1,ebikes1,equity1) {
   justrandom <- runif(nrow(baseline),0,1)   #prob vector for now_cycle (trip probability)
   #NON-EQUITY scenario (mode shift * odds in both)
   #EQUITY scenario  
-  # cat(ebikes, equity, MS, "\n")
-  # 0 1 1
-  MS1 = 1
-  ebikes1 = 0
-  equity1 = 1
   
   if (equity == 0) {
     Pcyc0 <- MS1 * Pcyc0.eq0
