@@ -1,2 +1,3 @@
-oddsp <- function (x)
-{   podds<- x/(x+1) }
+oddsp <- function (x){   
+  podds <- x/(x+1) 
+}
