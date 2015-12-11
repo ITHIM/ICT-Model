@@ -24,19 +24,34 @@ METcycling <- 6.44
 METwalking <- 4.61
 METebikes <- 4.50
 
+# Read Cycling Probabilities into an R Object
+probCycling <- read.csv("cycling-probability.csv", header = T, as.is = T)
+
+# Convert all probabilities into odss
+oddsCycling <- round(probCycling /( 1 - probCycling), 3)
+
+# Convert data.frame into a list
+oddsCycling <- unlist(oddsCycling, use.names = F)
+
 #lookup tables for equity=0,1. MUST BE expressed in ODDS!  
-Pcyc0.eq0 <- c(0.094,0.038,0.045,0.015)
-Pcyc0.eq1 <- c(0.050,0.050,0.050,0.050)
+Pcyc0.eq0 <- oddsCycling[1:4]
+Pcyc0.eq1 <- rep(oddsCycling[5], 4)
 #AS ILLUSTRATION: 
 #lookup.eq1 <-data.frame(agesex=c('16.59Male','16.59Female','60plusMale','60plusFemale'),
 
 #get source file as DF and filter for interest year 
 # bl <- read.csv('CBM5-TripsBaseline.csv', header=T)  #NTS trips, for age>18 & England only households
-bl <- read.csv('bl.csv', header=T)
+# bl <- read.csv('bl.csv', header=T)
+# Only read baseline for the year 2012
+bl <- read.csv('bl2012.csv', header=T)
+
 # bl <- read.csv('CBM5-TripsBaseline-AnonymousID.csv', header=T)  #NTS trips, for age>18 & England only households
 
-whichlines <- which(bl$SurveyYear==2012)
-baseline <- bl[whichlines,]  #baseline 30K / 2012
+# Don't need to subset for the year 2012
+# whichlines <- which(bl$SurveyYear==2012)
+# baseline <- bl[whichlines,]  #baseline 30K / 2012
+
+baseline <- bl
 
 #handle short walks, creating 6x of each
 df <- baseline[baseline$MainMode_B03ID==1,]
@@ -56,7 +71,11 @@ rm(shortwalks,df)
 
 #hsematch <- read.csv('hsematchonlymmets.csv',header=T)
 # Replace hsematch by including a two different columns for mmets
-hsematch <- read.csv('hsematchOnly2mmets.csv',header=T)
+# hsematch <- read.csv('hsematchOnly2mmets.csv', header=T)#, colClasses=c("integer", "numeric", "numeric"))
+
+# Removed NAs from the data.frame
+hsematch <- read.csv('hsematchOnly2mmetsremovedNAs.csv', header = T, as.is = T)
+
 
 #hsematch <- hsematch[,c(8,9)]  #keep only first and last column > IndivID, mMETs
 hse1 <- setDT(hsematch)[,if(.N<1) .SD else .SD[sample(.N,1,replace=F)],by=ID]
@@ -94,7 +113,10 @@ carMiles0 <- sum(baseline[baseline$MainMode_B04ID %in% c(3,4,5,12),'TripDisIncSW
 carMiles0 <- round(carMiles0,1)
 METh0 <- round(sum(baseline$METh),1)
 MMETh0 <- round(sum(baseline$MMETh),1)
-CO20 <- round(carMiles0 * 1.61 * 1.50 * 1e-4,2)   #(in metric Tons)
+# Miles to Kilometres, Grams to metric tonnes, 0.0001
+#CO20 <- round(carMiles0 * 1.61 * 1.50 * 1e-4,2)   #(in metric Tons)
+# Using new Christian's average CO2 value of 0.31 grams 
+CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-4,2)   #(in metric Tons)
 
 df <- data.frame()
 
@@ -112,7 +134,7 @@ for (ebikes in m) {
   for (equity in n) {
     for  (MS in i) {
       cat(ebikes, equity, MS, "\n")
-      assign(paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep=""),flowgram(baseline, MS,ebikes,equity))      
+      assign(paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep=""),flowgram(baseline, MS,ebikes,equity, pcycl_baseline))      
       num <- num + 1
     }  
   } 
@@ -120,14 +142,14 @@ for (ebikes in m) {
 
 
 #grouping baseline
-blaggr <- group_by(baseline,ID)
-blaggr <- summarise(blaggr,sum(METh),sum(MMETh),mean(mMETs))
-blaggr <- cbind(blaggr,blaggr[,3]+blaggr[,4])
-colnames(blaggr) <-c('ID','METh','MMETh1','MMETh2','MMEThTotal')
-blaggr<-sqldf('select t1.ID,t1.Age,t1.Sex,t1.NSSec_B03ID,
-              t2.METh,t2.MMETh1,t2.MMETh2,t2.MMEThTotal as TotalMMETH from baseline  
-              as t1 inner join blaggr as t2 where t1.ID=t2.ID 
-              group by t1.ID')
+# blaggr <- group_by(baseline,ID)
+# blaggr <- summarise(blaggr,sum(METh),sum(MMETh),sum(health_mmets), sum(physical_activity_mmets))
+# blaggr <- cbind(blaggr,blaggr[,3]+blaggr[,4])
+# colnames(blaggr) <-c('ID','METh','MMETh1','MMETh2','MMEThTotal', 'TotalHealthMMETS', 'TotalPhysicalActivityMMETS')
+# blaggr <- sqldf('select t1.ID,t1.Age,t1.Sex,t1.NSSec_B03ID,
+#               t2.METh,t2.MMETh1,t2.MMETh2,t2.MMEThTotal as TotalMMETH, t2.TotalHealthMMETS, t2.TotalPhysicalActivityMMETS from baseline  
+#               as t1 inner join blaggr as t2 where t1.ID=t2.ID 
+#               group by t1.ID')
 
 #blaggr<-sqldf('select t1.Age,t1.Sex,t1.NSSec_B03ID,t1.ID,(t1.MMETh+t2.mMETs) as TotalMMETH from baseline  as t1 inner join hse1 as t2 where t1.ID=t2.ID group by t1.ID')
 
