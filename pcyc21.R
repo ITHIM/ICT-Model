@@ -7,8 +7,7 @@ pcyc21 <-function(age,sex,dist,ebikes,equity,MS) {
   nrow <- findInterval(dist,distIntervals)+1  # starts @ 0, add 1
   
   if (ebikes == 0) {
-    #ifelse(equity==0,ncol <-paste(sex,age,sep="_"),ncol <-paste('Male',age,sep="_"))
-    ifelse(equity == 0,ncol <-paste(sex,age,sep="_"),ncol <-'pglobal')
+    ncol <- paste(sex,age,sep="_")
     prob <- pcycl_baseline[nrow,ncol]   
   } #end ebikes=0
   else {    #ebikes=1
