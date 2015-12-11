@@ -1,8 +1,8 @@
 
-flowgram <-function(baseline, MS1,ebikes1,equity1) {
+flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   # temporary initiliazaiton of baseline
-  baseline <- bl
+  # baseline <- bl
   #resets all senarios parameters: trip cycled(now_cycle) | person=cyclist | prob cycling a trip (Pcyc)  
   baseline$now_cycle <- 0  
   baseline$cyclist <- 0  
@@ -22,9 +22,9 @@ flowgram <-function(baseline, MS1,ebikes1,equity1) {
   #EQUITY scenario  
   
   if (equity == 0) {
-    Pcyc0 <- MS1 * Pcyc0.eq0
+    Pcyc0 <- MS * Pcyc0.eq0
   }else {
-    Pcyc0 <- MS1 * Pcyc0.eq1
+    Pcyc0 <- MS * Pcyc0.eq1
   }  
   
   #calc new probs
@@ -50,7 +50,7 @@ flowgram <-function(baseline, MS1,ebikes1,equity1) {
   
   baseline[baseline$Cycled != 1 & baseline$cyclist != 0 ,]$Pcyc <- 
     apply(subset(baseline, Cycled != 1 & cyclist != 0, select = c(Age,Sex,TripDisIncSW)), 1, 
-          function(x) pcyc21(x[1],x[2], x[3], ebikes1, equity1, MS1))
+          function(x) pcyc21(x[1],x[2], x[3], ebikes, equity, MS))
   
   ## add random column to the baseline data.frame
   baseline$justrandom <- justrandom
@@ -60,7 +60,7 @@ flowgram <-function(baseline, MS1,ebikes1,equity1) {
   
     baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc > baseline$justrandom),]$choice <- 
       apply(subset(baseline, Cycled != 1 & cyclist == 1 & (Pcyc > justrandom), 
-                 select = c(TripDisIncSW)), 1, function(x) bikechoice(x[1]))
+                 select = c(TripDisIncSW)), 1, function(x) bikechoice(x[1], unlist(subset(pcycl_baseline, select = tripsebike), use.names = FALSE)))
     
   if (nrow(baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc > baseline$justrandom) & baseline$choice == 1,]) > 0)
     baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc > baseline$justrandom) & baseline$choice == 1,]$ebike <- 1
@@ -94,11 +94,11 @@ flowgram <-function(baseline, MS1,ebikes1,equity1) {
   baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc <= baseline$justrandom),]$TripTotalTime1 <- 
     baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc <= baseline$justrandom),]$TripTotalTime1
     
-  # nombre <- paste("MS",MS1,"_ebik",ebikes1,"_eq" ,equity1,".csv",sep="")
-  nombre <- paste("MS",MS1,"_ebik",ebikes1,"_eq" ,equity1,sep="")
+  # nombre <- paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,".csv",sep="")
+  nombre <- paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep="")
   
   # Fixed a bug: replaced colnames with c
-  blsave <- baseline[,c('ID','now_cycle','METh','MMETh','TripTotalTime1','TripTravelTime1','health_mmets', 'physical_activity_mmets')]
+  blsave <- baseline[,c('ID','now_cycle','ebike','cyclist','METh','MMETh','TripTotalTime1','TripTravelTime1')]
   
   # write.csv(blsave,file=paste(scenarioFolderNameAndPath, nombre, sep = "\\"), row.names=F)
   cat("size: ", nrow(blsave), " - ", nombre,'\n',' done !!','\n') 
