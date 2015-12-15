@@ -22,7 +22,7 @@ baseline <-read.csv('baseline.csv',header=T,as.is=T)
 # baseline <- baseline[order(baseline$IndividualID),]     #re-ordering by individuals
 # rm(shortwalks,dfsw)
 
-fnotrips  <-read.csv('People_w_NoTrips2012_ENG_v5.csv',header=T,as.is=T)
+fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v5.csv',header=T,as.is=T)
 
 #DF for results
 df <- data.frame()
@@ -78,21 +78,24 @@ METh0 <-sum(baseline$METh)
 MMETh0 <-sum(baseline$MMETh)
 MMETh0.pers <-round(MMETh0/nopeople,1)
 
-CO20 <- round(carMiles0 * 1.61 * 1.50 * 1e-4,2)
+# Using new Christian's average CO2 value of 0.31 grams 
+CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-4,2)   #(in metric Tons)
 
 TripTotalTime0 <- round(sum(baseline$TripTotalTime),1)
 
 for (i1 in (1:nfiles)) {  #reading files for aggregates
-#for (i1 in (1:3)) {
-
-    #DATA AGGREGATES
-    AggCalc(todos[i1])
-    
-    ifelse(i1==1,df <-info,df<-rbind(df,info))   #consolidates content
-    
-    if ((i1%%1)==0) {message('no files: ',i1)}
-    
-                     }  #END main loop
+  #for (i1 in (1:3)) {
+  
+  #DATA AGGREGATES
+  AggCalc(todos[i1])
+  
+  ifelse(i1==1,df <-info,df<-rbind(df,info))   #consolidates content
+  
+  if ((i1%%1) == 0) {
+    message('no files: ',i1)
+  }
+  
+}  #END main loop
 
 rownames(df) <- NULL
 colnames(df) <-c('FileName','MS','ebike','equity',
