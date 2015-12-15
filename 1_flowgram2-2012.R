@@ -7,8 +7,8 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   baseline$now_cycle <- 0  
   baseline$cyclist <- 0  
   baseline$Pcyc <- 0
-  baseline$METh    <- bl$METh     #recovers basic MMET
-  baseline$MMETh   <- bl$MMETh
+#   baseline$METh    <- bl$METh     #recovers basic MMET
+#   baseline$MMETh   <- bl$MMETh
   baseline$ebike   <- 0
   ## add choice variable to all rows
   baseline$choice <- 0
@@ -98,7 +98,8 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   nombre <- paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep="")
   
   # Fixed a bug: replaced colnames with c
-  blsave <- baseline[,c('ID','now_cycle','ebike','cyclist','METh','MMETh','TripTotalTime1','TripTravelTime1')]
+  # Removed TripTravelTime1
+  blsave <- baseline[,c('ID','now_cycle','ebike','cyclist','METh','MMETh','TripTotalTime1')]
   
   # write.csv(blsave,file=paste(scenarioFolderNameAndPath, nombre, sep = "\\"), row.names=F)
   cat("size: ", nrow(blsave), " - ", nombre,'\n',' done !!','\n') 
