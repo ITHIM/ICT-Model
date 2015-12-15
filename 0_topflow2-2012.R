@@ -1,4 +1,5 @@
 #setwd("//me-filer1/home$/au232/My Documents/1.CEDAR/3_Studies !!/23-CBM2/3-Code") #NOT NEEDED ANYMORE
+
 rm(list=ls())
 timeStart<-Sys.time()
 
@@ -42,8 +43,8 @@ Pcyc0.eq1 <- rep(oddsCycling[5], 4)
 #get source file as DF and filter for interest year 
 # bl <- read.csv('CBM5-TripsBaseline.csv', header=T)  #NTS trips, for age>18 & England only households
 # bl <- read.csv('bl.csv', header=T)
-# Only read baseline for the year 2012
-bl <- read.csv('bl2012.csv', header=T)
+# Only read baseline for the year 2012 and individuals between 18-84 year olds
+bl <- read.csv('bl2012_18_84ag.csv', header=T, as.is = T)
 
 # bl <- read.csv('CBM5-TripsBaseline-AnonymousID.csv', header=T)  #NTS trips, for age>18 & England only households
 
@@ -114,7 +115,7 @@ carMiles0 <- round(carMiles0,1)
 METh0 <- round(sum(baseline$METh),1)
 MMETh0 <- round(sum(baseline$MMETh),1)
 # Miles to Kilometres, Grams to metric tonnes, 0.0001
-#CO20 <- round(carMiles0 * 1.61 * 1.50 * 1e-4,2)   #(in metric Tons)
+# CO20 <- round(carMiles0 * 1.61 * 1.50 * 1e-4,2)   #(in metric Tons)
 # Using new Christian's average CO2 value of 0.31 grams 
 CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-4,2)   #(in metric Tons)
 
@@ -139,28 +140,6 @@ for (ebikes in m) {
     }  
   } 
 }  #j-i-m-n loop
-
-
-#grouping baseline
-# blaggr <- group_by(baseline,ID)
-# blaggr <- summarise(blaggr,sum(METh),sum(MMETh),sum(health_mmets), sum(physical_activity_mmets))
-# blaggr <- cbind(blaggr,blaggr[,3]+blaggr[,4])
-# colnames(blaggr) <-c('ID','METh','MMETh1','MMETh2','MMEThTotal', 'TotalHealthMMETS', 'TotalPhysicalActivityMMETS')
-# blaggr <- sqldf('select t1.ID,t1.Age,t1.Sex,t1.NSSec_B03ID,
-#               t2.METh,t2.MMETh1,t2.MMETh2,t2.MMEThTotal as TotalMMETH, t2.TotalHealthMMETS, t2.TotalPhysicalActivityMMETS from baseline  
-#               as t1 inner join blaggr as t2 where t1.ID=t2.ID 
-#               group by t1.ID')
-
-#blaggr<-sqldf('select t1.Age,t1.Sex,t1.NSSec_B03ID,t1.ID,(t1.MMETh+t2.mMETs) as TotalMMETH from baseline  as t1 inner join hse1 as t2 where t1.ID=t2.ID group by t1.ID')
-
-# write.csv(blaggr,file=paste(scenarioFolderNameAndPath, 'baseline_aggr.csv', sep = "\\"), row.names=F)
-
-# MMEThbl <-sum(blaggr$TotalMMETH)   #for aggregate file totals
-# blsumm<-c('baseline',METh0,MMETh0,MMEThbl,MMETh0+MMEThbl,carMiles0,0,0)
-# df<-rbind(blsumm,df)
-# rownames(df) <- NULL
-# colnames(df) <-c('scenario','METh','MMETh1','MMETh2','TotalMMETh','carMiles','carMilesSaved','carMilesReplaced')
-# write.csv(df,file='./Scenarios2012/aggr.csv')
 
 cat('All done! \n')
 
