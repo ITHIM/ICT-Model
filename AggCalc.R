@@ -1,22 +1,22 @@
 
-AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
+AggCalc  <- function (f, fname) {    #calculates all agregates of a given scenario
   
   #get file parameters
-  if (fname=='baseline.csv') {
-    MS<-0
-    equity<-0
-    ebike <-0
+  if (fname=='baseline') {
+    MS <- 0
+    equity <- 0
+    ebike <- 0
   }     #baseline special case
   
   else {
-    params <-str_extract_all(fname, "([0-9]+(?:\\.[0-9]+)?)")
-    params <-as.numeric(params[[1]] )
+    params <- str_extract_all(fname, "([0-9]+(?:\\.[0-9]+)?)")
+    params <- as.numeric(params[[1]] )
     MS <- as.integer(params[1])
-    ebike <- as.integer(params[3]) 
-    equity <- as.integer(params[4])
+    ebike <- as.integer(params[2]) 
+    equity <- as.integer(params[3])
   }   #rest of files 
   
-  f <-read.csv(file=fname) 
+  #f <- read.csv(file=fname) 
   
   
   #1-MILES
@@ -65,27 +65,27 @@ AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
   TripDisIncSW <- round(sum(f$TripDisIncSW),0)
   
   #5-CYCLISTS & RATES
-  nocyclists <-length(unique(f$IndividualID[(f$now_cycle==1 | f$Cycled==1)])) #real cyclists     
-  newcyclists <-length(unique(f$IndividualID[f$now_cycle==1]))  
+  nocyclists <-length(unique(f$ID[(f$now_cycle==1 | f$Cycled==1)])) #real cyclists     
+  newcyclists <-length(unique(f$ID[f$now_cycle==1]))  
   
-  cyclists.white <- length(unique(f$IndividualID[ (f$now_cycle==1| f$Cycled==1) & f$EthGroupTS_B02ID==1]))  
-  newcyclists.white <-length(unique(f$IndividualID[f$now_cycle==1 & f$EthGroupTS_B02ID==1]))  
+  cyclists.white <- length(unique(f$ID[ (f$now_cycle==1| f$Cycled==1) & f$EthGroupTS_B02ID==1]))  
+  newcyclists.white <-length(unique(f$ID[f$now_cycle==1 & f$EthGroupTS_B02ID==1]))  
   
-  cyclists.nonwhite <- length(unique(f$IndividualID[ (f$now_cycle==1| f$Cycled==1) & f$EthGroupTS_B02ID==2]))  
-  newcyclists.nonwhite <-length(unique(f$IndividualID[f$now_cycle==1 & f$EthGroupTS_B02ID==2])) 
+  cyclists.nonwhite <- length(unique(f$ID[ (f$now_cycle==1| f$Cycled==1) & f$EthGroupTS_B02ID==2]))  
+  newcyclists.nonwhite <-length(unique(f$ID[f$now_cycle==1 & f$EthGroupTS_B02ID==2])) 
   
-  cyclist.caraccess <- length(unique(f$IndividualID [ (f$now_cycle==1 | f$Cycled==1) & (f$CarAccess_B01ID %in% c(1,2,3,4))]))
-  cyclist.noncaraccess <- length(unique(f$IndividualID [(f$now_cycle==1 | f$Cycled==1) & (f$CarAccess_B01ID %in% c(5,6)    )]))
+  cyclist.caraccess <- length(unique(f$ID [ (f$now_cycle==1 | f$Cycled==1) & (f$CarAccess_B01ID %in% c(1,2,3,4))]))
+  cyclist.noncaraccess <- length(unique(f$ID [(f$now_cycle==1 | f$Cycled==1) & (f$CarAccess_B01ID %in% c(5,6)    )]))
   #      
   #      if (fname=='baseline.csv') {
-  #           cyclist.potential <- length(unique(f$IndividualID[f$Cycled==1])) #potential=real cyclists
-  #           cyclist.male <-length(unique(f$IndividualID[f$Cycled==1 & f$Sex_B01ID==1]))    
-  #           cyclist.female <- length(unique(f$IndividualID[f$Cycled==1 & f$Sex_B01ID==2]))
+  #           cyclist.potential <- length(unique(f$ID[f$Cycled==1])) #potential=real cyclists
+  #           cyclist.male <-length(unique(f$ID[f$Cycled==1 & f$Sex_B01ID==1]))    
+  #           cyclist.female <- length(unique(f$ID[f$Cycled==1 & f$Sex_B01ID==2]))
   #                               }
   #      else {
-  cyclist.potential <- length(unique(f$IndividualID[f$cyclist==1])) #potential cyclists
-  cyclist.male <-length(unique(f$IndividualID[(f$now_cycle==1 |f$Cycled==1) & f$Sex_B01ID==1]))    
-  cyclist.female <- length(unique(f$IndividualID[(f$now_cycle==1 |f$Cycled==1) & f$Sex_B01ID==2]))                       
+  cyclist.potential <- length(unique(f$ID[f$cyclist==1])) #potential cyclists
+  cyclist.male <-length(unique(f$ID[(f$now_cycle==1 |f$Cycled==1) & f$Sex_B01ID==1]))    
+  cyclist.female <- length(unique(f$ID[(f$now_cycle==1 |f$Cycled==1) & f$Sex_B01ID==2]))                       
   #          }
   
   
@@ -101,11 +101,11 @@ AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
   cyclist.caraccess.perc <- round(100 * cyclist.caraccess/(no.caraccess+no.caraccess.wotrips),1)     
   cyclist.noncaraccess.perc <- round(100 * cyclist.noncaraccess/(no.noncaraccess+no.noncaraccess.wotrips),1)     
   
-  cyclist.nssec1 <- length(unique(f$IndividualID[(f$now_cycle==1 |f$Cycled==1) & f$NSSec_B03ID==1]))
-  cyclist.nssec2 <- length(unique(f$IndividualID[(f$now_cycle==1 |f$Cycled==1) & f$NSSec_B03ID==2]))
-  cyclist.nssec3 <- length(unique(f$IndividualID[(f$now_cycle==1 |f$Cycled==1) & f$NSSec_B03ID==3]))
-  cyclist.nssec4 <- length(unique(f$IndividualID[(f$now_cycle==1 |f$Cycled==1) & f$NSSec_B03ID==4]))
-  cyclist.nssec5 <- length(unique(f$IndividualID[(f$now_cycle==1 |f$Cycled==1) & f$NSSec_B03ID==5]))
+  cyclist.nssec1 <- length(unique(f$ID[(f$now_cycle==1 |f$Cycled==1) & f$NSSec_B03ID==1]))
+  cyclist.nssec2 <- length(unique(f$ID[(f$now_cycle==1 |f$Cycled==1) & f$NSSec_B03ID==2]))
+  cyclist.nssec3 <- length(unique(f$ID[(f$now_cycle==1 |f$Cycled==1) & f$NSSec_B03ID==3]))
+  cyclist.nssec4 <- length(unique(f$ID[(f$now_cycle==1 |f$Cycled==1) & f$NSSec_B03ID==4]))
+  cyclist.nssec5 <- length(unique(f$ID[(f$now_cycle==1 |f$Cycled==1) & f$NSSec_B03ID==5]))
   
   cyclist.nssec1.perc <- round(100 * cyclist.nssec1 / (no.nssec1 + no.nssec1.wotrips),1)
   cyclist.nssec2.perc <- round(100 * cyclist.nssec2 / (no.nssec2 + no.nssec2.wotrips),1)
@@ -157,8 +157,8 @@ AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
   bltrips <- transform(f, car_trip = as.numeric(MainMode_B04ID == 3 
                                                 | MainMode_B04ID == 4| MainMode_B04ID == 5 | MainMode_B04ID == 12))
   
-  bltrips <- sqldf("Select IndividualID,Sex,CarAccess_B01ID,EthGroupTS_B02ID,
-                      sum(car_trip) as [car] from bltrips Group by IndividualID")
+  bltrips <- sqldf("Select ID,Sex,CarAccess_B01ID,EthGroupTS_B02ID,
+                      sum(car_trip) as [car] from bltrips Group by ID")
   
   nocar.people <- nrow(subset(bltrips,car==0))
   nocar.people.perc <- round(100 * (nocar.people+notripspeople) / (nopeople + notripspeople) ,1)
@@ -183,7 +183,7 @@ AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
   
   
   # WRAPPING     
-  info <<- c(fname,MS,ebike,equity,
+  info <- c(fname,MS,ebike,equity,
             carMiles,carMilesR,carMiles.pers,carMilesR.pers,carMilesCycled,
             milesCycled, milesCycled.male, milesCycled.female, 
             milesCycled.white, milesCycled.nonwhite,
@@ -202,4 +202,6 @@ AggCalc  <- function (fname) {    #calculates all agregates of a given scenario
             trips.nssec1.perc,trips.nssec2.perc,trips.nssec3.perc,trips.nssec4.perc,trips.nssec5.perc,
             trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc,
             nopeople,notripspeople)
+  
+  info
 }
