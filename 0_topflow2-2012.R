@@ -131,11 +131,15 @@ m <- c(0,1)   #ebikes
 n <- c(0,1)   #equity
 num = 1
 
+listOfScenarios <- list()
 for (ebikes in m) {
   for (equity in n) {
     for  (MS in i) {
       cat(ebikes, equity, MS, "\n")
-      assign(paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep=""),flowgram(baseline, MS,ebikes,equity, pcycl_baseline))      
+      scenario_name <- paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep="")
+      assign(scenario_name,flowgram(baseline, MS,ebikes,equity, pcycl_baseline))      
+      
+      listOfScenarios[[num]] <- scenario_name
       num <- num + 1
     }  
   } 
