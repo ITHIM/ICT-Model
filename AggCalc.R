@@ -48,7 +48,7 @@ AggCalc  <- function (f, fname) {    #calculates all agregates of a given scenar
   #3-METs
   METh<-round(sum(f$METh),1)
   METhincr <- round(METh - METh0,1)
-  MMETh <-round(sum(f$MMETh),1)
+  MMETh <- round(sum(f$MMETh),1)
   MMETh.pers <- round(MMETh/nopeople ,1)
   MMEThincr <- round(MMETh - MMETh0,1)
   
