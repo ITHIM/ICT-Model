@@ -121,7 +121,7 @@ CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-4,2)   #(in metric Tons)
 
 df <- data.frame()
 
-i <- c(1,2,4,8,16,32,64)
+i <- c(2,4,8,16,32,64)
 
 # Removing TDR
 # TDR
