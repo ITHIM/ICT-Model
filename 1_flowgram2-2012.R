@@ -1,5 +1,10 @@
 
 flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
+#   
+#   MS = 1
+#   ebikes = 0
+#   equity = 0
+
   
   # temporary initiliazaiton of baseline
   # baseline <- bl
@@ -22,9 +27,9 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   #EQUITY scenario  
   
   if (equity == 0) {
-    Pcyc0 <- MS * Pcyc0.eq0
+    Pcyc0 <- (MS - 1) * Pcyc0.eq0
   }else {
-    Pcyc0 <- MS * Pcyc0.eq1
+    Pcyc0 <- (MS - 1) * Pcyc0.eq1
   }  
   
   #calc new probs
@@ -35,9 +40,10 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   #calculate if people become cyclists
   baseline <- inner_join(baseline,lookup,by='agesex')
   baseline$cyclist <- 0
+  # baseline$cyclist <-ifelse(baseline$Pcyc0>baseline$prob,1,0)
   baseline$cyclist[baseline$Pcyc0 > baseline$prob] <- 1
   
-  baseline$newtime <- apply(data.frame(baseline$Age, baseline$Sex), 1, function(x) tripspeed(x[1], x[2], 0))
+  baseline$newtime <- baseline$TripDisIncSW / apply(data.frame(baseline$Age, baseline$Sex), 1, function(x) tripspeed(x[1], x[2], 0))
   
   baseline[baseline$Cycled == 1,]$Pcyc <- 1
   
@@ -88,6 +94,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
       baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc > baseline$justrandom) & baseline$choice == 1,]$ebike <- 1
     
     baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc > baseline$justrandom) & baseline$choice == 1,]$newtime <- 
+      baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc > baseline$justrandom) & baseline$choice == 1,]$TripDisIncSW / 
       apply(subset(baseline, Cycled != 1 & cyclist == 1 & (Pcyc > justrandom) & choice == 1, select = c(Age, Sex)), 1, function(x) tripspeed(x[1], x[2], 1))
     
     baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc > baseline$justrandom) & baseline$choice == 1,]$METh <- 
