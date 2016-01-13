@@ -181,27 +181,46 @@ AggCalc  <- function (f, fname) {    #calculates all agregates of a given scenar
   nocar.caraccess.perc <- round(100*(nocar.caraccess+no.caraccess.wotrips) / (no.caraccess+no.caraccess.wotrips),1)
   nocar.noncaraccess.perc <- round(100* (nocar.noncaraccess+ no.noncaraccess.wotrips) / (no.noncaraccess + no.noncaraccess.wotrips),1)
   
-  
+  #FileName	MS	ebike	equity	Car Miles per person	Car Miles Reduction Per Person	Miles Cyled Per Person	
+  #Miles Cycled Per Male	Miles Cycled Per Female	Miles Cycled Per Male	Miles Cycled Per White Person	Miles Cycled Per Non-White 
+  #Person	Miles Cycled Per Person with Car Access	Miles Cycled Per Person with no Car Access	Marginal METs Per Person	
+  #CO2 Total Per Person (kg)	% Cyclists in the Total Population	% Males who Cycle	% Females who Cycle	% White people who Cycle	% Non-White people who Cycle	
+  #% People Car Access who Cycle	% People without Car Access who Cycle	% People with NSSEC 1 who Cycle	% People with NSSEC 2 who Cycle	% People with NSSEC 3 who Cycle	% People with NSSEC 4 who Cycle	% People with NSSEC 5 who Cycle	Years of Life Lost (YLL)	YLL Reduction (%)																																	
+
   # WRAPPING     
   info <- c(fname,MS,ebike,equity,
-            carMiles,carMilesR,carMiles.pers,carMilesR.pers,carMilesCycled,
+            carMiles.pers,carMilesR.pers,carMilesCycled,
             milesCycled, milesCycled.male, milesCycled.female, 
             milesCycled.white, milesCycled.nonwhite,
             milesCycled.caraccess, milesCycled.noncaraccess,
-            METh,METhincr,MMETh,MMETh.pers,MMEThincr,
-            CO2,CO2R,CO2.pers,
-            TripDisIncSW,TripTotalTime1,timeSaved,timeSavedCyclists,
-            nocar.people.perc,nocar.males.perc,nocar.females.perc,
-            nocar.white.perc,nocar.nonwhite.perc,
-            nocar.caraccess.perc,nocar.noncaraccess.perc,
-            nopeople,nocyclists,newcyclists,cyclist.potential,
-            cyclist.perc,cyclist.incr,cyclist.male.perc,cyclist.female.perc,
-            cyclist.white.perc,cyclist.nonwhite.perc, cyclist.caraccess.perc, cyclist.noncaraccess.perc,
-            cyclist.nssec1.perc,cyclist.nssec2.perc,cyclist.nssec3.perc,cyclist.nssec4.perc,cyclist.nssec5.perc,
-            trips.bike.perc,
-            trips.nssec1.perc,trips.nssec2.perc,trips.nssec3.perc,trips.nssec4.perc,trips.nssec5.perc,
-            trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc,
-            nopeople,notripspeople)
+            MMETh.pers,
+            CO2.pers,
+            timeSavedCyclists,
+            cyclist.perc,trips.bike.perc
+            )
+  
+  
+#   # WRAPPING     
+#   info <- c(fname,MS,ebike,equity,
+#             carMiles,carMilesR,carMiles.pers,carMilesR.pers,carMilesCycled,
+#             milesCycled, milesCycled.male, milesCycled.female, 
+#             milesCycled.white, milesCycled.nonwhite,
+#             milesCycled.caraccess, milesCycled.noncaraccess,
+#             METh,METhincr,MMETh,MMETh.pers,MMEThincr,
+#             CO2,CO2R,CO2.pers,
+#             TripDisIncSW,TripTotalTime1,timeSaved,timeSavedCyclists,
+#             nocar.people.perc,nocar.males.perc,nocar.females.perc,
+#             nocar.white.perc,nocar.nonwhite.perc,
+#             nocar.caraccess.perc,nocar.noncaraccess.perc,
+#             nopeople,nocyclists,newcyclists,cyclist.potential,
+#             cyclist.perc,cyclist.incr,cyclist.male.perc,cyclist.female.perc,
+#             cyclist.white.perc,cyclist.nonwhite.perc, cyclist.caraccess.perc, cyclist.noncaraccess.perc,
+#             cyclist.nssec1.perc,cyclist.nssec2.perc,cyclist.nssec3.perc,cyclist.nssec4.perc,cyclist.nssec5.perc,
+#             trips.bike.perc,
+#             trips.nssec1.perc,trips.nssec2.perc,trips.nssec3.perc,trips.nssec4.perc,trips.nssec5.perc,
+#             trips.age20.39.perc,trips.age40.59.perc,trips.age60plus.perc,
+#             nopeople,notripspeople)
+  
   
   info
 }

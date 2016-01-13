@@ -107,28 +107,43 @@ for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
   
 }  #END main loop
 
+
+# FileName	MS	ebike	equity	Car Miles per person	Car Miles Reduction Per Person	Miles Cycled Per Person	Miles Cycled Per White-Person	Miles Cycled Per Non-White-Person	Miles Cycled Per without car-access	Miles Cycled Per without non-car-access	Marginal METs Per Person	CO2 Total Per Person (kg)	% Cyclists in the Total Population	% Males who Cycle	% Females who Cycle	% White people who Cycle	% Non-White people who Cycle	% People Car Access who Cycle	% People without Car Access who Cycle	Years of Life Lost (YLL)	YLL Reduction (%)	
+
+
 rownames(df) <- NULL
+
 colnames(df) <-c('FileName','MS','ebike','equity',
-                 'carMiles','carMilesR','carMiles.pers','carMilesR.pers','carMilesCycled',
-                 'milesCycled.pers','milesCycled.male', 'milesCycled.female', 
-                 'milesCycled.white', 'milesCycled.nonwhite',
-                 'milesCycled.caraccess', 'milesCycled.noncaraccess',
-                 'METh','METhincr','MMETh','MMETh.pers','MMEThincr',
-                 'CO2.Tm','CO2R.perc','CO2.pers',
-                 'TripDisIncSW','TripTotalTime1','timeSaved.Total.h','timeSavedCyclists.perc',
-                 'nocarTrips.people.perc','nocar.males.perc','nocar.females.perc',
-                 'nocar.white.perc','nocar.nonwhite.perc',
-                 'nocar.caraccess','nocar.noncaraccess',
-                 'nopeople','nocyclists','newcyclists','cyclist.potential',
-                 'cyclists.perc','cyclists.incr','cyclist.male.perc','cyclist.female.perc',
-                 'cyclist.white.perc','cyclist.nonwhite.perc','cyclist.caraccess.perc','cyclist.noncaraccess.perc',
-                 'cyclist.nssec1.perc','cyclist.nssec2.perc','cyclist.nssec3.perc','cyclist.nssec4.perc','cyclist.nssec5.perc',
-                 'trips.bike.perc',
-                 'trips.nssec1.perc','trips.nssec2.perc','trips.nssec3.perc','trips.nssec4.perc','trips.nssec5.perc',
-                 'trips.age20.39.perc','trips.age40.59.perc','trips.age60plus.perc',
-                 'nopeopleWithTrips','People.with.NoTrips')
+          "Car Miles Per person","Car Miles Reduced Per person","Total Car Miles Cycled",
+          "Total Miles Cycled", "Miles Cycled Per Male", "Miles Cycled Per Female", 
+          "Miles Cycled Per White Person", "Miles Cycled Per Non-White Person",
+          "Miles Cycled Per Person with Car-Access", "Miles Cycled Per Person with No Car-Access",
+          "Marginal METs Per Person",
+          "CO2 Per Person",
+          "Total Time Saved by Cyclists",
+          "% Cyclists in the Total Population","% Of Trips by Bicycle"
+)
 
+# colnames(df) <-c('FileName','MS','ebike','equity',
+#                  'carMiles','carMilesR','carMiles.pers','carMilesR.pers','carMilesCycled',
+#                  'milesCycled.pers','milesCycled.male', 'milesCycled.female', 
+#                  'milesCycled.white', 'milesCycled.nonwhite',
+#                  'milesCycled.caraccess', 'milesCycled.noncaraccess',
+#                  'METh','METhincr','MMETh','MMETh.pers','MMEThincr',
+#                  'CO2.Tm','CO2R.perc','CO2.pers',
+#                  'TripDisIncSW','TripTotalTime1','timeSaved.Total.h','timeSavedCyclists.perc',
+#                  'nocarTrips.people.perc','nocar.males.perc','nocar.females.perc',
+#                  'nocar.white.perc','nocar.nonwhite.perc',
+#                  'nocar.caraccess','nocar.noncaraccess',
+#                  'nopeople','nocyclists','newcyclists','cyclist.potential',
+#                  'cyclists.perc','cyclists.incr','cyclist.male.perc','cyclist.female.perc',
+#                  'cyclist.white.perc','cyclist.nonwhite.perc','cyclist.caraccess.perc','cyclist.noncaraccess.perc',
+#                  'cyclist.nssec1.perc','cyclist.nssec2.perc','cyclist.nssec3.perc','cyclist.nssec4.perc','cyclist.nssec5.perc',
+#                  'trips.bike.perc',
+#                  'trips.nssec1.perc','trips.nssec2.perc','trips.nssec3.perc','trips.nssec4.perc','trips.nssec5.perc',
+#                  'trips.age20.39.perc','trips.age40.59.perc','trips.age60plus.perc',
+#                  'nopeopleWithTrips','People.with.NoTrips')
 
-write.csv(df,file='CBM_aggr_II.csv', row.names=F)
+write.csv(df,file='ICT_aggr', row.names=F)
 
 cat('All done !')
