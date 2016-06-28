@@ -1,7 +1,7 @@
 
 flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
 #   
-#   MS = 1
+#   MS = 2
 #   ebikes = 0
 #   equity = 0
 
@@ -36,7 +36,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   Pcyc0 <- sapply(Pcyc0,oddsp)
   lookup <- data.frame(agesex = c('16.59Male','16.59Female','60plusMale','60plusFemale'),
                        Pcyc0)                    
-  
+  lookup$agesex <- as.character(lookup$agesex)
   #calculate if people become cyclists
   baseline <- inner_join(baseline,lookup,by='agesex')
   baseline$cyclist <- 0
@@ -60,7 +60,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   ## add random column to the baseline data.frame
   baseline$justrandom <- justrandom
-  
+  cat(class(baseline$Cycled), " : ", class(baseline$cyclist), " : ", class(baseline$Pcyc), " : ", class(baseline$justrandom), "\n")
   if (nrow(baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc > baseline$justrandom) ,]) > 0)
     baseline[baseline$Cycled != 1 & baseline$cyclist == 1 & (baseline$Pcyc > baseline$justrandom) ,]$now_cycle <- 1
   
