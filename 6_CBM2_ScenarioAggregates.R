@@ -19,12 +19,13 @@ library(tcltk)
 
 ############   CALCULATE from BASELINE: Individuals
 # bl <- read.csv('baseline.csv')
-bl <- read.csv('bl2012_18_84ag_sw.csv', header=T, as.is = T)
+bl <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
 bl.indiv <- data.frame(ID = unique(bl$ID))
 colnames(bl.indiv) <- 'ID'
 
 #transforms MainMode_B04ID >> to our own modes
 lookup <- data.frame(MainMode_B04ID=c(1,2,3,4,5,6,7,8,9,10,11,12,13),modefinal=c(1,2,3,4,3,7,5,5,5,6,6,7,7))
+bl$MainMode_Reduced <- lookup$modefinal[match(bl$MainMode_B04ID, lookup$MainMode_B04ID)]
 
 
 ########## DATA FRAMES for RESULTS (individuals added) -- 16 NEW MEASURES BY INDIVIDUAL
