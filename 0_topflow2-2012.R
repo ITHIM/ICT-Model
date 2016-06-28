@@ -1,5 +1,4 @@
 #setwd("//me-filer1/home$/au232/My Documents/1.CEDAR/3_Studies !!/23-CBM2/3-Code") #NOT NEEDED ANYMORE
-
 rm(list=ls())
 timeStart<-Sys.time()
 
@@ -10,7 +9,7 @@ source('oddsp.R')             # calculates odds > prob
 source('podds.R')             # calculates prob > odds
 source('bikechoice.r')        #calculates prob of using pushbike/ebike 
 # depending on: [age-sex-trip distance]
-
+library(plyr)
 library(dplyr)  
 library(stringr)
 library(data.table)
@@ -37,20 +36,9 @@ oddsCycling <- unlist(oddsCycling, use.names = F)
 #lookup tables for equity=0,1. MUST BE expressed in ODDS!  
 Pcyc0.eq0 <- oddsCycling[1:4]
 Pcyc0.eq1 <- rep(oddsCycling[5], 4)
-#AS ILLUSTRATION: 
-#lookup.eq1 <-data.frame(agesex=c('16.59Male','16.59Female','60plusMale','60plusFemale'),
 
-#get source file as DF and filter for interest year 
-# bl <- read.csv('CBM5-TripsBaseline.csv', header=T)  #NTS trips, for age>18 & England only households
-# bl <- read.csv('bl.csv', header=T)
 # Only read baseline for the year 2012 and individuals between 18-84 year olds
-bl <- read.csv('bl2012_18_84ag.csv', header=T, as.is = T)
-
-# bl <- read.csv('CBM5-TripsBaseline-AnonymousID.csv', header=T)  #NTS trips, for age>18 & England only households
-
-# Don't need to subset for the year 2012
-# whichlines <- which(bl$SurveyYear==2012)
-# baseline <- bl[whichlines,]  #baseline 30K / 2012
+bl <- read.csv('bl2012_18_84ag_reduced.csv', header=T, as.is = T)
 
 baseline <- bl
 
@@ -61,9 +49,44 @@ shortwalks <- data.frame()
 for (i in 1:6) {
   shortwalks <- rbind(shortwalks,df) 
 }
+# Update trip IDs with new IDs
 
+shortwalks$TripID <-  c(max(baseline$TripID) + 1:nrow(shortwalks))
 baseline <- rbind(baseline,shortwalks)
 baseline <- baseline[order(baseline$ID),]
+
+fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
+# Remove 85+ age group
+fnotrips <- subset(fnotrips, Age_B01ID != 21)
+
+fnotrips$agesex <- ""
+
+fnotrips$Age <- ""
+
+fnotrips$Sex <- ""
+
+fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15) & fnotrips$Sex_B01ID == 1,]$agesex <- '16.59Male'
+
+fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15) & fnotrips$Sex_B01ID == 2,]$agesex <- '16.59Female'
+
+fnotrips[fnotrips$Age_B01ID >= 16 & fnotrips$Sex_B01ID == 1,]$agesex <- '60plusMale'
+
+fnotrips[fnotrips$Age_B01ID >= 16 & fnotrips$Sex_B01ID == 2,]$agesex <- '60plusFemale'
+
+fnotrips$Age <- 0
+
+fnotrips[fnotrips$Sex_B01ID == 1,]$Sex <- "Male"
+
+fnotrips[fnotrips$Sex_B01ID == 2,]$Sex <- "Female"
+
+
+fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15),]$Age <- '16.59'
+
+fnotrips[fnotrips$Age_B01ID >= 16,]$Age <- '60plus'
+
+# Add tripID variable to it
+fnotrips$TripID <- c(max(baseline$TripID) + 1:nrow(fnotrips))
+
 rm(shortwalks,df)
 
 #1 sample before running scenarios -
@@ -76,6 +99,17 @@ rm(shortwalks,df)
 
 # Removed NAs from the data.frame
 hsematch <- read.csv('hsematchOnly2mmetsremovedNAs.csv', header = T, as.is = T)
+hsematch <- rbind(hsematch, subset(fnotrips, select = c(ID,health_mmets, physical_activity_mmets)))
+
+# Remove health_mmets and physical_activity_mmets from fnotrips
+fnotrips$health_mmets <- NULL
+fnotrips$physical_activity_mmets <- NULL
+
+baseline <- rbind.fill(baseline, fnotrips)
+
+baseline[is.na(baseline)] <- 0
+baseline$TripID  <- as.numeric(factor(baseline$TripID))
+
 
 
 #hsematch <- hsematch[,c(8,9)]  #keep only first and last column > IndivID, mMETs
@@ -104,7 +138,7 @@ baseline <- inner_join(baseline,randcycle,by='ID')
 bl <- baseline
 
 #save FINAL baseline in scenarios folder
-# write.csv(baseline,file='baseline.csv', row.names=F)
+write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
 
 
 ###################################  START CALCULATIONS on BASELINE #############################
@@ -116,7 +150,7 @@ METh0 <- round(sum(baseline$METh),1)
 MMETh0 <- round(sum(baseline$MMETh),1)
 # Miles to Kilometres, Grams to metric tonnes, 0.0001
 # CO20 <- round(carMiles0 * 1.61 * 1.50 * 1e-4,2)   #(in metric Tons)
-# Using new Christian's average CO2 value of 0.31 grams 
+# Using new Christian's average CO2 value of 0.31 grams
 CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-4,2)   #(in metric Tons)
 
 df <- data.frame()
