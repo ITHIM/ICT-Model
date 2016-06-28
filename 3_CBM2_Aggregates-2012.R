@@ -11,7 +11,7 @@ library(sqldf)
 #setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012_England") #source folder
 
 #read baseline & add short walks
-baseline <- read.csv('bl2012_18_84ag_sw.csv', header=T, as.is = T)
+baseline <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
 
 # #add shortwalks
 # dfsw <-baseline[baseline$MainMode_B03ID==1,]
@@ -23,6 +23,35 @@ baseline <- read.csv('bl2012_18_84ag_sw.csv', header=T, as.is = T)
 # rm(shortwalks,dfsw)
 
 fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
+
+
+# Remove 85+ age group
+fnotrips <- subset(fnotrips, Age_B01ID != 21)
+
+fnotrips$agesex <- ""
+
+fnotrips$Age <- ""
+
+fnotrips$Sex <- ""
+
+fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15) & fnotrips$Sex_B01ID == 1,]$agesex <- '16.59Male'
+
+fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15) & fnotrips$Sex_B01ID == 2,]$agesex <- '16.59Female'
+
+fnotrips[fnotrips$Age_B01ID >= 16 & fnotrips$Sex_B01ID == 1,]$agesex <- '60plusMale'
+
+fnotrips[fnotrips$Age_B01ID >= 16 & fnotrips$Sex_B01ID == 2,]$agesex <- '60plusFemale'
+
+fnotrips$Age <- 0
+
+fnotrips[fnotrips$Sex_B01ID == 1,]$Sex <- "Male"
+
+fnotrips[fnotrips$Sex_B01ID == 2,]$Sex <- "Female"
+
+
+fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15),]$Age <- '16.59'
+
+fnotrips[fnotrips$Age_B01ID >= 16,]$Age <- '60plus'
 
 # todos<-list.files(pattern="[0-9].csv")
 # todos <-c('baseline.csv',todos)
@@ -114,14 +143,14 @@ for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
 rownames(df) <- NULL
 
 colnames(df) <-c('FileName','MS','ebike','equity',
-          "Car Miles Per person","Car Miles Reduced Per person","Total Car Miles Cycled",
-          "Total Miles Cycled", "Miles Cycled Per Male", "Miles Cycled Per Female", 
-          "Miles Cycled Per White Person", "Miles Cycled Per Non-White Person",
-          "Miles Cycled Per Person with Car-Access", "Miles Cycled Per Person with No Car-Access",
-          "Marginal METs Per Person",
-          "CO2 Per Person",
-          "Total Time Saved by Cyclists",
-          "% Cyclists in the Total Population","% Of Trips by Bicycle"
+          "Car Miles Per person (per week)","Car Miles Reduced Per person (per/week)","Total Car Miles Cycled (per week)",
+          "Total Miles Cycled (per week)", "Miles Cycled Per Male (per week)", "Miles Cycled Per Female (per week)", 
+          "Miles Cycled Per White Person (per week)", "Miles Cycled Per Non-White Person (per week)",
+          "Miles Cycled Per Person with Car-Access (per week)", "Miles Cycled Per Person with No Car-Access (per week)",
+          "Marginal METs Per Person (per week)",
+          "Transport CO2 Per Person (per week)",
+          "Total Time Saved in minutes by Cyclists (per week)",
+          "% Cyclists in the Total Population","% of Trips by Bicycle"
 )
 
 # colnames(df) <-c('FileName','MS','ebike','equity',
@@ -144,6 +173,6 @@ colnames(df) <-c('FileName','MS','ebike','equity',
 #                  'trips.age20.39.perc','trips.age40.59.perc','trips.age60plus.perc',
 #                  'nopeopleWithTrips','People.with.NoTrips')
 
-write.csv(df,file='ICT_aggr', row.names=F)
+write.csv(df,file='ICT_aggr.csv', row.names=F)
 
 cat('All done !')
