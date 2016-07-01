@@ -24,6 +24,9 @@ METcycling <- 6.44
 METwalking <- 4.61
 METebikes <- 4.50
 
+#Read cycling speeds by age/sex
+cyclingspeed <- read.csv('cyclingSpeeds.csv',header=T)
+
 # Read Cycling Probabilities into an R Object
 probCycling <- read.csv("cycling-probability.csv", header = T, as.is = T)
 
@@ -39,6 +42,7 @@ Pcyc0.eq1 <- rep(oddsCycling[5], 4)
 
 # Only read baseline for the year 2012 and individuals between 18-84 year olds
 bl <- read.csv('bl2012_18_84ag_reduced.csv', header=T, as.is = T)
+#bl <- readRDS('bl2014.Rds')
 
 baseline <- bl
 
@@ -56,6 +60,7 @@ baseline <- rbind(baseline,shortwalks)
 baseline <- baseline[order(baseline$ID),]
 
 fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
+#fnotrips  <- read.csv(indiv2014_woTrips.csv', header=T)
 # Remove 85+ age group
 fnotrips <- subset(fnotrips, Age_B01ID != 21)
 
@@ -99,7 +104,13 @@ rm(shortwalks,df)
 
 # Removed NAs from the data.frame
 hsematch <- read.csv('hsematchOnly2mmetsremovedNAs.csv', header = T, as.is = T)
-hsematch <- rbind(hsematch, subset(fnotrips, select = c(ID,health_mmets, physical_activity_mmets)))
+#hsematch <- readRDS('V:/Studies/MOVED/HealthImpact/Research/DfT_2.0/ICTv2/Baseline/Match_HSE_NTS/indiv2014_HSE_NTS.Rds')
+#hsematch <- hsematch[,c(1,21,22)]
+#names(hsematch) <- c('ID', 'health_mmets', 'physical_activity_mmets')
+hsematch <- rbind(hsematch, subset(fnotrips, select = c(ID,health_mmets, physical_activity_mmets))) #this needed temporarily
+
+#hsematch <- rbind(hsematch, subset(fnotrips, select = c(IndividualID,health_mmets, physical_activity_mmets)))
+
 
 # Remove health_mmets and physical_activity_mmets from fnotrips
 fnotrips$health_mmets <- NULL
@@ -115,10 +126,6 @@ baseline$TripID  <- as.numeric(factor(baseline$TripID))
 #hsematch <- hsematch[,c(8,9)]  #keep only first and last column > IndivID, mMETs
 hse1 <- setDT(hsematch)[,if(.N<1) .SD else .SD[sample(.N,1,replace=F)],by=ID]
 
-#set scenarios folder (for saving them)
-#setwd('C:/Temp/Test')
-#setwd('V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012_England')
-
 #add times cols. to baseline (used for travel time after cycle switch takes place)
 TripTotalTime1 <- 0
 TripTravelTime1 <- 0
@@ -129,12 +136,13 @@ baseline$TripTravelTime1 <-baseline$TripTravelTime
 #add mmets column to baseline (& save for having total mmets)
 baseline <-inner_join(baseline,hse1,by='ID')
 
+
 #randcycle (used later to calculate if people are cyclists), add col. [prob]
 randcycle <- runif(length(unique(baseline$ID)))
 randcycle <- data.frame(ID=unique(baseline$ID),prob=randcycle)
 baseline <- inner_join(baseline,randcycle,by='ID')
 
-#keep blas a backup for future scenarios core values
+#keep bl as backup for future scenarios core values
 bl <- baseline
 
 #save FINAL baseline in scenarios folder
