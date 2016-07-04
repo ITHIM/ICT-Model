@@ -1,4 +1,4 @@
-#setwd("//me-filer1/home$/au232/My Documents/1.CEDAR/3_Studies !!/23-CBM2/3-Code") #NOT NEEDED ANYMORE
+
 rm(list=ls())
 timeStart<-Sys.time()
 
@@ -122,7 +122,6 @@ baseline[is.na(baseline)] <- 0
 baseline$TripID  <- as.numeric(factor(baseline$TripID))
 
 
-
 #hsematch <- hsematch[,c(8,9)]  #keep only first and last column > IndivID, mMETs
 hse1 <- setDT(hsematch)[,if(.N<1) .SD else .SD[sample(.N,1,replace=F)],by=ID]
 
@@ -141,6 +140,9 @@ baseline <-inner_join(baseline,hse1,by='ID')
 randcycle <- runif(length(unique(baseline$ID)))
 randcycle <- data.frame(ID=unique(baseline$ID),prob=randcycle)
 baseline <- inner_join(baseline,randcycle,by='ID')
+
+baseline$prob[baseline$TravDay==0 ] <- 0
+
 
 #keep bl as backup for future scenarios core values
 bl <- baseline
