@@ -24,3 +24,6 @@ tripspeed <-function(age,sex,biketype)  {
   
   
 }
+  
+ 
+  

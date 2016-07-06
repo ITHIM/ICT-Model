@@ -41,8 +41,8 @@ Pcyc0.eq0 <- oddsCycling[1:4]
 Pcyc0.eq1 <- rep(oddsCycling[5], 4)
 
 # Only read baseline for the year 2012 and individuals between 18-84 year olds
-bl <- read.csv('bl2012_18_84ag_reduced.csv', header=T, as.is = T)
-#bl <- readRDS('bl2014.Rds')
+bl <- readRDS('bl2014.Rds')
+#bl <- read.csv('bl2012_18_84ag_reduced.csv', header=T, as.is = T)
 
 baseline <- bl
 
@@ -53,14 +53,15 @@ shortwalks <- data.frame()
 for (i in 1:6) {
   shortwalks <- rbind(shortwalks,df) 
 }
-# Update trip IDs with new IDs
 
+# Update trip IDs with new IDs
 shortwalks$TripID <-  c(max(baseline$TripID) + 1:nrow(shortwalks))
+
 baseline <- rbind(baseline,shortwalks)
 baseline <- baseline[order(baseline$ID),]
 
-fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
-#fnotrips  <- read.csv(indiv2014_woTrips.csv', header=T)
+fnotrips  <- readRDS('people_notrips2014.Rds')
+#fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
 # Remove 85+ age group
 fnotrips <- subset(fnotrips, Age_B01ID != 21)
 
@@ -94,20 +95,13 @@ fnotrips$TripID <- c(max(baseline$TripID) + 1:nrow(fnotrips))
 
 rm(shortwalks,df)
 
-#1 sample before running scenarios -
-# hsematch <- read.csv('indivHSE-NTS_2012_v1_AnonymousID.csv',header=T)
-# hsematch <- read.csv('indivHSE-NTS_2012_v1.csv',header=T)
-
-#hsematch <- read.csv('hsematchonlymmets.csv',header=T)
-# Replace hsematch by including a two different columns for mmets
-# hsematch <- read.csv('hsematchOnly2mmets.csv', header=T)#, colClasses=c("integer", "numeric", "numeric"))
+#Sample before running scenarios -
 
 # Removed NAs from the data.frame
-hsematch <- read.csv('hsematchOnly2mmetsremovedNAs.csv', header = T, as.is = T)
-#hsematch <- readRDS('V:/Studies/MOVED/HealthImpact/Research/DfT_2.0/ICTv2/Baseline/Match_HSE_NTS/indiv2014_HSE_NTS.Rds')
-#hsematch <- hsematch[,c(1,21,22)]
-#names(hsematch) <- c('ID', 'health_mmets', 'physical_activity_mmets')
-hsematch <- rbind(hsematch, subset(fnotrips, select = c(ID,health_mmets, physical_activity_mmets))) #this needed temporarily
+#hsematch <- read.csv('hsematchOnly2mmetsremovedNAs.csv', header = T, as.is = T)
+hsematch <- readRDS('hse-nts_match.Rds')
+#names(hsematch)[c(1,7,8)] <- c('ID', 'health_mmets', 'physical_activity_mmets')
+hsematch <- rbind(hsematch, subset(fnotrips, select = c(ID, health_mmets, physical_activity_mmets))) #this needed temporarily
 
 #hsematch <- rbind(hsematch, subset(fnotrips, select = c(IndividualID,health_mmets, physical_activity_mmets)))
 
@@ -148,7 +142,8 @@ baseline$prob[baseline$TravDay==0 ] <- 0
 bl <- baseline
 
 #save FINAL baseline in scenarios folder
-write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
+write.csv(bl,file='bl2014.csv', row.names=F)
+#write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
 
 
 ###################################  START CALCULATIONS on BASELINE #############################

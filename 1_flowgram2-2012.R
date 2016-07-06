@@ -6,15 +6,14 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
 #   equity = 0
 
   
-  # temporary initiliazaiton of baseline
+  # temporary initialization of baseline
   # baseline <- bl
   #resets all senarios parameters: trip cycled(now_cycle) | person=cyclist | prob cycling a trip (Pcyc)  
   baseline$now_cycle <- 0  
   baseline$cyclist <- 0  
   baseline$Pcyc <- 0
-  #   baseline$METh    <- bl$METh     #recovers basic MMET
-  #   baseline$MMETh   <- bl$MMETh
   baseline$ebike   <- 0
+  
   ## add choice variable to all rows
   baseline$choice <- 0
   
@@ -40,7 +39,6 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   #calculate if people become cyclists
   baseline <- inner_join(baseline,lookup,by='agesex')
   baseline$cyclist <- 0
-  # baseline$cyclist <-ifelse(baseline$Pcyc0>baseline$prob,1,0)
   baseline$cyclist[baseline$Pcyc0 > baseline$prob] <- 1
   
   baseline$newtime <- baseline$TripDisIncSW / apply(data.frame(baseline$Age, baseline$Sex), 1, function(x) tripspeed(x[1], x[2], 0))
@@ -54,6 +52,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   baseline[baseline$Cycled != 1 & baseline$cyclist == 0 ,]$TripTotalTime1 <- 
     baseline[baseline$Cycled != 1 & baseline$cyclist == 0 ,]$TripTotalTime
   
+  #calculate prob of a given trip being cycled
   baseline[baseline$Cycled != 1 & baseline$cyclist != 0 ,]$Pcyc <- 
     apply(subset(baseline, Cycled != 1 & cyclist != 0, select = c(Age,Sex,TripDisIncSW)), 1, 
           function(x) pcyc21(x[1],x[2], x[3], ebikes, equity, MS))
@@ -128,7 +127,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   # Fixed a bug: replaced colnames with c
   # Removed TripTravelTime1
-  blsave <- baseline[,c('ID','now_cycle','ebike','cyclist','METh','MMETh','TripTotalTime1')]
+  blsave <- baseline[,c('ID','HHoldGOR_B02ID','now_cycle','ebike','cyclist','METh','MMETh','TripTotalTime1')]
   
   # write.csv(blsave,file=paste(scenarioFolderNameAndPath, nombre, sep = "\\"), row.names=F)
   cat("size: ", nrow(blsave), " - ", nombre,'\n',' done !!','\n') 
