@@ -142,7 +142,7 @@ baseline$prob[baseline$TravDay==0 ] <- 0
 bl <- baseline
 
 #save FINAL baseline in scenarios folder
-write.csv(bl,file='bl2014.csv', row.names=F)
+saveRDS(bl,file='bl2014_p.Rds')
 #write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
 
 

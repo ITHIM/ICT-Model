@@ -1,4 +1,4 @@
-#setwd("//me-filer1/home$/au232/My Documents/1.CEDAR/3_Studies !!/23-CBM2/3-Code")
+
 #rm(list=ls())
 source('AggCalc.R')   
 
@@ -7,23 +7,12 @@ library(stringr)
 library(data.table)
 library(sqldf)
 
-#setwd('C:/Temp/Test/Scenarios2012')
-#setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012_England") #source folder
+#read baseline (short walks already included)
+baseline <- readRDS('bl2014_p.Rds')
+#baseline <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
 
-#read baseline & add short walks
-baseline <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
-
-# #add shortwalks
-# dfsw <-baseline[baseline$MainMode_B03ID==1,]
-# shortwalks <-data.frame()
-# 
-# for (i in 1:6) {shortwalks <-rbind(shortwalks,dfsw) }
-# baseline <- rbind(baseline,shortwalks)    #short walks added
-# baseline <- baseline[order(baseline$ID),]     #re-ordering by individuals
-# rm(shortwalks,dfsw)
-
-fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
-
+fnotrips  <- readRDS('people_notrips2014.Rds')
+#fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
 
 # Remove 85+ age group
 fnotrips <- subset(fnotrips, Age_B01ID != 21)
@@ -50,12 +39,7 @@ fnotrips[fnotrips$Sex_B01ID == 2,]$Sex <- "Female"
 
 
 fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15),]$Age <- '16.59'
-
 fnotrips[fnotrips$Age_B01ID >= 16,]$Age <- '60plus'
-
-# todos<-list.files(pattern="[0-9].csv")
-# todos <-c('baseline.csv',todos)
-# nfiles <-length(todos)
 
 
 #Individuals figures
