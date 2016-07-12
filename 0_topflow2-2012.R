@@ -44,6 +44,8 @@ Pcyc0.eq1 <- rep(oddsCycling[5], 4)
 bl <- readRDS('bl2014.Rds')
 #bl <- read.csv('bl2012_18_84ag_reduced.csv', header=T, as.is = T)
 
+#IMPORTANT: ID needs to be deleted, IndividualID renamed to ID.
+
 baseline <- bl
 
 #handle short walks, creating 6x of each
@@ -141,7 +143,7 @@ baseline$prob[baseline$TravDay==0 ] <- 0
 #keep bl as backup for future scenarios core values
 bl <- baseline
 
-#save FINAL baseline in scenarios folder
+#save PROCESSED baseline in scenarios folder
 saveRDS(bl,file='bl2014_p.Rds')
 #write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
 
@@ -154,7 +156,6 @@ carMiles0 <- round(carMiles0,1)
 METh0 <- round(sum(baseline$METh),1)
 MMETh0 <- round(sum(baseline$MMETh),1)
 # Miles to Kilometres, Grams to metric tonnes, 0.0001
-# CO20 <- round(carMiles0 * 1.61 * 1.50 * 1e-4,2)   #(in metric Tons)
 # Using new Christian's average CO2 value of 0.31 grams
 CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-4,2)   #(in metric Tons)
 
