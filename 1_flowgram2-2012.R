@@ -39,7 +39,69 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   #calculate if people become cyclists
   baseline <- inner_join(baseline,lookup,by='agesex')
   baseline$cyclist <- 0
-  baseline$cyclist[baseline$Pcyc0 > baseline$prob] <- 1
+  #baseline$cyclist[baseline$Pcyc0 > baseline$prob] <- 1
+  
+  # calc how many cyclists should be drawn, don't include ppl who already cycle
+  
+  howManyCyclistNeeded <- round(MS * length(unique(baseline$ID)) - totalNumberOfCyclistInPop, digits = 0)
+  
+  # just in case check if number excess # of all ppl
+  
+  howManyCyclistNeeded <- ifelse(howManyCyclistNeeded > length(unique(baseline$ID)), length(unique(baseline$ID)), howManyCyclistNeeded)
+  
+  if (equity == 0) {
+    
+    #print(howManyCyclistNeeded)
+    #print(cyclistsPropBySubgroups*howManyCyclistNeeded)
+    
+    remainingCyclistsBySubgroups <- data.frame(agesex = c('16.59Male','16.59Female','60plusMale','60plusFemale'))
+    
+    remainingCyclistsBySubgroups$remaining <- mapply(function(whichGroup){
+      
+      # calc how many cyclists should be drawn, taking into account cyclists prop
+      
+      projectedCyclistsInSubgroup <- round(as.numeric(cyclistsPropBySubgroups[cyclistsPropBySubgroups$agesex == whichGroup, ]$prop) * howManyCyclistNeeded, digits = 0)
+      
+      #print(projectedCyclistsInSubgroup)
+      
+      # check if there are enough ppl from subgroup in population; if more are selected -> use total number of subgroup members
+      
+      realCyclistsInSubgroup <- ifelse(projectedCyclistsInSubgroup > length(unique(baseline[baseline$Cycled != 1 & baseline$agesex == whichGroup, ]$ID)), length(unique(baseline[baseline$Cycled != 1 & baseline$agesex == whichGroup, ]$ID)), projectedCyclistsInSubgroup)
+      #print(realCyclistsInSubgroup)
+      
+      # pick up ppl, mark them as cyclists
+      
+      baseline$cyclist[baseline$ID == sample(unique(baseline[baseline$Cycled != 1 & baseline$agesex == whichGroup,]$ID), realCyclistsInSubgroup, replace = F)] <- 1
+      
+      # work out remaining diff (if value > 0 this means that sample should be filled with ppl from other subgroups)
+      
+      ifelse(projectedCyclistsInSubgroup - length(unique(baseline[baseline$Cycled != 1 & baseline$agesex == whichGroup, ]$ID)) <= 0, 0, projectedCyclistsInSubgroup - length(unique(baseline[baseline$Cycled != 1 & baseline$agesex == whichGroup, ]$ID)))
+      
+    }, remainingCyclistsBySubgroups$agesex)
+    
+    #print(remainingCyclistsBySubgroups) 
+    
+    # fill scenario with ppl from other subgroups if remaining ppl exist
+    
+    if (sum(remainingCyclistsBySubgroups$remaining) > 0){
+      
+      #print(sum(remainingCyclistsBySubgroups$remaining))
+      
+      baseline$cyclist[baseline$ID == sample(unique(baseline[baseline$Cycled != 1 & baseline$cyclist != 1,]$ID), sum(remainingCyclistsBySubgroups$remaining), replace = F)] <- 1
+      
+    }
+    
+  } else {
+    
+    # pick up randomly ppl who are not cyclist using same prop for all
+    
+    baseline$cyclist[baseline$ID == sample(unique(baseline[baseline$Cycled != 1,]$ID), howManyCyclistNeeded, replace = F)] <- 1
+    
+  }
+  
+  # cyclists in population should be marked as cyclists
+  
+  baseline[baseline$Cycled == 1,]$cyclist <- 1
   
   baseline$newtime <- baseline$TripDisIncSW / apply(data.frame(baseline$Age, baseline$Sex), 1, function(x) tripspeed(x[1], x[2], 0))
   
