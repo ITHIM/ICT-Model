@@ -45,63 +45,104 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   howManyCyclistNeeded <- round(MS * length(unique(baseline$ID)) - totalNumberOfCyclistInPop, digits = 0)
   
-  # just in case check if number excess # of all ppl
+  # just in case check if number exceeds # of all ppl
   
   howManyCyclistNeeded <- ifelse(howManyCyclistNeeded > length(unique(baseline$ID)), length(unique(baseline$ID)), howManyCyclistNeeded)
+  
+  # init vector with IDs of ppl who is going to become cyclist
+  
+  IDOfPplBecomingCyclist = c()
+  
+  # init counter of remaining ppl (ppl that should be pick up from other subgroups because of lack of ppl in particular subgroups)
+  
+  remainingCyclistsCounter = 0
+  
+  # cyclists in a population should be marked as cyclists for all trips
+  
+  baseline[baseline$ID %in% baseline[baseline$Cycled == 1, ]$ID, ]$cyclist <- 1
+  
+  #print(paste('cyclist number ID', length(unique(baseline[baseline$ID %in% baseline[baseline$Cycled == 1, ]$ID, ]$ID))))
   
   if (equity == 0) {
     
     #print(howManyCyclistNeeded)
     #print(cyclistsPropBySubgroups*howManyCyclistNeeded)
     
-    remainingCyclistsBySubgroups <- data.frame(agesex = c('16.59Male','16.59Female','60plusMale','60plusFemale'))
-    
-    remainingCyclistsBySubgroups$remaining <- mapply(function(whichGroup){
+    for (i in seq_len(nrow(cyclistsPropBySubgroups))){
+      
+      #print(cyclistsPropBySubgroups[i, ]$agesex)
+      
+      #print(paste('len2', length(unique(baseline[baseline$cyclist != 1 & baseline$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex), ]$ID))))
       
       # calc how many cyclists should be drawn, taking into account cyclists prop
       
-      projectedCyclistsInSubgroup <- round(as.numeric(cyclistsPropBySubgroups[cyclistsPropBySubgroups$agesex == whichGroup, ]$prop) * howManyCyclistNeeded, digits = 0)
+      projectedCyclistsInSubgroup <- round(as.numeric(cyclistsPropBySubgroups[i, ]$prop) * howManyCyclistNeeded, digits = 0)
       
-      #print(projectedCyclistsInSubgroup)
+      #print(paste('projectedCyclistsInSubgroup', projectedCyclistsInSubgroup))
       
       # check if there are enough ppl from subgroup in population; if more are selected -> use total number of subgroup members
       
-      realCyclistsInSubgroup <- ifelse(projectedCyclistsInSubgroup > length(unique(baseline[baseline$Cycled != 1 & baseline$agesex == whichGroup, ]$ID)), length(unique(baseline[baseline$Cycled != 1 & baseline$agesex == whichGroup, ]$ID)), projectedCyclistsInSubgroup)
-      #print(realCyclistsInSubgroup)
+      realCyclistsInSubgroup <- ifelse(projectedCyclistsInSubgroup > length(unique(baseline[baseline$cyclist != 1 & baseline$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex), ]$ID)), length(unique(baseline[baseline$cyclist != 1 & baseline$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex), ]$ID)), projectedCyclistsInSubgroup)
       
-      # pick up ppl, mark them as cyclists
+      #print(paste("realCyclistsInSubgroup", realCyclistsInSubgroup))
       
-      baseline$cyclist[baseline$ID == sample(unique(baseline[baseline$Cycled != 1 & baseline$agesex == whichGroup,]$ID), realCyclistsInSubgroup, replace = F)] <- 1
+      # pick up ppl who become cyclist but are not cyclist already
+      #tempppp <- unique(baseline[baseline$cyclist != 1 & baseline$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex),]$ID)
+      #tempppp2 <- unique(baseline[with(baseline, cyclist != 1 & agesex == '16.59Male'),]$ID)
+      subgroupIDsOfPplBecomeCyclist <- sample(unique(baseline[baseline$cyclist != 1 & baseline$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex),]$ID), realCyclistsInSubgroup, replace = F)
+      #print(subgroupIDsOfPplBecomeCyclist)
+      #print(intersect(unique(baseline[baseline$cyclist == 1,]$ID), tempppp2))
+      #print(length(sample(unique(subgroupIDsOfPplBecomeCyclist))))
+      #print(intersect(subgroupIDsOfPplBecomeCyclist, IDOfPplBecomingCyclist))
+      IDOfPplBecomingCyclist <- append(IDOfPplBecomingCyclist, subgroupIDsOfPplBecomeCyclist)
+      #print(intersect(baseline[baseline$cyclist == 1,]$ID, IDOfPplBecomingCyclist))
+      #print(length(IDOfPplBecomingCyclist))
       
       # work out remaining diff (if value > 0 this means that sample should be filled with ppl from other subgroups)
       
-      ifelse(projectedCyclistsInSubgroup - length(unique(baseline[baseline$Cycled != 1 & baseline$agesex == whichGroup, ]$ID)) <= 0, 0, projectedCyclistsInSubgroup - length(unique(baseline[baseline$Cycled != 1 & baseline$agesex == whichGroup, ]$ID)))
-      
-    }, remainingCyclistsBySubgroups$agesex)
+      remainingCyclistsCounter <- remainingCyclistsCounter + ifelse(projectedCyclistsInSubgroup - length(subgroupIDsOfPplBecomeCyclist) <= 0, 0, projectedCyclistsInSubgroup - length(subgroupIDsOfPplBecomeCyclist))
+      #print(paste('rem', remainingCyclistsCounter))
+    }
     
-    #print(remainingCyclistsBySubgroups) 
+    #print(paste('idbec', length(IDOfPplBecomingCyclist)))
     
     # fill scenario with ppl from other subgroups if remaining ppl exist
     
-    if (sum(remainingCyclistsBySubgroups$remaining) > 0){
+    if (remainingCyclistsCounter > 0){
       
-      #print(sum(remainingCyclistsBySubgroups$remaining))
+      #print((remainingCyclistsCounter))
       
-      baseline$cyclist[baseline$ID == sample(unique(baseline[baseline$Cycled != 1 & baseline$cyclist != 1,]$ID), sum(remainingCyclistsBySubgroups$remaining), replace = F)] <- 1
+      #print(intersect(IDOfPplBecomingCyclist, unique(baseline[baseline$cyclist != 1 & !(baseline$ID %in% IDOfPplBecomingCyclist),]$ID)))
       
+      filledIDsOfPplBecomeCyclist <- sample(unique(baseline[baseline$cyclist != 1 & !(baseline$ID %in% IDOfPplBecomingCyclist),]$ID), remainingCyclistsCounter, replace = F)
+      
+      #print(paste('filledIDsOfPplBecomeCyclist', length(filledIDsOfPplBecomeCyclist)))
+      
+      #print(intersect(IDOfPplBecomingCyclist, filledIDsOfPplBecomeCyclist))
+      
+      IDOfPplBecomingCyclist <- append(IDOfPplBecomingCyclist, filledIDsOfPplBecomeCyclist)
     }
+    
+    # set cyclist
+    
+    baseline[baseline$ID %in% IDOfPplBecomingCyclist,]$cyclist <- 1
+    
+    #print(paste('final', length(unique(IDOfPplBecomingCyclist))))
+    #print(paste('final2', length(unique(baseline[baseline$cyclist == 1, ]$ID)) ))
     
   } else {
     
     # pick up randomly ppl who are not cyclist using same prop for all
     
-    baseline$cyclist[baseline$ID == sample(unique(baseline[baseline$Cycled != 1,]$ID), howManyCyclistNeeded, replace = F)] <- 1
+    baseline[baseline$ID %in% sample(unique(baseline[baseline$cyclist != 1,]$ID), howManyCyclistNeeded, replace = F), ]$cyclist <- 1
     
   }
   
-  # cyclists in population should be marked as cyclists
+  #print(intersect(baseline[baseline$ID %in% baseline[baseline$Cycled == 1, ]$ID, ]$ID, IDOfPplBecomingCyclist))
   
-  baseline[baseline$Cycled == 1,]$cyclist <- 1
+  #print(paste('totla of cyc trips', length((baseline[baseline$cyclist == 1,]$ID))))
+  
+  print(length(unique(baseline[baseline$cyclist == 1,]$ID)))
   
   baseline$newtime <- baseline$TripDisIncSW / apply(data.frame(baseline$Age, baseline$Sex), 1, function(x) tripspeed(x[1], x[2], 0))
   
