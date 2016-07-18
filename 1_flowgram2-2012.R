@@ -63,6 +63,8 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   #print(paste('cyclist number ID', length(unique(baseline[baseline$ID %in% baseline[baseline$Cycled == 1, ]$ID, ]$ID))))
   
+  #print(paste('total', length(unique(baseline$ID))))
+  
   if (equity == 0) {
     
     #print(howManyCyclistNeeded)
@@ -134,7 +136,17 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
     
     # pick up randomly ppl who are not cyclist using same prop for all
     
-    baseline[baseline$ID %in% sample(unique(baseline[baseline$cyclist != 1,]$ID), howManyCyclistNeeded, replace = F), ]$cyclist <- 1
+    #print(paste('howmany', howManyCyclistNeeded))
+    
+    #print(paste('noncyclis', length(unique(baseline[baseline$cyclist != 1,]$ID))))
+    
+    IDOfPplBecomingCyclist <- sample(unique(baseline[baseline$cyclist != 1,]$ID), howManyCyclistNeeded, replace = F)
+    
+    #print(length(IDOfPplBecomingCyclist))
+    
+    #print(intersect(baseline[baseline$cyclist == 1,]$ID, IDOfPplBecomingCyclist))
+    
+    baseline[baseline$ID %in% IDOfPplBecomingCyclist, ]$cyclist <- 1
     
   }
   
@@ -142,7 +154,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   #print(paste('totla of cyc trips', length((baseline[baseline$cyclist == 1,]$ID))))
   
-  print(length(unique(baseline[baseline$cyclist == 1,]$ID)))
+  #print(paste('allcycafter', length(unique(baseline[baseline$cyclist == 1,]$ID))))
   
   baseline$newtime <- baseline$TripDisIncSW / apply(data.frame(baseline$Age, baseline$Sex), 1, function(x) tripspeed(x[1], x[2], 0))
   
