@@ -40,11 +40,13 @@ oddsCycling <- unlist(oddsCycling, use.names = F)
 Pcyc0.eq0 <- oddsCycling[1:4]
 Pcyc0.eq1 <- rep(oddsCycling[5], 4)
 
-# Only read baseline for the year 2012 and individuals between 18-84 year olds
+# Baseline=NTS years 2011-2014 + individuals between 18-79 y.o + not Wales/Scotland 
 bl <- readRDS('bl2014.Rds')
+bl = subset(bl, subset = Age_B01ID < 20 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
+
 #bl <- read.csv('bl2012_18_84ag_reduced.csv', header=T, as.is = T)
 
-#IMPORTANT: ID needs to be deleted, IndividualID renamed to ID.
+#IMPORTANT: from database -> ID needs to be deleted, IndividualID renamed to ID.
 
 baseline <- bl
 
@@ -64,8 +66,10 @@ baseline <- baseline[order(baseline$ID),]
 
 fnotrips  <- readRDS('people_notrips2014.Rds')
 #fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
-# Remove 85+ age group
-fnotrips <- subset(fnotrips, Age_B01ID != 21)
+
+# Remove 80+ age group + Wales/Scotland
+fnotrips <- subset(fnotrips, subset = Age_B01ID < 20 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
+#fnotrips <- subset(fnotrips, subset = Age_B01ID != 21)
 
 fnotrips$agesex <- ""
 
@@ -95,7 +99,7 @@ fnotrips[fnotrips$Age_B01ID >= 16,]$Age <- '60plus'
 # Add tripID variable to it
 fnotrips$TripID <- c(max(baseline$TripID) + 1:nrow(fnotrips))
 
-rm(shortwalks,df)
+rm(shortwalks, df)
 
 #Sample before running scenarios -
 
