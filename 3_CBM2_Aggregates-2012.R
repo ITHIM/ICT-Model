@@ -14,8 +14,8 @@ baseline <- readRDS('bl2014_p.Rds')
 fnotrips  <- readRDS('people_notrips2014.Rds')
 #fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
 
-# Remove 85+ age group
-fnotrips <- subset(fnotrips, Age_B01ID != 21)
+# Remove 80+ age group + Wales/Scotland
+fnotrips <- subset(fnotrips, subset = Age_B01ID < 20 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
 
 fnotrips$agesex <- ""
 
@@ -44,7 +44,7 @@ fnotrips[fnotrips$Age_B01ID >= 16,]$Age <- '60plus'
 
 #create regions list (to process regional aggregates)
 regions <- sort(unique(baseline$HHoldGOR_B02ID))
-regions <- c('all',regions)
+regions <- c('all',regions)[-c(10,11)]
 
 
 #define parameters of interest (33)
@@ -142,7 +142,7 @@ for (i in regions) {
 }   #regions loop
 
 
-#DF to hols results
+#DF to hold results
 df <- data.frame()
 df <- AggCalc(baseline, "baseline", "all")
 df = as.data.frame( t(df), stringsAsFactors = F)
@@ -180,12 +180,9 @@ for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
 }  #END main loop
 
 
-# FileName	MS	ebike	equity	Car Miles per person	Car Miles Reduction Per Person	Miles Cycled Per Person	Miles Cycled Per White-Person	Miles Cycled Per Non-White-Person	Miles Cycled Per without car-access	Miles Cycled Per without non-car-access	Marginal METs Per Person	CO2 Total Per Person (kg)	% Cyclists in the Total Population	% Males who Cycle	% Females who Cycle	% White people who Cycle	% Non-White people who Cycle	% People Car Access who Cycle	% People without Car Access who Cycle	Years of Life Lost (YLL)	YLL Reduction (%)	
-
-
 rownames(df) <- NULL
 
-colnames(df) <-c('FileName','MS','ebike','equity',
+colnames(df) <-c('Scenario','MS','ebike','equity',
                  "Car Miles Per person (per week)","Car Miles Reduced Per person (per/week)","Total Car Miles Cycled (per week)",
                  "Total Miles Cycled (per week)", "Miles Cycled Per Male (per week)", "Miles Cycled Per Female (per week)", 
                  "Miles Cycled Per White Person (per week)", "Miles Cycled Per Non-White Person (per week)",
