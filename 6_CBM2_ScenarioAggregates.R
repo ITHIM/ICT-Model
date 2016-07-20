@@ -1,6 +1,4 @@
 
-#rm(list=ls())
-#setwd("~/1.CEDAR/3_Studies !!/23-CBM2/3-Code")
 source("init.R")
 source('AggScenarios6.R')
 
@@ -11,15 +9,10 @@ library(sqldf)
 library(tcltk)
 #library(tcltk2)
 
-#setwd("V:/Studies/MOVED/HealthImpact/CBM2/Code/Scenarios2012_England") #source folder
-
-# todos<-list.files(pattern="[0-9].csv")
-# todos <-c('baseline.csv',todos)
-# nfiles <-length(todos)
 
 ############   CALCULATE from BASELINE: Individuals
-# bl <- read.csv('baseline.csv')
-bl <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
+#bl <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
+bl <- readRDS('bl2014_p.Rds')  #needs to be bl2014_p.Rds or bl2014.Rds?
 bl.indiv <- data.frame(ID = unique(bl$ID))
 colnames(bl.indiv) <- 'ID'
 
@@ -28,7 +21,7 @@ lookup <- data.frame(MainMode_B04ID=c(1,2,3,4,5,6,7,8,9,10,11,12,13),modefinal=c
 bl$MainMode_Reduced <- lookup$modefinal[match(bl$MainMode_B04ID, lookup$MainMode_B04ID)]
 
 
-########## DATA FRAMES for RESULTS (individuals added) -- 16 NEW MEASURES BY INDIVIDUAL
+########## DATA FRAMES for RESULTS (individuals added) -- 18 NEW MEASURES BY INDIVIDUAL
 carMiles <- bl.indiv         # no. 1
 carMilesR <- bl.indiv
 
@@ -53,7 +46,7 @@ newcyclists <- bl.indiv
 potential.cyclist <- bl.indiv
 trips.bike.perc <- bl.indiv
 
-mode.travel <- bl.indiv      # no. 16  - 01-NOV
+mode.travel <- bl.indiv      # no. 18  - 01-NOV
 
 listaDF<-list(carMiles = carMiles, carMilesR = carMilesR,carMilesCycledAggr = carMilesCycledAggr,
               milesCycled.pers = milesCycled.pers, METh = METh, METhincr = METhincr, MMETh = MMETh,
@@ -138,32 +131,3 @@ colnames(PA_mmets)[3:length(PA_mmets)] <- listOfScenarios
 # colnames(mode.travel)[3:length(mode.travel)] <- listOfScenarios
 
 
-# ########### ANADIR COLNAMES Y WRITE.CSV MEDIANTE LAPPLY ############ 
-# lapply(listaDF,function(x) write.csv(listaDF[x],file=paste(names(listaDF[x]),".csv",sep="")))
-# 
-# for (i in (1:length(listaDF))) {
-#   names(listaDF[[i]]) <- todos[1:length(listaDF[[i]]) ]
-# }
-# 
-# setwd("./aggregates") #source folder
-# 
-# write.csv(carMiles,file="carMiles.csv")
-# write.csv(carMilesR,file="carMilesR.csv")
-# write.csv(carMilesCycled,file="carMilesCycled.csv")
-# write.csv(milesCycled.pers,file="milesCycled.pers.csv")
-# write.csv(METh,file="METh.csv")
-# 
-# write.csv(METhincr,file="METhincr.csv")
-# write.csv(MMETh,file="MMETh.csv")
-# write.csv(CO2.Tm,file="CO2.Tm.csv")
-# write.csv(CO2.R,file="CO2.R.csv")
-# 
-# write.csv(TripDisIncSW,file="TripDisIncSW.csv")
-# write.csv(TripTotalTime1,file="TripTotalTime1.csv")
-# write.csv(timeSaved.Total.h,file="timeSaved.Total.h.csv")
-# 
-# write.csv(newcyclists,file="newcyclists.csv")
-# write.csv(potential.cyclist,file="potential.cyclist.csv")
-# write.csv(trips.bike.perc,file="trips.bike.perc.csv")
-# 
-# write.csv(mode.travel,file="mode.travel.csv")
