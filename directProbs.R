@@ -51,24 +51,13 @@ directProbPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baseline)
   
   cyclistsPropBySubgroups <- data.frame(agesex = c('16.59Male','16.59Female','60plusMale','60plusFemale'))
   
-  print(paste('totcyc',totalNumberOfCyclistInBaselineSubset))
-  
-  print(paste('totalsubgroup', length(unique(baselineSubset$ID))))
-  
   cyclistsPropBySubgroups$prop <-mapply(function(whichGroup) {
     round(length(unique(baselineSubset[baselineSubset$Cycled == 1 & baselineSubset$agesex == whichGroup,]$ID))/totalNumberOfCyclistInBaselineSubset, digits = 2)
   }, cyclistsPropBySubgroups$agesex)
   
-  print(cyclistsPropBySubgroups)
-  print(paste('totalcycneeded', round(DP * length(unique(baselineSubset$ID)))))
-  
   # calc how many cyclists should be drawn excluding # of ppl who already cycle
   
   howManyCyclistNeeded <- round(DP * length(unique(baselineSubset$ID)), digits = 0) - totalNumberOfCyclistInBaselineSubset
-  
-  print(paste('round', round(DP * length(unique(baselineSubset$ID)))))
-  
-  print(paste('howManyCyclistNeeded', howManyCyclistNeeded))
   
   # just in case check if number exceeds # of all ppl
   
@@ -87,8 +76,6 @@ directProbPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baseline)
       # calc how many cyclists should be drawn, taking into account cyclists prop
       
       projectedCyclistsInSubgroup <- round(as.numeric(cyclistsPropBySubgroups[i, ]$prop) * howManyCyclistNeeded, digits = 0)
-      
-      print(projectedCyclistsInSubgroup)
       
       # check if there are enough ppl from subgroup in a population; if more are selected -> use total number of subgroup members
       

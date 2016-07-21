@@ -55,17 +55,10 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
     # subset data for a particular region
     
     baselineSubset <- subset(baseline, HHoldGOR_B02ID == region)
-    print('#########################')
-    
-    print(paste('totalsubgroup', length(unique(baselineSubset$ID))))
     
     IDOfPplCyclist = directProbPPLIDs(baselineSubset, MS, ebikes, equity, pcycl_baseline)
     
-    print(paste('leng teee', length(IDOfPplCyclist)))
-    
     baselineSubset[baselineSubset$ID %in% IDOfPplCyclist,]$cyclist <- 1
-    
-    print(paste('cycpopafter', length(unique(baselineSubset[baselineSubset$cyclist == 1, ]$ID))))
     
     # add baselineSubset to baselineProcessed
     
@@ -88,14 +81,6 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   # add baselineSubset to baselineProcessed
   
   baselineProcessed <- rbind(baselineProcessed, baselineCoutry)
-  
-  print(unique(baselineCoutry$HHoldGOR_B02ID))
-  
-  print(paste('DP results', length(baselineCoutry$ID)))
-  
-  print(unique(baselineProcessed$HHoldGOR_B02ID))
-  
-  print(paste('DP results', length(baselineProcessed$ID)))
   
   # baselineProcessed shoud be now baseline
   
