@@ -8,6 +8,7 @@ source('tripspeed.R')         # speed by age/gender
 source('oddsp.R')             # calculates odds > prob
 source('podds.R')             # calculates prob > odds
 source('bikechoice.R')        #calculates prob of using pushbike/ebike 
+source('directProbs.R')       # used in 1_flowgram2-2012.R
 # depending on: [age-sex-trip distance]
 library(plyr)
 library(dplyr)  
@@ -169,16 +170,7 @@ i <- c(2,4,8,16,32,64)
 
 # TODO: directProbs temp values - should be replaced with the final values
 
-directProbs <- c(0.05, 0.1, 0.2, 0.5, 0.7, 1)
-
-# work out proportion of cyclists by age-sex subgroups
-
-totalNumberOfCyclistInPop <- length(unique(baseline[baseline$Cycled == 1,]$ID))
-cyclistsPropBySubgroups <- data.frame(agesex = c('16.59Male','16.59Female','60plusMale','60plusFemale'))
-
-cyclistsPropBySubgroups$prop <-mapply(function(whichGroup) {
-    length(unique(baseline[baseline$Cycled == 1 & baseline$agesex == whichGroup,]$ID))/totalNumberOfCyclistInPop
-  }, cyclistsPropBySubgroups$agesex)
+directProbs <- c(0.05, 0.1, 0.15, 0.25, 0.5, 0.75, 1)
 
 # Removing TDR
 # TDR

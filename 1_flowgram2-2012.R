@@ -41,120 +41,67 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   baseline$cyclist <- 0
   #baseline$cyclist[baseline$Pcyc0 > baseline$prob] <- 1
   
-  # calc how many cyclists should be drawn, don't include ppl who already cycle
+  # direct probs
   
-  howManyCyclistNeeded <- round(MS * length(unique(baseline$ID)) - totalNumberOfCyclistInPop, digits = 0)
+  # init processedBaseline DF which should include results of DP function 
+  # for whole country and for every region. Same structure as baseline
   
-  # just in case check if number exceeds # of all ppl
+  baselineProcessed <- baseline[0, ]
   
-  howManyCyclistNeeded <- ifelse(howManyCyclistNeeded > length(unique(baseline$ID)), length(unique(baseline$ID)), howManyCyclistNeeded)
+  # iterate over all regions
   
-  # init vector with IDs of ppl who is going to become cyclist
-  
-  IDOfPplBecomingCyclist = c()
-  
-  # init counter of remaining ppl (ppl that should be pick up from other subgroups because of lack of ppl in particular subgroups)
-  
-  remainingCyclistsCounter = 0
-  
-  # cyclists in a population should be marked as cyclists for all trips
-  
-  baseline[baseline$ID %in% baseline[baseline$Cycled == 1, ]$ID, ]$cyclist <- 1
-  
-  #print(paste('cyclist number ID', length(unique(baseline[baseline$ID %in% baseline[baseline$Cycled == 1, ]$ID, ]$ID))))
-  
-  #print(paste('total', length(unique(baseline$ID))))
-  
-  if (equity == 0) {
+  for (region in unique(baseline$HHoldGOR_B02ID)){
     
-    #print(howManyCyclistNeeded)
-    #print(cyclistsPropBySubgroups*howManyCyclistNeeded)
+    # subset data for a particular region
     
-    for (i in seq_len(nrow(cyclistsPropBySubgroups))){
-      
-      #print(cyclistsPropBySubgroups[i, ]$agesex)
-      
-      #print(paste('len2', length(unique(baseline[baseline$cyclist != 1 & baseline$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex), ]$ID))))
-      
-      # calc how many cyclists should be drawn, taking into account cyclists prop
-      
-      projectedCyclistsInSubgroup <- round(as.numeric(cyclistsPropBySubgroups[i, ]$prop) * howManyCyclistNeeded, digits = 0)
-      
-      #print(paste('projectedCyclistsInSubgroup', projectedCyclistsInSubgroup))
-      
-      # check if there are enough ppl from subgroup in population; if more are selected -> use total number of subgroup members
-      
-      realCyclistsInSubgroup <- ifelse(projectedCyclistsInSubgroup > length(unique(baseline[baseline$cyclist != 1 & baseline$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex), ]$ID)), length(unique(baseline[baseline$cyclist != 1 & baseline$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex), ]$ID)), projectedCyclistsInSubgroup)
-      
-      #print(paste("realCyclistsInSubgroup", realCyclistsInSubgroup))
-      
-      # pick up ppl who become cyclist but are not cyclist already
-      #tempppp <- unique(baseline[baseline$cyclist != 1 & baseline$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex),]$ID)
-      #tempppp2 <- unique(baseline[with(baseline, cyclist != 1 & agesex == '16.59Male'),]$ID)
-      subgroupIDsOfPplBecomeCyclist <- sample(unique(baseline[baseline$cyclist != 1 & baseline$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex),]$ID), realCyclistsInSubgroup, replace = F)
-      #print(subgroupIDsOfPplBecomeCyclist)
-      #print(intersect(unique(baseline[baseline$cyclist == 1,]$ID), tempppp2))
-      #print(length(sample(unique(subgroupIDsOfPplBecomeCyclist))))
-      #print(intersect(subgroupIDsOfPplBecomeCyclist, IDOfPplBecomingCyclist))
-      IDOfPplBecomingCyclist <- append(IDOfPplBecomingCyclist, subgroupIDsOfPplBecomeCyclist)
-      #print(intersect(baseline[baseline$cyclist == 1,]$ID, IDOfPplBecomingCyclist))
-      #print(length(IDOfPplBecomingCyclist))
-      
-      # work out remaining diff (if value > 0 this means that sample should be filled with ppl from other subgroups)
-      
-      remainingCyclistsCounter <- remainingCyclistsCounter + ifelse(projectedCyclistsInSubgroup - length(subgroupIDsOfPplBecomeCyclist) <= 0, 0, projectedCyclistsInSubgroup - length(subgroupIDsOfPplBecomeCyclist))
-      #print(paste('rem', remainingCyclistsCounter))
-    }
+    baselineSubset <- subset(baseline, HHoldGOR_B02ID == region)
+    print('#########################')
     
-    #print(paste('idbec', length(IDOfPplBecomingCyclist)))
+    print(paste('totalsubgroup', length(unique(baselineSubset$ID))))
     
-    # fill scenario with ppl from other subgroups if remaining ppl exist
+    IDOfPplCyclist = directProbPPLIDs(baselineSubset, MS, ebikes, equity, pcycl_baseline)
     
-    if (remainingCyclistsCounter > 0){
-      
-      #print((remainingCyclistsCounter))
-      
-      #print(intersect(IDOfPplBecomingCyclist, unique(baseline[baseline$cyclist != 1 & !(baseline$ID %in% IDOfPplBecomingCyclist),]$ID)))
-      
-      filledIDsOfPplBecomeCyclist <- sample(unique(baseline[baseline$cyclist != 1 & !(baseline$ID %in% IDOfPplBecomingCyclist),]$ID), remainingCyclistsCounter, replace = F)
-      
-      #print(paste('filledIDsOfPplBecomeCyclist', length(filledIDsOfPplBecomeCyclist)))
-      
-      #print(intersect(IDOfPplBecomingCyclist, filledIDsOfPplBecomeCyclist))
-      
-      IDOfPplBecomingCyclist <- append(IDOfPplBecomingCyclist, filledIDsOfPplBecomeCyclist)
-    }
+    print(paste('leng teee', length(IDOfPplCyclist)))
     
-    # set cyclist
+    baselineSubset[baselineSubset$ID %in% IDOfPplCyclist,]$cyclist <- 1
     
-    baseline[baseline$ID %in% IDOfPplBecomingCyclist,]$cyclist <- 1
+    print(paste('cycpopafter', length(unique(baselineSubset[baselineSubset$cyclist == 1, ]$ID))))
     
-    #print(paste('final', length(unique(IDOfPplBecomingCyclist))))
-    #print(paste('final2', length(unique(baseline[baseline$cyclist == 1, ]$ID)) ))
+    # add baselineSubset to baselineProcessed
     
-  } else {
-    
-    # pick up randomly ppl who are not cyclist using same prop for all
-    
-    #print(paste('howmany', howManyCyclistNeeded))
-    
-    #print(paste('noncyclis', length(unique(baseline[baseline$cyclist != 1,]$ID))))
-    
-    IDOfPplBecomingCyclist <- sample(unique(baseline[baseline$cyclist != 1,]$ID), howManyCyclistNeeded, replace = F)
-    
-    #print(length(IDOfPplBecomingCyclist))
-    
-    #print(intersect(baseline[baseline$cyclist == 1,]$ID, IDOfPplBecomingCyclist))
-    
-    baseline[baseline$ID %in% IDOfPplBecomingCyclist, ]$cyclist <- 1
+    baselineProcessed <- rbind(baselineProcessed, baselineSubset)
     
   }
   
-  #print(intersect(baseline[baseline$ID %in% baseline[baseline$Cycled == 1, ]$ID, ]$ID, IDOfPplBecomingCyclist))
+  # calc DP for whole country treating it as region with id = 0
   
-  #print(paste('totla of cyc trips', length((baseline[baseline$cyclist == 1,]$ID))))
+  # set new region value
   
-  #print(paste('allcycafter', length(unique(baseline[baseline$cyclist == 1,]$ID))))
+  baselineCoutry <- baseline
+  
+  baselineCoutry$HHoldGOR_B02ID <- 0
+  
+  IDOfPplCyclist = directProbPPLIDs(baselineCoutry, MS, ebikes, equity, pcycl_baseline)
+  
+  baselineCoutry[baselineCoutry$ID %in% IDOfPplCyclist,]$cyclist <- 1
+  
+  # add baselineSubset to baselineProcessed
+  
+  baselineProcessed <- rbind(baselineProcessed, baselineCoutry)
+  
+  print(unique(baselineCoutry$HHoldGOR_B02ID))
+  
+  print(paste('DP results', length(baselineCoutry$ID)))
+  
+  print(unique(baselineProcessed$HHoldGOR_B02ID))
+  
+  print(paste('DP results', length(baselineProcessed$ID)))
+  
+  # baselineProcessed shoud be now baseline
+  
+  baseline <- baselineProcessed
+  
+  # end of direct probs
   
   baseline$newtime <- baseline$TripDisIncSW / apply(data.frame(baseline$Age, baseline$Sex), 1, function(x) tripspeed(x[1], x[2], 0))
   
