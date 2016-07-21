@@ -39,7 +39,54 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   #calculate if people become cyclists
   baseline <- inner_join(baseline,lookup,by='agesex')
   baseline$cyclist <- 0
-  baseline$cyclist[baseline$Pcyc0 > baseline$prob] <- 1
+  #baseline$cyclist[baseline$Pcyc0 > baseline$prob] <- 1
+  
+  # direct probs
+  
+  # init processedBaseline DF which should include results of DP function 
+  # for whole country and for every region. Same structure as baseline
+  
+  baselineProcessed <- baseline[0, ]
+  
+  # iterate over all regions
+  
+  for (region in unique(baseline$HHoldGOR_B02ID)){
+    
+    # subset data for a particular region
+    
+    baselineSubset <- subset(baseline, HHoldGOR_B02ID == region)
+    
+    IDOfPplCyclist = directProbPPLIDs(baselineSubset, MS, ebikes, equity, pcycl_baseline)
+    
+    baselineSubset[baselineSubset$ID %in% IDOfPplCyclist,]$cyclist <- 1
+    
+    # add baselineSubset to baselineProcessed
+    
+    baselineProcessed <- rbind(baselineProcessed, baselineSubset)
+    
+  }
+  
+  # calc DP for whole country treating it as region with id = 0
+  
+  # set new region value
+  
+  baselineCoutry <- baseline
+  
+  baselineCoutry$HHoldGOR_B02ID <- 0
+  
+  IDOfPplCyclist = directProbPPLIDs(baselineCoutry, MS, ebikes, equity, pcycl_baseline)
+  
+  baselineCoutry[baselineCoutry$ID %in% IDOfPplCyclist,]$cyclist <- 1
+  
+  # add baselineSubset to baselineProcessed
+  
+  baselineProcessed <- rbind(baselineProcessed, baselineCoutry)
+  
+  # baselineProcessed shoud be now baseline
+  
+  baseline <- baselineProcessed
+  
+  # end of direct probs
   
   baseline$newtime <- baseline$TripDisIncSW / apply(data.frame(baseline$Age, baseline$Sex), 1, function(x) tripspeed(x[1], x[2], 0))
   

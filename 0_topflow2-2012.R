@@ -7,7 +7,8 @@ source('pcyc21.R')            # cycling probabilities
 source('tripspeed.R')         # speed by age/gender
 source('oddsp.R')             # calculates odds > prob
 source('podds.R')             # calculates prob > odds
-source('bikechoice.r')        #calculates prob of using pushbike/ebike 
+source('bikechoice.R')        #calculates prob of using pushbike/ebike 
+source('directProbs.R')       # used in 1_flowgram2-2012.R
 # depending on: [age-sex-trip distance]
 library(plyr)
 library(dplyr)  
@@ -167,6 +168,10 @@ df <- data.frame()
 
 i <- c(2,4,8,16,32,64)
 
+# TODO: directProbs temp values - should be replaced with the final values
+
+directProbs <- c(0.05, 0.1, 0.15, 0.25, 0.5, 0.75, 1)
+
 # Removing TDR
 # TDR
 # j <- c(1,0.9,0.8,0.7)
@@ -178,8 +183,8 @@ num = 1
 listOfScenarios <- list()
 for (ebikes in m) {
   for (equity in n) {
-    for  (MS in i) {
-      cat(ebikes, equity, MS, "\n")
+    for  (MS in directProbs) { # all occurences of MS should be replaced
+      cat(ebikes, equity, MS, "\n") 
       scenario_name <- paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep="")
       assign(scenario_name,flowgram(baseline, MS,ebikes,equity, pcycl_baseline))      
       
