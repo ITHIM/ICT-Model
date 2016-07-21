@@ -105,29 +105,46 @@ for (i1 in 1:length(listOfScenarios)) {
 
 #listaDF <-lapply(listaDF, function(x) colnames(x)[2:length(x)] <- listOfScenarios[1:length(x)-1] )
 
+#add baseline (1st colum of results)
+listOfScenarios <- c('baseline', listOfScenarios)
 
-colnames(carMiles)[3:length(carMiles)] <- listOfScenarios
-colnames(carMilesR)[3:length(carMilesR)] <- listOfScenarios
-colnames(carMilesCycledAggr)[3:length(carMilesCycledAggr)] <- listOfScenarios
-colnames(milesCycled.pers)[3:length(milesCycled.pers)] <- listOfScenarios
-colnames(METh)[3:length(METh)] <- listOfScenarios
+colnames(carMiles)[2:length(carMiles)] <- listOfScenarios
+colnames(carMilesR)[2:length(carMilesR)] <- listOfScenarios
+colnames(carMilesCycledAggr)[2:length(carMilesCycledAggr)] <- listOfScenarios
+colnames(milesCycled.pers)[2:length(milesCycled.pers)] <- listOfScenarios
+colnames(METh)[2:length(METh)] <- listOfScenarios
 
-colnames(METhincr)[3:length(METhincr)] <- listOfScenarios
-colnames(MMETh)[3:length(MMETh)] <- listOfScenarios
-colnames(CO2.Tm)[3:length(CO2.Tm)] <- listOfScenarios
+colnames(METhincr)[2:length(METhincr)] <- listOfScenarios
+colnames(MMETh)[2:length(MMETh)] <- listOfScenarios
+colnames(CO2.Tm)[2:length(CO2.Tm)] <- listOfScenarios
 # colnames(CO2.R)[2:length(CO2.R)] <- listOfScenarios[1:(length(CO2.R)-1)]
 
-colnames(TripDisIncSW)[3:length(TripDisIncSW)] <- listOfScenarios
-colnames(TripTotalTime1)[3:length(TripTotalTime1)] <- listOfScenarios
-colnames(timeSaved.Total.h)[3:length(timeSaved.Total.h)] <- listOfScenarios
+colnames(TripDisIncSW)[2:length(TripDisIncSW)] <- listOfScenarios
+colnames(TripTotalTime1)[2:length(TripTotalTime1)] <- listOfScenarios
+colnames(timeSaved.Total.h)[2:length(timeSaved.Total.h)] <- listOfScenarios
 
-colnames(health_mmets)[3:length(health_mmets)] <- listOfScenarios
-colnames(PA_mmets)[3:length(PA_mmets)] <- listOfScenarios
+colnames(health_mmets)[2:length(health_mmets)] <- listOfScenarios
+colnames(PA_mmets)[2:length(PA_mmets)] <- listOfScenarios
 
+##########
 # colnames(newcyclists)[3:length(newcyclists)] <- listOfScenarios
 # colnames(potential.cyclist)[3:length(potential.cyclist)] <- listOfScenarios
 # colnames(trips.bike.perc)[3:length(trips.bike.perc)] <- listOfScenarios
-
 # colnames(mode.travel)[3:length(mode.travel)] <- listOfScenarios
+##########
+
+
+
+
+#DFs holding the results
+tosave <- c('carMiles','carMilesR','carMilesCycledAggr','milesCycled.pers','METh',
+            'METhincr','MMETh','CO2.Tm','TripDisIncSW','TripTotalTime1',
+            'timeSaved.Total.h','health_mmets','PA_mmets'  )
+
+
+#save DFs to Shiny repo folder (check final names w. Ali)
+pathfile <- 'V:/Group/GitHub/ICT/app/data/csv/'
+for (i in tosave) { write.csv(get(i),file =paste0(pathfile, as.character(i), '.csv'))  }
+
 
 
