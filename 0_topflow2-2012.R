@@ -45,6 +45,12 @@ Pcyc0.eq1 <- rep(oddsCycling[5], 4)
 bl <- readRDS('bl2014.Rds')
 bl = subset(bl, subset = Age_B01ID < 21 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
 
+# Read nts age group lookup table
+ag_lookup <- read.csv("nts-adjusted-age-groups.csv", header = T, as.is = T)
+
+# Create a new variable 'age_group' for baseline, which converts numeric age categories into age ranges
+bl$age_group <- ag_lookup$age[match(bl$Age_B01ID, ag_lookup$nts_group)]
+
 #bl <- read.csv('bl2012_18_84ag_reduced.csv', header=T, as.is = T)
 
 #IMPORTANT: from database -> ID needs to be deleted, IndividualID renamed to ID.
