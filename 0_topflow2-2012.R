@@ -41,9 +41,15 @@ oddsCycling <- unlist(oddsCycling, use.names = F)
 Pcyc0.eq0 <- oddsCycling[1:4]
 Pcyc0.eq1 <- rep(oddsCycling[5], 4)
 
-# Baseline=NTS years 2011-2014 + individuals between 18-79 y.o + not Wales/Scotland 
+# Baseline=NTS years 2011-2014 + individuals between 18-84 y.o + not Wales/Scotland 
 bl <- readRDS('bl2014.Rds')
-bl = subset(bl, subset = Age_B01ID < 20 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
+bl = subset(bl, subset = Age_B01ID < 21 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
+
+# Read nts age group lookup table
+ag_lookup <- read.csv("nts-adjusted-age-groups.csv", header = T, as.is = T)
+
+# Create a new variable 'age_group' for baseline, which converts numeric age categories into age ranges
+bl$age_group <- ag_lookup$age[match(bl$Age_B01ID, ag_lookup$nts_group)]
 
 #bl <- read.csv('bl2012_18_84ag_reduced.csv', header=T, as.is = T)
 
@@ -68,8 +74,8 @@ baseline <- baseline[order(baseline$ID),]
 fnotrips  <- readRDS('people_notrips2014.Rds')
 #fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
 
-# Remove 80+ age group + Wales/Scotland
-fnotrips <- subset(fnotrips, subset = Age_B01ID < 20 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
+# Remove 85+ age group + Wales/Scotland
+fnotrips <- subset(fnotrips, subset = Age_B01ID < 21 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
 #fnotrips <- subset(fnotrips, subset = Age_B01ID != 21)
 
 fnotrips$agesex <- ""
