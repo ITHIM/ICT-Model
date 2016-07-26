@@ -1,150 +1,89 @@
-
 source("init.R")
 source('AggScenarios6.R')
 
 library(dplyr)
+library(plyr)
 library(stringr)
 library(data.table)
 library(sqldf)
 library(tcltk)
-#library(tcltk2)
-
 
 ############   CALCULATE from BASELINE: Individuals
-#bl <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
 bl <- readRDS('bl2014_p.Rds')  #needs to be bl2014_p.Rds or bl2014.Rds?
-bl.indiv <- data.frame(ID = unique(bl$ID))
-colnames(bl.indiv) <- 'ID'
+
+bl1 <- bl
+bl1$HHoldGOR_B02ID <- 0
+bl <- rbind(bl, bl1)
+
+bl.indiv <- data.frame (unique(bl[c("ID", "HHoldGOR_B02ID")])) 
+#sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID from bl GROUP BY bl.ID, bl.HHoldGOR_B02ID')
+
+carMiles <- carMilesR <- carMilesCycledAggr <- 
+  milesCycled.pers <- METh <- METhincr <- MMETh <- CO2.Tm <- 
+  TripDisIncSW <- TripTotalTime1 <- 
+  timeSaved.Total.h <- health_mmets <- PA_mmets <- bl.indiv
 
 #transforms MainMode_B04ID >> to our own modes
 lookup <- data.frame(MainMode_B04ID=c(1,2,3,4,5,6,7,8,9,10,11,12,13),modefinal=c(1,2,3,4,3,7,5,5,5,6,6,7,7))
 bl$MainMode_Reduced <- lookup$modefinal[match(bl$MainMode_B04ID, lookup$MainMode_B04ID)]
+bl_backup <- bl
 
 
-########## DATA FRAMES for RESULTS (individuals added) -- 18 NEW MEASURES BY INDIVIDUAL
-carMiles <- bl.indiv         # no. 1
-carMilesR <- bl.indiv
+carMiles0 <- sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.TripDisIncSW) as carMiles0 FROM bl WHERE bl.MainMode_B04ID IN (3,4,5,12) GROUP BY bl.ID, bl.HHoldGOR_B02ID')
+#carMiles0 <- left_join(bl.indiv, carMiles0, by=c('ID, HHoldGOR_B02ID'))
 
-carMilesCycledAggr <- bl.indiv
-milesCycled.pers <- bl.indiv
-
-METh <- bl.indiv
-METhincr <- bl.indiv
-MMETh <- bl.indiv
-health_mmets <- bl.indiv
-PA_mmets <- bl.indiv
-
-CO2.Tm <- bl.indiv
-CO2.R <- bl.indiv    #new 01-NOV
-
-TripDisIncSW <- bl.indiv
-TripTotalTime1 <- bl.indiv
-
-timeSaved.Total.h <- bl.indiv
-
-newcyclists <- bl.indiv
-potential.cyclist <- bl.indiv
-trips.bike.perc <- bl.indiv
-
-mode.travel <- bl.indiv      # no. 18  - 01-NOV
-
-listaDF<-list(carMiles = carMiles, carMilesR = carMilesR,carMilesCycledAggr = carMilesCycledAggr,
-              milesCycled.pers = milesCycled.pers, METh = METh, METhincr = METhincr, MMETh = MMETh,
-              CO2.Tm = CO2.Tm, CO2.R = CO2.R, TripDisIncSW = TripDisIncSW, TripTotalTime1 = TripTotalTime1,
-              timeSaved.Total.h = TripTotalTime1, newcyclists = newcyclists, potential.cyclist =  potential.cyclist,
-              trips.bike.perc = trips.bike.perc)   
-#16 data frames
-
-#################### CALCULATE from BASELINE: f.carMiles0 - f.METh0 - f.TripTotalTime0........
-
-carMiles0 <- sqldf ('SELECT bl.ID,sum(bl.[TripDisIncSW]) as [carMiles0] FROM bl WHERE [bl].[MainMode_B04ID] IN (3,4,5,12) GROUP BY bl.ID')
-carMiles0 <- left_join(bl.indiv, carMiles0, by='ID')
-
-carMilesR0 <- sqldf ('SELECT ID,0 as [carMilesR0] FROM bl GROUP BY ID')
+carMilesR0 <- sqldf ('SELECT ID,HHoldGOR_B02ID, 0 as [carMilesR0] FROM bl GROUP BY ID, HHoldGOR_B02ID')
 #carMilesR0 <- left_join(bl.indiv, carMilesR0, by='ID')
 
-METh0 <-  sqldf ('SELECT bl.ID, sum(bl.METh) AS METh0 FROM bl GROUP BY bl.ID')
-TripTotalTime0 <- sqldf ('SELECT bl.ID, sum(bl.TripTotalTime) AS TripTotalTime0 FROM bl GROUP BY bl.ID')
+METh0 <-  sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.METh) AS METh0 FROM bl GROUP BY bl.ID, bl.HHoldGOR_B02ID')
 
+TripTotalTime0 <- sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.TripTotalTime) AS TripTotalTime0 FROM bl GROUP BY bl.ID, bl.HHoldGOR_B02ID')
 
-############### LOOP all SCENARIOS................
-
-#for (i1 in (1:nfiles)) {  #reading scenarios for aggregates
 
 AggScenarios6(bl, "baseline")
 
 for (i1 in 1:length(listOfScenarios)) {
 
   #DATA AGGREGATES
-  # AggScenarios6(todos[i1])
-  
-  
-  #DATA AGGREGATES
   tbl <- bl
   sc <- get(as.character(listOfScenarios[i1]) )
+  
+  # Temporary solution
+  # Conider only first half of the scenario objects (as they're twice the size of baseline)
+  # sc <- sc[1:(nrow(sc) / 2), ]
+  
   tbl$now_cycle <- sc$now_cycle
   tbl$ebike <- sc$ebike
   tbl$cyclist <- sc$cyclist
   tbl$METh <- sc$METh
   tbl$MMETh <- sc$MMETh
   tbl$TripTotalTime1 <- sc$TripTotalTime1
-  #   "now_cycle"      "ebike"          "cyclist"        "METh"           "MMETh"         
-  #   "TripTotalTime1"
-  
   AggScenarios6(tbl, as.character(listOfScenarios[i1]))
   
   if ((i1%%1)==0) {
     
     message('no files: ',i1)
   }
-  
-  
+
 }  #END main loop
 
-
-
-#listaDF <-lapply(listaDF, function(x) colnames(x)[2:length(x)] <- listOfScenarios[1:length(x)-1] )
-
 #add baseline (1st colum of results)
-listOfScenarios <- c('baseline', listOfScenarios)
+local_listOfScenarios <- c('baseline', listOfScenarios)
 
-colnames(carMiles)[2:length(carMiles)] <- listOfScenarios
-colnames(carMilesR)[2:length(carMilesR)] <- listOfScenarios
-colnames(carMilesCycledAggr)[2:length(carMilesCycledAggr)] <- listOfScenarios
-colnames(milesCycled.pers)[2:length(milesCycled.pers)] <- listOfScenarios
-colnames(METh)[2:length(METh)] <- listOfScenarios
+colnames(carMiles)[2:length(carMiles)] <- local_listOfScenarios
+colnames(carMilesR)[2:length(carMilesR)] <- local_listOfScenarios
+colnames(carMilesCycledAggr)[2:length(carMilesCycledAggr)] <- local_listOfScenarios
+colnames(milesCycled.pers)[2:length(milesCycled.pers)] <- local_listOfScenarios
+colnames(METh)[2:length(METh)] <- local_listOfScenarios
 
-colnames(METhincr)[2:length(METhincr)] <- listOfScenarios
-colnames(MMETh)[2:length(MMETh)] <- listOfScenarios
-colnames(CO2.Tm)[2:length(CO2.Tm)] <- listOfScenarios
-# colnames(CO2.R)[2:length(CO2.R)] <- listOfScenarios[1:(length(CO2.R)-1)]
+colnames(METhincr)[2:length(METhincr)] <- local_listOfScenarios
+colnames(MMETh)[2:length(MMETh)] <- local_listOfScenarios
+colnames(CO2.Tm)[2:length(CO2.Tm)] <- local_listOfScenarios
+# colnames(CO2.R)[2:length(CO2.R)] <- local_listOfScenarios[1:(length(CO2.R)-1)]
 
-colnames(TripDisIncSW)[2:length(TripDisIncSW)] <- listOfScenarios
-colnames(TripTotalTime1)[2:length(TripTotalTime1)] <- listOfScenarios
-colnames(timeSaved.Total.h)[2:length(timeSaved.Total.h)] <- listOfScenarios
+colnames(TripDisIncSW)[2:length(TripDisIncSW)] <- local_listOfScenarios
+colnames(TripTotalTime1)[2:length(TripTotalTime1)] <- local_listOfScenarios
+colnames(timeSaved.Total.h)[2:length(timeSaved.Total.h)] <- local_listOfScenarios
 
-colnames(health_mmets)[2:length(health_mmets)] <- listOfScenarios
-colnames(PA_mmets)[2:length(PA_mmets)] <- listOfScenarios
-
-##########
-# colnames(newcyclists)[3:length(newcyclists)] <- listOfScenarios
-# colnames(potential.cyclist)[3:length(potential.cyclist)] <- listOfScenarios
-# colnames(trips.bike.perc)[3:length(trips.bike.perc)] <- listOfScenarios
-# colnames(mode.travel)[3:length(mode.travel)] <- listOfScenarios
-##########
-
-
-
-
-#DFs holding the results
-tosave <- c('carMiles','carMilesR','carMilesCycledAggr','milesCycled.pers','METh',
-            'METhincr','MMETh','CO2.Tm','TripDisIncSW','TripTotalTime1',
-            'timeSaved.Total.h','health_mmets','PA_mmets'  )
-
-
-#save DFs to Shiny repo folder (check final names w. Ali)
-pathfile <- 'V:/Group/GitHub/ICT/app/data/csv/'
-for (i in tosave) { write.csv(get(i),file =paste0(pathfile, as.character(i), '.csv'))  }
-
-
-
+colnames(health_mmets)[2:length(health_mmets)] <- local_listOfScenarios
+colnames(PA_mmets)[2:length(PA_mmets)] <- local_listOfScenarios
