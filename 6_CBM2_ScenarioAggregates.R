@@ -15,8 +15,8 @@ bl1 <- bl
 bl1$HHoldGOR_B02ID <- 0
 bl <- rbind(bl, bl1)
 
-bl.indiv <- data.frame (unique(bl[c("ID", "HHoldGOR_B02ID")])) 
-#sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID from bl GROUP BY bl.ID, bl.HHoldGOR_B02ID')
+bl.indiv <- sqldf("Select ID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, HHoldGOR_B02ID from bl Group by ID,
+HHoldGOR_B02ID")
 
 carMiles <- carMilesR <- carMilesCycledAggr <- 
   milesCycled.pers <- METh <- METhincr <- MMETh <- CO2.Tm <- 
@@ -26,8 +26,6 @@ carMiles <- carMilesR <- carMilesCycledAggr <-
 #transforms MainMode_B04ID >> to our own modes
 lookup <- data.frame(MainMode_B04ID=c(1,2,3,4,5,6,7,8,9,10,11,12,13),modefinal=c(1,2,3,4,3,7,5,5,5,6,6,7,7))
 bl$MainMode_Reduced <- lookup$modefinal[match(bl$MainMode_B04ID, lookup$MainMode_B04ID)]
-bl_backup <- bl
-
 
 carMiles0 <- sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.TripDisIncSW) as carMiles0 FROM bl WHERE bl.MainMode_B04ID IN (3,4,5,12) GROUP BY bl.ID, bl.HHoldGOR_B02ID')
 #carMiles0 <- left_join(bl.indiv, carMiles0, by=c('ID, HHoldGOR_B02ID'))
@@ -39,6 +37,16 @@ METh0 <-  sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.METh) AS METh0 FROM bl
 
 TripTotalTime0 <- sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.TripTotalTime) AS TripTotalTime0 FROM bl GROUP BY bl.ID, bl.HHoldGOR_B02ID')
 
+# Select only interested columns for the aggregate files
+bl <- subset(bl, select = c(ID, HHoldGOR_B02ID, TripDisIncSW, MainMode_B04ID, Cycled, MMETh, physical_activity_mmets))
+
+# Add additional columns for baseline
+bl$now_cycle <- 0
+bl$ebike <- 0
+
+# To include to baseline columns
+# METh
+# tbl$TripTotalTime1
 
 AggScenarios6(bl, "baseline")
 
@@ -54,36 +62,34 @@ for (i1 in 1:length(listOfScenarios)) {
   
   tbl$now_cycle <- sc$now_cycle
   tbl$ebike <- sc$ebike
-  tbl$cyclist <- sc$cyclist
+  #tbl$cyclist <- sc$cyclist
   tbl$METh <- sc$METh
   tbl$MMETh <- sc$MMETh
   tbl$TripTotalTime1 <- sc$TripTotalTime1
   AggScenarios6(tbl, as.character(listOfScenarios[i1]))
   
-  if ((i1%%1)==0) {
-    
-    message('no files: ',i1)
-  }
-
+  message('Scenario: ',as.character(listOfScenarios[i1]))
+  
 }  #END main loop
 
 #add baseline (1st colum of results)
 local_listOfScenarios <- c('baseline', listOfScenarios)
 
-colnames(carMiles)[2:length(carMiles)] <- local_listOfScenarios
-colnames(carMilesR)[2:length(carMilesR)] <- local_listOfScenarios
-colnames(carMilesCycledAggr)[2:length(carMilesCycledAggr)] <- local_listOfScenarios
-colnames(milesCycled.pers)[2:length(milesCycled.pers)] <- local_listOfScenarios
-colnames(METh)[2:length(METh)] <- local_listOfScenarios
+scenarioStartingIndex <- ncol(bl.indiv) + 1
 
-colnames(METhincr)[2:length(METhincr)] <- local_listOfScenarios
-colnames(MMETh)[2:length(MMETh)] <- local_listOfScenarios
-colnames(CO2.Tm)[2:length(CO2.Tm)] <- local_listOfScenarios
-# colnames(CO2.R)[2:length(CO2.R)] <- local_listOfScenarios[1:(length(CO2.R)-1)]
+colnames(carMiles)[scenarioStartingIndex:length(carMiles)] <- local_listOfScenarios
+colnames(MMETh)[scenarioStartingIndex:length(MMETh)] <- local_listOfScenarios
+colnames(CO2.Tm)[scenarioStartingIndex:length(CO2.Tm)] <- local_listOfScenarios
+colnames(PA_mmets)[scenarioStartingIndex:length(PA_mmets)] <- local_listOfScenarios
 
-colnames(TripDisIncSW)[2:length(TripDisIncSW)] <- local_listOfScenarios
-colnames(TripTotalTime1)[2:length(TripTotalTime1)] <- local_listOfScenarios
-colnames(timeSaved.Total.h)[2:length(timeSaved.Total.h)] <- local_listOfScenarios
 
-colnames(health_mmets)[2:length(health_mmets)] <- local_listOfScenarios
-colnames(PA_mmets)[2:length(PA_mmets)] <- local_listOfScenarios
+# colnames(carMiles)[scenarioStartingIndex:length(carMiles)] <- local_listOfScenarios
+# colnames(carMilesR)[scenarioStartingIndex:length(carMilesR)] <- local_listOfScenarios
+# colnames(carMilesCycledAggr)[scenarioStartingIndex:length(carMilesCycledAggr)] <- local_listOfScenarios
+# colnames(milesCycled.pers)[scenarioStartingIndex:length(milesCycled.pers)] <- local_listOfScenarios
+# colnames(METh)[scenarioStartingIndex:length(METh)] <- local_listOfScenarios
+# colnames(METhincr)[scenarioStartingIndex:length(METhincr)] <- local_listOfScenarios
+# colnames(TripDisIncSW)[scenarioStartingIndex:length(TripDisIncSW)] <- local_listOfScenarios
+# colnames(TripTotalTime1)[scenarioStartingIndex:length(TripTotalTime1)] <- local_listOfScenarios
+# colnames(timeSaved.Total.h)[scenarioStartingIndex:length(timeSaved.Total.h)] <- local_listOfScenarios
+# colnames(health_mmets)[scenarioStartingIndex:length(health_mmets)] <- local_listOfScenarios
