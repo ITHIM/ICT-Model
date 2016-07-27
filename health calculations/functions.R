@@ -331,7 +331,7 @@ create_trips <-
   function (bl, lObj)
   {
     
-    bl <- subset(bl, select = c(ID, Sex_B01ID, EthGroupTS_B02ID, NSSec_B03ID, MainMode_Reduced))
+    bl <- subset(bl, select = c(ID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, MainMode_Reduced, Cycled, HHoldGOR_B02ID))
     
     for (i in 1:length(lObj)){
       tbl <- bl
@@ -339,7 +339,8 @@ create_trips <-
       tbl$now_cycle <- sc$now_cycle
       tbl$ebike <- sc$ebike
       tbl$cyclist <- sc$cyclist
-      tbl[tbl$now_cycle == 1 | tbl$cyclist == 1 ,]$MainMode_Reduced <- 2
+      # f$now_cycle==1 | f$Cycled==1)
+      tbl[tbl$now_cycle == 1 | tbl$Cycled == 1 ,]$MainMode_Reduced <- 2
       if (nrow(tbl[tbl$ebike == 1,]) > 0)
         tbl[tbl$ebike == 1,]$MainMode_Reduced <- 2.5
       
@@ -349,9 +350,3 @@ create_trips <-
     bl
     
   }
-
-
-
-
-
-
