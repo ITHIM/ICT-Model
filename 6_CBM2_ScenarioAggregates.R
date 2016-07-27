@@ -82,6 +82,7 @@ colnames(carMiles)[scenarioStartingIndex:length(carMiles)] <- local_listOfScenar
 colnames(MMETh)[scenarioStartingIndex:length(MMETh)] <- local_listOfScenarios
 colnames(CO2.Tm)[scenarioStartingIndex:length(CO2.Tm)] <- local_listOfScenarios
 colnames(PA_mmets)[scenarioStartingIndex:length(PA_mmets)] <- local_listOfScenarios
+colnames(health_mmets)[scenarioStartingIndex:length(health_mmets)] <- local_listOfScenarios
 
 # Remove newly created local baseline file
 rm(local_bl)
