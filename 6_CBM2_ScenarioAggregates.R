@@ -38,22 +38,23 @@ METh0 <-  sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.METh) AS METh0 FROM bl
 TripTotalTime0 <- sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.TripTotalTime) AS TripTotalTime0 FROM bl GROUP BY bl.ID, bl.HHoldGOR_B02ID')
 
 # Select only interested columns for the aggregate files
-bl <- subset(bl, select = c(ID, HHoldGOR_B02ID, TripDisIncSW, MainMode_B04ID, Cycled, MMETh, physical_activity_mmets))
+# in a new local variable - so that baseline object 'bl' remains unchanged
+local_bl <- subset(bl, select = c(ID, HHoldGOR_B02ID, TripDisIncSW, MainMode_B04ID, Cycled, MMETh, physical_activity_mmets))
 
 # Add additional columns for baseline
-bl$now_cycle <- 0
-bl$ebike <- 0
+local_bl$now_cycle <- 0
+local_bl$ebike <- 0
 
 # To include to baseline columns
 # METh
 # tbl$TripTotalTime1
 
-AggScenarios6(bl, "baseline")
+AggScenarios6(local_bl, "baseline")
 
 for (i1 in 1:length(listOfScenarios)) {
 
   #DATA AGGREGATES
-  tbl <- bl
+  tbl <- local_bl
   sc <- get(as.character(listOfScenarios[i1]) )
   
   # Temporary solution
@@ -81,6 +82,9 @@ colnames(carMiles)[scenarioStartingIndex:length(carMiles)] <- local_listOfScenar
 colnames(MMETh)[scenarioStartingIndex:length(MMETh)] <- local_listOfScenarios
 colnames(CO2.Tm)[scenarioStartingIndex:length(CO2.Tm)] <- local_listOfScenarios
 colnames(PA_mmets)[scenarioStartingIndex:length(PA_mmets)] <- local_listOfScenarios
+
+# Remove newly created local baseline file
+rm(local_bl)
 
 
 # colnames(carMiles)[scenarioStartingIndex:length(carMiles)] <- local_listOfScenarios
