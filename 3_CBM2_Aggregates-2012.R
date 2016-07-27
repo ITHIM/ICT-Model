@@ -10,37 +10,7 @@ library(sqldf)
 #read baseline (short walks already included)
 baseline <- readRDS('bl2014_p.Rds')   #80+ people + Wales/Scotland (already removed)
 #baseline <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
-
-fnotrips  <- readRDS('people_notrips2014.Rds')
-#fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
-
-# Remove 80+ age group + Wales/Scotland
-fnotrips <- subset(fnotrips, subset = Age_B01ID < 20 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
-
-fnotrips$agesex <- ""
-
-fnotrips$Age <- ""
-
-fnotrips$Sex <- ""
-
-fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15) & fnotrips$Sex_B01ID == 1,]$agesex <- '16.59Male'
-
-fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15) & fnotrips$Sex_B01ID == 2,]$agesex <- '16.59Female'
-
-fnotrips[fnotrips$Age_B01ID >= 16 & fnotrips$Sex_B01ID == 1,]$agesex <- '60plusMale'
-
-fnotrips[fnotrips$Age_B01ID >= 16 & fnotrips$Sex_B01ID == 2,]$agesex <- '60plusFemale'
-
-fnotrips$Age <- 0
-
-fnotrips[fnotrips$Sex_B01ID == 1,]$Sex <- "Male"
-
-fnotrips[fnotrips$Sex_B01ID == 2,]$Sex <- "Female"
-
-
-fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15),]$Age <- '16.59'
-fnotrips[fnotrips$Age_B01ID >= 16,]$Age <- '60plus'
-
+rm(bl)
 
 #create regions list (to process regional aggregates)
 regions <- sort(unique(baseline$HHoldGOR_B02ID))
@@ -152,7 +122,7 @@ listOfScenarios <- c('baseline', listOfScenarios)
 
 for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
   
-    for (j1 in regions)  {
+  for (j1 in regions)  {
     sc <- get(as.character(listOfScenarios[i1]) )
     tbl <- baseline
     
@@ -177,7 +147,7 @@ for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
     #df <- rbind(df,info)   #consolidates content
     num=num+1
     
-                    } #regions
+  } #regions
   
   
   if ((i1%%1) == 0) {message('no scenarios finished: ',i1)  }
@@ -199,7 +169,7 @@ colnames(df) <-c('Scenario','MS','ebike','equity',
                  "Region" )
 
 
-
-write.csv(df,file='ICT_aggr_reg.csv', row.names=F)
+saveRDS(df,file='ICT_aggr_reg.Rds')
+#write.csv(df,file='ICT_aggr_reg.csv', row.names=F)
 
 cat('All done !')
