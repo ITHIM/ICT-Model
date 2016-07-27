@@ -92,11 +92,11 @@ AggScenarios6 <- function (f, fname) {
 #   
 #   timeSaved.Total.h <<- cbind(timeSaved.Total.h, f.timeSaved)
 #   
-#   # 12-Health_mmts   
-#   f.hmmets <- sqldf('Select f.ID, f.HHoldGOR_B02ID, f.health_mmets from f GROUP BY f.ID, f.HHoldGOR_B02ID')
-#   f.hmmets$health_mmets <- f.hmmets$health_mmets + f.MMETh$mmets
-#   #colnames(f.hmmets$health_mmets) <- fname
-#   health_mmets <<- cbind(health_mmets,f.hmmets$health_mmets)
+  # 12-Health_mmts   
+  f.hmmets <- sqldf('Select f.ID, f.HHoldGOR_B02ID, f.health_mmets from f GROUP BY f.ID, f.HHoldGOR_B02ID')
+  f.hmmets$health_mmets <- f.hmmets$health_mmets + f.MMETh$mmets
+  #colnames(f.hmmets$health_mmets) <- fname
+  health_mmets <<- cbind(health_mmets,f.hmmets$health_mmets)
   
   # 13-PA_mmets
   f.PA_mmets <- sqldf('Select f.ID, f.HHoldGOR_B02ID, f.physical_activity_mmets from f GROUP BY f.ID, f.HHoldGOR_B02ID')
