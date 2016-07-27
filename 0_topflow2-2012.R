@@ -43,7 +43,7 @@ Pcyc0.eq0 <- oddsCycling[1:4]
 Pcyc0.eq1 <- rep(oddsCycling[5], 4)
 
 # Baseline=NTS years 2011-2014 + individuals between 18-84 y.o + not Wales/Scotland 
-bl <- readRDS('bl2014_v2.Rds')
+bl <- readRDS('bl2014_v2.rds')
 bl = subset(bl, subset = Age_B01ID < 21 & HHoldGOR_B02ID!=10  & HHoldGOR_B02ID!=11)
 bl$Age[bl$Age_B01ID<16] <- '16.59'
 bl$Age[bl$Age_B01ID>=16] <- '60plus'
@@ -78,7 +78,7 @@ baseline <- rbind(baseline,shortwalks)
 baseline <- baseline[order(baseline$ID),]
 
 
-fnotrips  <- readRDS('people_notrips2014_v2.Rds')
+fnotrips  <- readRDS('people_notrips2014_v2.rds')
 #fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
 
 # Remove 85+ age group + Wales/Scotland
@@ -118,7 +118,7 @@ rm(shortwalks, df)
 #Sample before running scenarios -
 
 # Removed NAs from the data.frame
-hsematch <- readRDS('hse-nts_match_v2.Rds')
+hsematch <- readRDS('hse-nts_match_v2.rds')
 #names(hsematch)[c(1,7,8)] <- c('ID', 'health_mmets', 'physical_activity_mmets')
 #hsematch = hsematch[, c(1,7,8)]
 
@@ -162,7 +162,7 @@ baseline$prob[baseline$TravDay==0 ] <- 0
 bl <- baseline
 
 #save PROCESSED baseline in scenarios folder
-saveRDS(bl,file='bl2014_p_v2.Rds')
+saveRDS(bl,file='bl2014_p_v2.rds')
 #write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
 
 
