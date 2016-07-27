@@ -66,6 +66,8 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
     
   }
   
+  rm(baselineSubset)
+  
   # calc DP for whole country treating it as region with id = 0
   
   # set new region value
@@ -81,11 +83,11 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   # add baselineSubset to baselineProcessed
   
   baselineProcessed <- rbind(baselineProcessed, baselineCoutry)
-  
+  rm(baselineCoutry)
   # baselineProcessed shoud be now baseline
   
   baseline <- baselineProcessed
-  
+  rm(baselineProcessed)
   # end of direct probs
   
   baseline$newtime <- baseline$TripDisIncSW / apply(data.frame(baseline$Age, baseline$Sex), 1, function(x) tripspeed(x[1], x[2], 0))
