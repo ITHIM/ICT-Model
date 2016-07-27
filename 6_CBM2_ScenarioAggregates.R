@@ -9,7 +9,7 @@ library(sqldf)
 library(tcltk)
 
 ############   CALCULATE from BASELINE: Individuals
-bl <- readRDS('bl2014_p.Rds')  #needs to be bl2014_p.Rds or bl2014.Rds?
+bl <- readRDS('bl2014_p.rds')  #needs to be bl2014_p.Rds or bl2014.Rds?
 
 bl1 <- bl
 bl1$HHoldGOR_B02ID <- 0
