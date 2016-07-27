@@ -187,7 +187,7 @@ directProbs <- c(0.05, 0.1, 0.15, 0.25, 0.5, 0.75, 1)
 
 # Removing TDR
 # TDR
-# j <- c(1,0.9,0.8,0.7)
+# j  <- c(1,0.9,0.8,0.7)
 
 m <- c(0,1)   #ebikes 
 n <- c(0,1)   #equity
