@@ -8,7 +8,7 @@ library(data.table)
 library(sqldf)
 
 #read baseline (short walks already included)
-baseline <- readRDS('bl2014_p.Rds')   #80+ people + Wales/Scotland (already removed)
+baseline <- readRDS('bl2014_p.rds')   #80+ people + Wales/Scotland (already removed)
 #baseline <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
 rm(bl)
 
@@ -169,7 +169,7 @@ colnames(df) <-c('Scenario','MS','ebike','equity',
                  "Region" )
 
 
-saveRDS(df,file='ICT_aggr_reg.Rds')
+saveRDS(df,file='ICT_aggr_reg.rds')
 #write.csv(df,file='ICT_aggr_reg.csv', row.names=F)
 
 cat('All done !')

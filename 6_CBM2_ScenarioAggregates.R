@@ -9,7 +9,7 @@ library(sqldf)
 library(tcltk)
 
 ############   CALCULATE from BASELINE: Individuals
-bl <- readRDS('bl2014_p.Rds')  #needs to be bl2014_p.Rds or bl2014.Rds?
+bl <- readRDS('bl2014_p.rds')  #needs to be bl2014_p.Rds or bl2014.Rds?
 
 bl1 <- bl
 bl1$HHoldGOR_B02ID <- 0
@@ -82,6 +82,7 @@ colnames(carMiles)[scenarioStartingIndex:length(carMiles)] <- local_listOfScenar
 colnames(MMETh)[scenarioStartingIndex:length(MMETh)] <- local_listOfScenarios
 colnames(CO2.Tm)[scenarioStartingIndex:length(CO2.Tm)] <- local_listOfScenarios
 colnames(PA_mmets)[scenarioStartingIndex:length(PA_mmets)] <- local_listOfScenarios
+colnames(health_mmets)[scenarioStartingIndex:length(health_mmets)] <- local_listOfScenarios
 
 # Remove newly created local baseline file
 rm(local_bl)
