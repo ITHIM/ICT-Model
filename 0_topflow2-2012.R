@@ -9,14 +9,15 @@ source('oddsp.R')             # calculates odds > prob
 source('podds.R')             # calculates prob > odds
 source('bikechoice.R')        #calculates prob of using pushbike/ebike 
 source('directProbs.R')       # used in 1_flowgram2-2012.R
-# depending on: [age-sex-trip distance]
+
+
 library(plyr)
 library(dplyr)  
 library(stringr)
 library(data.table)
 library(sqldf)
 
-#read reference odds
+#read reference odds (varies by age/sex/dist)
 pcycl_baseline <- read.csv('pcycl_baseline2.csv')  #cycling probs file
 pcycl_baseline <- pcycl_baseline[,-1]              #quita columna 1
 
@@ -41,10 +42,21 @@ oddsCycling <- unlist(oddsCycling, use.names = F)
 Pcyc0.eq0 <- oddsCycling[1:4]
 Pcyc0.eq1 <- rep(oddsCycling[5], 4)
 
-# Baseline=NTS years 2011-2014 + individuals between 18-79 y.o + not Wales/Scotland 
-bl <- readRDS('bl2014.Rds')
-bl = subset(bl, subset = Age_B01ID < 20 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
+# Baseline=NTS years 2011-2014 + individuals between 18-84 y.o + not Wales/Scotland 
+bl <- readRDS('bl2014_v2.rds')
+bl = subset(bl, subset = Age_B01ID < 21 & HHoldGOR_B02ID!=10  & HHoldGOR_B02ID!=11)
+bl$Age[bl$Age_B01ID<16] <- '16.59'
+bl$Age[bl$Age_B01ID>=16] <- '60plus'
+bl$Sex[bl$Sex_B01ID==1] <- 'Male'
+bl$Sex[bl$Sex_B01ID==2] <- 'Female'
 
+
+# Read nts age group lookup table
+ag_lookup <- read.csv("nts-adjusted-age-groups.csv", header = T, as.is = T)
+
+# Create a new variable 'age_group' for baseline, which converts numeric age categories into age ranges
+bl$age_group <- ag_lookup$age[match(bl$Age_B01ID, ag_lookup$nts_group)]
+rm(ag_lookup)
 #bl <- read.csv('bl2012_18_84ag_reduced.csv', header=T, as.is = T)
 
 #IMPORTANT: from database -> ID needs to be deleted, IndividualID renamed to ID.
@@ -65,11 +77,12 @@ shortwalks$TripID <-  c(max(baseline$TripID) + 1:nrow(shortwalks))
 baseline <- rbind(baseline,shortwalks)
 baseline <- baseline[order(baseline$ID),]
 
-fnotrips  <- readRDS('people_notrips2014.Rds')
+
+fnotrips  <- readRDS('people_notrips2014_v2.rds')
 #fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
 
-# Remove 80+ age group + Wales/Scotland
-fnotrips <- subset(fnotrips, subset = Age_B01ID < 20 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
+# Remove 85+ age group + Wales/Scotland
+fnotrips <- subset(fnotrips, subset = Age_B01ID < 21 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
 #fnotrips <- subset(fnotrips, subset = Age_B01ID != 21)
 
 fnotrips$agesex <- ""
@@ -105,13 +118,12 @@ rm(shortwalks, df)
 #Sample before running scenarios -
 
 # Removed NAs from the data.frame
-#hsematch <- read.csv('hsematchOnly2mmetsremovedNAs.csv', header = T, as.is = T)
-hsematch <- readRDS('hse-nts_match.Rds')
+hsematch <- readRDS('hse-nts_match_v2.rds')
 #names(hsematch)[c(1,7,8)] <- c('ID', 'health_mmets', 'physical_activity_mmets')
+#hsematch = hsematch[, c(1,7,8)]
+
+#next line commented as people w/o trips already in hse
 hsematch <- rbind(hsematch, subset(fnotrips, select = c(ID, health_mmets, physical_activity_mmets))) #this needed temporarily
-
-#hsematch <- rbind(hsematch, subset(fnotrips, select = c(IndividualID,health_mmets, physical_activity_mmets)))
-
 
 # Remove health_mmets and physical_activity_mmets from fnotrips
 fnotrips$health_mmets <- NULL
@@ -135,12 +147,13 @@ baseline$TripTravelTime1 <-baseline$TripTravelTime
 
 #add mmets column to baseline (& save for having total mmets)
 baseline <-inner_join(baseline,hse1,by='ID')
-
+rm(hse1, hsematch)
 
 #randcycle (used later to calculate if people are cyclists), add col. [prob]
 randcycle <- runif(length(unique(baseline$ID)))
 randcycle <- data.frame(ID=unique(baseline$ID),prob=randcycle)
 baseline <- inner_join(baseline,randcycle,by='ID')
+rm(randcycle)
 
 baseline$prob[baseline$TravDay==0 ] <- 0
 
@@ -149,7 +162,7 @@ baseline$prob[baseline$TravDay==0 ] <- 0
 bl <- baseline
 
 #save PROCESSED baseline in scenarios folder
-saveRDS(bl,file='bl2014_p.Rds')
+saveRDS(bl,file='bl2014_p_v2.rds')
 #write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
 
 
@@ -164,9 +177,9 @@ MMETh0 <- round(sum(baseline$MMETh),1)
 # Using new Christian's average CO2 value of 0.31 grams
 CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-4,2)   #(in metric Tons)
 
-df <- data.frame()
+# df <- data.frame()
 
-i <- c(2,4,8,16,32,64)
+#i <- c(2,4,8,16,32,64)
 
 # TODO: directProbs temp values - should be replaced with the final values
 
@@ -174,11 +187,22 @@ directProbs <- c(0.05, 0.1, 0.15, 0.25, 0.5, 0.75, 1)
 
 # Removing TDR
 # TDR
-# j <- c(1,0.9,0.8,0.7)
+# j  <- c(1,0.9,0.8,0.7)
 
 m <- c(0,1)   #ebikes 
 n <- c(0,1)   #equity
 num = 1
+
+#keep only used variables
+baseline <-baseline[ , c('Age_B01ID', 'Sex_B01ID', 'HHoldGOR_B02ID', 'CarAccess_B01ID',
+                         'NSSec_B03ID', 'IndIncome2002_B02ID', 'EthGroupTS_B02ID', 'ID',
+                         'MainMode_B03ID', 'MainMode_B04ID', 'MainMode_B11ID', 
+                         'TripTotalTime', 'TripTravTime', 'TripDisIncSW',
+                         'agesex', 'Cycled', 'METh', 'MMETh', 'cyclist',
+                         'Age', 'Sex', 'age_group',
+                         'TripTotalTime1', 'TripTravelTime1', 
+                         'health_mmets', 'physical_activity_mmets', 'prob')]
+
 
 listOfScenarios <- list()
 for (ebikes in m) {

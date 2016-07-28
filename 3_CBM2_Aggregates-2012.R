@@ -8,47 +8,18 @@ library(data.table)
 library(sqldf)
 
 #read baseline (short walks already included)
-baseline <- readRDS('bl2014_p.Rds')
+baseline <- readRDS('bl2014_p.rds')   #80+ people + Wales/Scotland (already removed)
 #baseline <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
-
-fnotrips  <- readRDS('people_notrips2014.Rds')
-#fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
-
-# Remove 80+ age group + Wales/Scotland
-fnotrips <- subset(fnotrips, subset = Age_B01ID < 20 & HHoldGOR_B02ID!=10 & HHoldGOR_B02ID!=11)
-
-fnotrips$agesex <- ""
-
-fnotrips$Age <- ""
-
-fnotrips$Sex <- ""
-
-fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15) & fnotrips$Sex_B01ID == 1,]$agesex <- '16.59Male'
-
-fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15) & fnotrips$Sex_B01ID == 2,]$agesex <- '16.59Female'
-
-fnotrips[fnotrips$Age_B01ID >= 16 & fnotrips$Sex_B01ID == 1,]$agesex <- '60plusMale'
-
-fnotrips[fnotrips$Age_B01ID >= 16 & fnotrips$Sex_B01ID == 2,]$agesex <- '60plusFemale'
-
-fnotrips$Age <- 0
-
-fnotrips[fnotrips$Sex_B01ID == 1,]$Sex <- "Male"
-
-fnotrips[fnotrips$Sex_B01ID == 2,]$Sex <- "Female"
-
-
-fnotrips[(fnotrips$Age_B01ID >= 6 & fnotrips$Age_B01ID <= 15),]$Age <- '16.59'
-fnotrips[fnotrips$Age_B01ID >= 16,]$Age <- '60plus'
-
+rm(bl)
 
 #create regions list (to process regional aggregates)
 regions <- sort(unique(baseline$HHoldGOR_B02ID))
-regions <- c('all',regions)[-c(10,11)]
+regions <- c(0,regions)[-c(10,11)]    #regions <- c('all',regions)[-c(10,11)]
 
 
-#define parameters of interest (33)
-params <-         c('nopeople', 'no.males', 'no.females', 'no.white', 'no.nonwhite', 
+
+#define parameters of interest (33 + 1)
+params <-         c('region', 'nopeople', 'no.males', 'no.females', 'no.white', 'no.nonwhite', 
                     'no.caraccess', 'no.noncaraccess', 
                     'no.nssec1', 'no.nssec2','no.nssec3', 'no.nssec4', 'no.nssec5',
                     'notripspeople', 'no.males.wotrips', 'no.females.wotrips', 'no.white.wotrips','no.nonwhite.wotrips',
@@ -70,15 +41,17 @@ row.names(aggr) <- regions
 blreg <-  baseline
 fnotripsreg <-  fnotrips
 
+# calculate 33 key figures (nat. & by region)
 for (i in regions) {
   
   #filter data sources for region                      
-  if (i!='all')  { blreg <- subset(baseline, subset = baseline$HHoldGOR_B02ID==i)
+  if (i!=0)  { blreg <- subset(baseline, subset = baseline$HHoldGOR_B02ID==i)     #if (i!='all')
   fnotripsreg <- subset(fnotrips, subset = fnotrips$HHoldGOR_B02ID==i)
   }  
   
   ichar <- as.character(i)
   
+  aggr[ichar, 'region'] <-  i
   # nopeople
   aggr[ichar, 'nopeople'] <-  length(unique(blreg$ID)) 
   
@@ -139,24 +112,25 @@ for (i in regions) {
   
   aggr[ichar, 'TripTotalTime0'] <- round(sum(blreg$TripTotalTime),1)
   
-}   #regions loop
+}   #regions loop for baseline key aggregates
 
 
 #DF to hold results
 df <- data.frame()
-df <- AggCalc(baseline, "baseline", "all")
-df = as.data.frame( t(df), stringsAsFactors = F)
+num=0 
+listOfScenarios <- c('baseline', listOfScenarios) 
 
 for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
-  
-  #DATA AGGREGATES
   
   for (j1 in regions)  {
     sc <- get(as.character(listOfScenarios[i1]) )
     tbl <- baseline
     
-    if (j1!='all')  { tbl <- subset(baseline, subset = baseline$HHoldGOR_B02ID==j1)
-    sc <- subset(sc, subset = sc$HHoldGOR_B02ID==j1) }  
+    if (i1!=1 | j1!=0)  { sc <- subset(sc, subset= sc$HHoldGOR_B02ID==j1)   }
+    
+    if (j1!=0)  { tbl <- subset(baseline, subset = baseline$HHoldGOR_B02ID==j1)  } #(j1!='all')
+    
+    
     
     tbl$now_cycle <- sc$now_cycle
     tbl$ebike <- sc$ebike
@@ -167,19 +141,20 @@ for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
     # keeping 6 relevant variables from scenario
     
     info <- AggCalc(tbl, as.character(listOfScenarios[i1]), j1)
+    if (num==0) {df<- info
+    } else {df <- rbind(df,info)     }
     
-    df <- rbind(df,info)   #consolidates content
+    #df <- rbind(df,info)   #consolidates content
+    num=num+1
     
-  }
+  } #regions
   
   
-  if ((i1%%1) == 0) {
-    message('no scenarios finished: ',i1)
-  }
+  if ((i1%%1) == 0) {message('no scenarios finished: ',i1)  }
   
-}  #END main loop
+}  #scenarios
 
-
+df <-as.data.frame(df)
 rownames(df) <- NULL
 
 colnames(df) <-c('Scenario','MS','ebike','equity',
@@ -191,10 +166,10 @@ colnames(df) <-c('Scenario','MS','ebike','equity',
                  "Transport CO2 Per Person (per week)",
                  "Total Time Saved in minutes by Cyclists (per week)",
                  "% Cyclists in the Total Population","% of Trips by Bicycle",
-                 "Region"
-)
+                 "Region" )
 
 
-write.csv(df,file='ICT_aggr_reg.csv', row.names=F)
+saveRDS(df,file='ICT_aggr_reg.rds')
+#write.csv(df,file='ICT_aggr_reg.csv', row.names=F)
 
 cat('All done !')
