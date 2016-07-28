@@ -1,0 +1,4 @@
+"location_name","cause","cause_name","sex","sex_name","age","age_name","year","nm_mean","rt_mean","pc_mean","metric_name"
+"East Midlands",294,"All causes",1,"Male",22,"All Ages",2013,599899.74690604,26601.222021709,1,"DALYs"
+"East Midlands",294,"All causes",2,"Female",22,"All Ages",2013,594616.11462515,25677.574091793,1,"DALYs"
+"East Midlands",294,"All causes",3,"Both",22,"All Ages",2013,1194515.8615312,26133.280954139,1,"DALYs"

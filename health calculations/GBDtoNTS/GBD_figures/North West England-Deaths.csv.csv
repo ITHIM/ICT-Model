@@ -1,0 +1,4 @@
+"location_name","cause","cause_name","sex","sex_name","age","age_name","year","nm_mean","rt_mean","pc_mean","metric_name"
+"North West England",294,"All causes",1,"Male",22,"All Ages",2013,33663.214205772,967.000999856,1,"Deaths"
+"North West England",294,"All causes",2,"Female",22,"All Ages",2013,35620.475578074,992.604185919,1,"Deaths"
+"North West England",294,"All causes",3,"Both",22,"All Ages",2013,69283.689783845,979.997050154,1,"Deaths"
