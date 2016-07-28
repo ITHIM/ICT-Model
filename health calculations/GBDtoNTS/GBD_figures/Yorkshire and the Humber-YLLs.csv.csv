@@ -1,0 +1,4 @@
+"location_name","cause","cause_name","sex","sex_name","age","age_name","year","nm_mean","rt_mean","pc_mean","metric_name"
+"Yorkshire and the Humber",294,"All causes",1,"Male",22,"All Ages",2013,390000.42125036,14886.484866512,1,"YLLs"
+"Yorkshire and the Humber",294,"All causes",2,"Female",22,"All Ages",2013,314402.17776245,11677.697762218,1,"YLLs"
+"Yorkshire and the Humber",294,"All causes",3,"Both",22,"All Ages",2013,704402.59901281,13260.194254535,1,"YLLs"

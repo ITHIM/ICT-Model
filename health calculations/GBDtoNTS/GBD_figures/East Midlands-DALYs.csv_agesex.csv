@@ -1,0 +1,67 @@
+location_name,cause,cause_name,sex,sex_name,age,age_name,year,nm_mean,rt_mean,pc_mean,metric_name
+East Midlands,294,All causes,1,Male,5,1 to 4,2013,4185.66712,3867.299888,1,DALYs
+East Midlands,294,All causes,2,Female,5,1 to 4,2013,3552.816858,3435.732279,1,DALYs
+East Midlands,294,All causes,3,Both,5,1 to 4,2013,7738.483978,3656.434978,1,DALYs
+East Midlands,294,All causes,1,Male,6,5 to 9,2013,7119.003111,5413.378784,1,DALYs
+East Midlands,294,All causes,2,Female,6,5 to 9,2013,5617.796968,4457.580207,1,DALYs
+East Midlands,294,All causes,3,Both,6,5 to 9,2013,12736.80008,4945.647834,1,DALYs
+East Midlands,294,All causes,1,Male,7,10 to 14,2013,9265.248466,7187.742844,1,DALYs
+East Midlands,294,All causes,2,Female,7,10 to 14,2013,8175.511853,6637.401984,1,DALYs
+East Midlands,294,All causes,3,Both,7,10 to 14,2013,17440.76032,6918.827443,1,DALYs
+East Midlands,294,All causes,1,Male,8,15 to 19,2013,13739.82023,9320.052345,1,DALYs
+East Midlands,294,All causes,2,Female,8,15 to 19,2013,13163.85751,9483.641142,1,DALYs
+East Midlands,294,All causes,3,Both,8,15 to 19,2013,26903.67774,9399.384525,1,DALYs
+East Midlands,294,All causes,1,Male,9,20 to 24,2013,19294.17789,11921.68661,1,DALYs
+East Midlands,294,All causes,2,Female,9,20 to 24,2013,17824.82805,11540.04996,1,DALYs
+East Midlands,294,All causes,3,Both,9,20 to 24,2013,37119.00594,11735.32075,1,DALYs
+East Midlands,294,All causes,1,Male,10,25 to 29,2013,18064.02217,13011.01877,1,DALYs
+East Midlands,294,All causes,2,Female,10,25 to 29,2013,17494.30646,12456.41878,1,DALYs
+East Midlands,294,All causes,3,Both,10,25 to 29,2013,35558.32863,12732.1224,1,DALYs
+East Midlands,294,All causes,1,Male,11,30 to 34,2013,19557.65952,14154.4343,1,DALYs
+East Midlands,294,All causes,2,Female,11,30 to 34,2013,19507.6711,13956.49453,1,DALYs
+East Midlands,294,All causes,3,Both,11,30 to 34,2013,39065.33062,14054.89417,1,DALYs
+East Midlands,294,All causes,1,Male,12,35 to 39,2013,20178.03248,15540.84876,1,DALYs
+East Midlands,294,All causes,2,Female,12,35 to 39,2013,20988.36796,15942.62523,1,DALYs
+East Midlands,294,All causes,3,Both,12,35 to 39,2013,41166.40044,15743.12807,1,DALYs
+East Midlands,294,All causes,1,Male,13,40 to 44,2013,29356.39076,18231.49323,1,DALYs
+East Midlands,294,All causes,2,Female,13,40 to 44,2013,30390.89102,18340.94463,1,DALYs
+East Midlands,294,All causes,3,Both,13,40 to 44,2013,59747.28179,18287.00274,1,DALYs
+East Midlands,294,All causes,1,Male,14,45 to 49,2013,35990.3919,20810.65364,1,DALYs
+East Midlands,294,All causes,2,Female,14,45 to 49,2013,36042.26674,20440.76939,1,DALYs
+East Midlands,294,All causes,3,Both,14,45 to 49,2013,72032.65863,20623.92004,1,DALYs
+East Midlands,294,All causes,1,Male,15,50 to 54,2013,40314.2291,25589.72322,1,DALYs
+East Midlands,294,All causes,2,Female,15,50 to 54,2013,38295.30404,23844.987,1,DALYs
+East Midlands,294,All causes,3,Both,15,50 to 54,2013,78609.53314,24708.96335,1,DALYs
+East Midlands,294,All causes,1,Male,16,55 to 59,2013,41480.44938,30883.10867,1,DALYs
+East Midlands,294,All causes,2,Female,16,55 to 59,2013,37894.63474,28029.25755,1,DALYs
+East Midlands,294,All causes,3,Both,16,55 to 59,2013,79375.08412,29451.5115,1,DALYs
+East Midlands,294,All causes,1,Male,17,60 to 64,2013,55174.69754,39531.76092,1,DALYs
+East Midlands,294,All causes,2,Female,17,60 to 64,2013,47836.38519,33203.38563,1,DALYs
+East Midlands,294,All causes,3,Both,17,60 to 64,2013,103011.0827,36317.3703,1,DALYs
+East Midlands,294,All causes,1,Male,18,65 to 69,2013,65966.39274,49784.73597,1,DALYs
+East Midlands,294,All causes,2,Female,18,65 to 69,2013,55840.28483,41280.44487,1,DALYs
+East Midlands,294,All causes,3,Both,18,65 to 69,2013,121806.6776,45488.64674,1,DALYs
+East Midlands,294,All causes,1,Male,19,70 to 74,2013,57323.77076,64428.78299,1,DALYs
+East Midlands,294,All causes,2,Female,19,70 to 74,2013,49265.5151,51407.12332,1,DALYs
+East Midlands,294,All causes,3,Both,19,70 to 74,2013,106589.2859,57676.21082,1,DALYs
+East Midlands,294,All causes,1,Male,20,75 to 79,2013,57456.5863,81979.39128,1,DALYs
+East Midlands,294,All causes,2,Female,20,75 to 79,2013,50996.87269,63305.74089,1,DALYs
+East Midlands,294,All causes,3,Both,20,75 to 79,2013,108453.459,71993.64703,1,DALYs
+East Midlands,294,All causes,1,Male,21,80 plus,2013,92970.81515,107480.0467,1,DALYs
+East Midlands,294,All causes,2,Female,21,80 plus,2013,132279.5839,95272.85095,1,DALYs
+East Midlands,294,All causes,3,Both,21,80 plus,2013,225250.3991,99958.71626,1,DALYs
+East Midlands,294,All causes,1,Male,22,All Ages,2013,599899.7469,26601.22202,1,DALYs
+East Midlands,294,All causes,2,Female,22,All Ages,2013,594616.1146,25677.57409,1,DALYs
+East Midlands,294,All causes,3,Both,22,All Ages,2013,1194515.862,26133.28095,1,DALYs
+East Midlands,294,All causes,1,Male,23,5-14 years,2013,16384.25158,6291.688945,1,DALYs
+East Midlands,294,All causes,2,Female,23,5-14 years,2013,13793.30882,5535.006267,1,DALYs
+East Midlands,294,All causes,3,Both,23,5-14 years,2013,30177.5604,5921.669801,1,DALYs
+East Midlands,294,All causes,1,Male,24,15-49 years,2013,156180.4949,14873.28595,1,DALYs
+East Midlands,294,All causes,2,Female,24,15-49 years,2013,155412.1888,14841.30338,1,DALYs
+East Midlands,294,All causes,3,Both,24,15-49 years,2013,311592.6838,14857.31688,1,DALYs
+East Midlands,294,All causes,1,Male,25,50-69 years,2013,202935.7688,35986.05828,1,DALYs
+East Midlands,294,All causes,2,Female,25,50-69 years,2013,179866.6088,31273.58185,1,DALYs
+East Midlands,294,All causes,3,Both,25,50-69 years,2013,382802.3776,33606.63086,1,DALYs
+East Midlands,294,All causes,1,Male,26,70+ years,2013,207751.1722,84603.2052,1,DALYs
+East Midlands,294,All causes,2,Female,26,70+ years,2013,232541.9717,73768.19112,1,DALYs
+East Midlands,294,All causes,3,Both,26,70+ years,2013,440293.1439,78512.61712,1,DALYs
