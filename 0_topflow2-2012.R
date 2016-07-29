@@ -50,13 +50,6 @@ bl$Age[bl$Age_B01ID>=16] <- '60plus'
 bl$Sex[bl$Sex_B01ID==1] <- 'Male'
 bl$Sex[bl$Sex_B01ID==2] <- 'Female'
 
-
-# Read nts age group lookup table
-ag_lookup <- read.csv("nts-adjusted-age-groups.csv", header = T, as.is = T)
-
-# Create a new variable 'age_group' for baseline, which converts numeric age categories into age ranges
-bl$age_group <- ag_lookup$age[match(bl$Age_B01ID, ag_lookup$nts_group)]
-rm(ag_lookup)
 #bl <- read.csv('bl2012_18_84ag_reduced.csv', header=T, as.is = T)
 
 #IMPORTANT: from database -> ID needs to be deleted, IndividualID renamed to ID.
@@ -77,7 +70,7 @@ shortwalks$TripID <-  c(max(baseline$TripID) + 1:nrow(shortwalks))
 baseline <- rbind(baseline,shortwalks)
 baseline <- baseline[order(baseline$ID),]
 
-
+#add people w/o trips to baseline
 fnotrips  <- readRDS('people_notrips2014_v2.rds')
 #fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
 
@@ -123,13 +116,21 @@ hsematch <- readRDS('hse-nts_match_v2.rds')
 #hsematch = hsematch[, c(1,7,8)]
 
 #next line commented as people w/o trips already in hse
-hsematch <- rbind(hsematch, subset(fnotrips, select = c(ID, health_mmets, physical_activity_mmets))) #this needed temporarily
+#hsematch <- rbind(hsematch, subset(fnotrips, select = c(ID, health_mmets, physical_activity_mmets))) 
 
 # Remove health_mmets and physical_activity_mmets from fnotrips
 fnotrips$health_mmets <- NULL
 fnotrips$physical_activity_mmets <- NULL
 
 baseline <- rbind.fill(baseline, fnotrips)
+
+# Read nts age group lookup table
+ag_lookup <- read.csv("nts-adjusted-age-groups.csv", header = T, as.is = T)
+
+# Create a new variable 'age_group' for baseline, which converts numeric age categories into age ranges
+baseline$age_group <- ag_lookup$age[match(baseline$Age_B01ID, ag_lookup$nts_group)]
+rm(ag_lookup)
+
 
 baseline[is.na(baseline)] <- 0
 baseline$TripID  <- as.numeric(factor(baseline$TripID))
@@ -159,10 +160,12 @@ baseline$prob[baseline$TravDay==0 ] <- 0
 
 
 #keep bl as backup for future scenarios core values
-bl <- baseline
+# bl <- baseline
+# 
+# #save PROCESSED baseline in scenarios folder
+# saveRDS(bl,file='bl2014_p_v2.rds')
+# rm(bl)
 
-#save PROCESSED baseline in scenarios folder
-saveRDS(bl,file='bl2014_p_v2.rds')
 #write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
 
 
@@ -205,13 +208,14 @@ baseline <-baseline[ , c('Age_B01ID', 'Sex_B01ID', 'HHoldGOR_B02ID', 'CarAccess_
 
 
 listOfScenarios <- list()
+
 for (ebikes in m) {
   for (equity in n) {
     for  (MS in directProbs) { # all occurences of MS should be replaced
       cat(ebikes, equity, MS, "\n") 
       scenario_name <- paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep="")
       assign(scenario_name,flowgram(baseline, MS,ebikes,equity, pcycl_baseline))      
-      
+
       listOfScenarios[[num]] <- scenario_name
       num <- num + 1
     }  
