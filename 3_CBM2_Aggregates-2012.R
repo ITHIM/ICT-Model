@@ -117,13 +117,15 @@ for (i in regions) {
 
 #DF to hold results
 df <- data.frame()
-num=0 
-listOfScenarios <- c('baseline', listOfScenarios) 
+num=0
+# Creata local variable
+# Please don't amend listOfScenarios, as it's a global variable
+local_listOfScenarios <- c('baseline', listOfScenarios) 
 
-for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
+for (i1 in 1:length(local_listOfScenarios)) {  #reading files for aggregates
   
   for (j1 in regions)  {
-    sc <- get(as.character(listOfScenarios[i1]) )
+    sc <- get(as.character(local_listOfScenarios[i1]) )
     tbl <- baseline
     
     if (i1!=1 | j1!=0)  { sc <- subset(sc, subset= sc$HHoldGOR_B02ID==j1)   }
@@ -140,7 +142,7 @@ for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
     tbl$TripTotalTime1 <- sc$TripTotalTime1
     # keeping 6 relevant variables from scenario
     
-    info <- AggCalc(tbl, as.character(listOfScenarios[i1]), j1)
+    info <- AggCalc(tbl, as.character(local_listOfScenarios[i1]), j1)
     if (num==0) {df<- info
     } else {df <- rbind(df,info)     }
     
