@@ -62,4 +62,14 @@ saveRDS(yll_red, "../ICT/app/data/csv/yll_reduction.rds")
 saveRDS(death, "../ICT/app/data/csv/deaths.rds")
 saveRDS(death_red, "../ICT/app/data/csv/deaths_reduction.rds")
 
+# 
+# Aggregate file
+
+# FileName 	MS 	ebike 	equity 	
+# % of trips by bicycle 	% cyclists in the total population 	Miles cycled per person per week 	
+# Car miles cycled per week 	Marginal METs per person per week 	Years of Life Lost (YLL) 	
+# Car miles per person per week 	Car miles reduced per person per week 	CO2 (kg) from car travel per person per week
+
+saveRDS(df, "../ICT/app/data/csv/ICT_aggr_regional.rds")
+
 
