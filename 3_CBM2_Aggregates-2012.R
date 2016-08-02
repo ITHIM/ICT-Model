@@ -7,14 +7,37 @@ library(stringr)
 library(data.table)
 library(sqldf)
 
+# Check if listOfScenarios exists. If not, then read it from a csv file
+if (!exists("listOfScenarios") || length(listOfScenarios) != 28){
+  listOfScenarios <- read.csv("listofScenarios.csv", header = F, as.is = T)
+  listOfScenarios <- as.list(listOfScenarios$V1)
+}
+
 #read baseline (short walks already included)
 baseline <- readRDS('bl2014_p.rds')   #80+ people + Wales/Scotland (already removed)
-#baseline <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
-rm(bl)
 
-#create regions list (to process regional aggregates)
-regions <- sort(unique(baseline$HHoldGOR_B02ID))
-regions <- c(0,regions)[-c(10,11)]    #regions <- c('all',regions)[-c(10,11)]
+if (nrow(baseline) != nrow(get(as.character(listOfScenarios[1])))){
+  
+  bl1 <- baseline
+  bl1$HHoldGOR_B02ID <- 0
+  
+  # Rbind with itself setting region to 0, so that it becomes equal to the size of scenarios
+  baseline <- rbind(baseline, bl1)
+  
+  # Remove temporary variable
+  rm (bl1)
+  
+  #create regions list (to process regional aggregates)
+  regions <- sort(unique(baseline$HHoldGOR_B02ID))
+  
+} else{
+  
+  #create regions list (to process regional aggregates)
+  regions <- sort(unique(baseline$HHoldGOR_B02ID))
+  regions <- c(0,regions)[-c(10,11)]    #regions <- c('all',regions)[-c(10,11)]
+}
+
+
 
 
 
@@ -122,6 +145,10 @@ num=0
 # Please don't amend listOfScenarios, as it's a global variable
 local_listOfScenarios <- c('baseline', listOfScenarios) 
 
+# Add additional columns for baseline
+baseline$now_cycle <- 0
+baseline$ebike <- 0
+
 for (i1 in 1:length(local_listOfScenarios)) {  #reading files for aggregates
   
   for (j1 in regions)  {
@@ -170,6 +197,13 @@ colnames(df) <-c('Scenario','MS','ebike','equity',
                  "% Cyclists in the Total Population","% of Trips by Bicycle",
                  "Region" )
 
+# Change column class from factor to character/numeric
+# Convert pif columns' classes from factor to character and numeric
+df$Scenario <- as.character(df$Scenario)
+for (i in 2:ncol(df)){
+  df[,i] <- as.numeric.factor(df[,i])
+  
+}
 
 saveRDS(df,file='ICT_aggr_reg.rds')
 #write.csv(df,file='ICT_aggr_reg.csv', row.names=F)
