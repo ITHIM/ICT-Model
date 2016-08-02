@@ -1,4 +1,3 @@
-
 #rm(list=ls())
 source('AggCalc.R')   
 
@@ -198,14 +197,11 @@ colnames(df) <-c('Scenario','MS','ebike','equity',
                  "Region" )
 
 # Change column class from factor to character/numeric
-# Convert pif columns' classes from factor to character and numeric
 df$Scenario <- as.character(df$Scenario)
 for (i in 2:ncol(df)){
   df[,i] <- as.numeric.factor(df[,i])
-  
 }
 
 saveRDS(df,file='ICT_aggr_reg.rds')
-#write.csv(df,file='ICT_aggr_reg.csv', row.names=F)
 
 cat('All done !')
