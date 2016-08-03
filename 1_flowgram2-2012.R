@@ -51,22 +51,22 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   # iterate over all regions
   
   for (region in unique(baseline$HHoldGOR_B02ID)){
-    
+
     # subset data for a particular region
-    
+
     baselineSubset <- subset(baseline, HHoldGOR_B02ID == region)
-    
-    IDOfPplCyclist = directProbPPLIDs(baselineSubset, MS, ebikes, equity, pcycl_baseline)
-    
+
+    IDOfPplCyclist = directProbRRPPLIDs(baselineSubset, MS, ebikes, equity, pcycl_baseline)
+
     baselineSubset[baselineSubset$ID %in% IDOfPplCyclist,]$cyclist <- 1
-    
+
     # add baselineSubset to baselineProcessed
-    
+
     baselineProcessed <- rbind(baselineProcessed, baselineSubset)
-    
+
+    rm(baselineSubset)
+
   }
-  
-  rm(baselineSubset)
   
   # calc DP for whole country treating it as region with id = 0
   
@@ -74,13 +74,27 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   baselineCoutry <- baseline
   
+  # tes
+  
+  print(paste('total before', length(unique(baselineCoutry[baselineCoutry$Cycled == 1, ]$ID))))
+  print(paste('total before', length(unique(baselineCoutry[baselineCoutry$cyclist == 1, ]$ID))))
+  
+  # te
+  
   baselineCoutry$HHoldGOR_B02ID <- 0
   
-  IDOfPplCyclist = directProbPPLIDs(baselineCoutry, MS, ebikes, equity, pcycl_baseline)
+  IDOfPplCyclist = directProbRRPPLIDs(baselineCoutry, MS, ebikes, equity, pcycl_baseline)
   
   baselineCoutry[baselineCoutry$ID %in% IDOfPplCyclist,]$cyclist <- 1
   
-  # add baselineSubset to baselineProcessed
+  # tes
+  
+  print(paste('after', length(unique(baselineCoutry[baselineCoutry$cyclist == 1, ]$ID))/length(unique(baselineCoutry$ID)) ))
+  
+  
+  # te
+  
+  # add baselineCoutry to baselineProcessed
   
   baselineProcessed <- rbind(baselineProcessed, baselineCoutry)
   rm(baselineCoutry)
