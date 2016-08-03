@@ -13,14 +13,14 @@ testBaseline[95:100, ]$agesex <- '60plusFemale'
 
 # create Cyclist
 
-cyclist <- c()
+cyclistIDs <- c()
 
-cyclist <- append(cyclist, sample(testBaseline[testBaseline$agesex == '16.59Male', ]$ID, 7, replace = FALSE))
-cyclist <- append(cyclist, sample(testBaseline[testBaseline$agesex == '16.59Female', ]$ID, 1, replace = FALSE))
-cyclist <- append(cyclist, sample(testBaseline[testBaseline$agesex == '60plusMale', ]$ID, 1, replace = FALSE))
-cyclist <- append(cyclist, sample(testBaseline[testBaseline$agesex == '60plusFemale', ]$ID, 1, replace = FALSE))
+cyclistIDs <- append(cyclistIDs, sample(testBaseline[testBaseline$agesex == '16.59Male', ]$ID, 7, replace = FALSE))
+cyclistIDs <- append(cyclistIDs, sample(testBaseline[testBaseline$agesex == '16.59Female', ]$ID, 1, replace = FALSE))
+cyclistIDs <- append(cyclistIDs, sample(testBaseline[testBaseline$agesex == '60plusMale', ]$ID, 1, replace = FALSE))
+cyclistIDs <- append(cyclistIDs, sample(testBaseline[testBaseline$agesex == '60plusFemale', ]$ID, 1, replace = FALSE))
 
-testBaseline[testBaseline$ID %in% cyclist, ]$Cycled <- 1
+testBaseline[testBaseline$ID %in% cyclistIDs, ]$Cycled <- 1
 
 print(addmargins(table(testBaseline$agesex, testBaseline$Cycled)),1)
 

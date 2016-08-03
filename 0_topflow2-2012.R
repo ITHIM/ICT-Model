@@ -118,7 +118,7 @@ rm(shortwalks, df)
 #Sample before running scenarios -
 
 # Removed NAs from the data.frame
-hsematch <- readRDS('hse-nts_match_v2.rds')
+hsematch <- readRDS('hse-nts_match_v2.Rds')
 #names(hsematch)[c(1,7,8)] <- c('ID', 'health_mmets', 'physical_activity_mmets')
 #hsematch = hsematch[, c(1,7,8)]
 
@@ -162,7 +162,7 @@ baseline$prob[baseline$TravDay==0 ] <- 0
 bl <- baseline
 
 #save PROCESSED baseline in scenarios folder
-saveRDS(bl,file='bl2014_p_v2.rds')
+saveRDS(bl,file='bl2014_p_v2.Rds')
 #write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
 
 

@@ -63,10 +63,6 @@ directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baselin
     
     remainingCyclistsCounter <- 0
     
-    print(length(unique(baselineSubset$ID)))
-    print(totalNumberOfCyclistInBaselineSubset)
-    print(howManyCyclistNeeded)
-    
     # work out proportion of cyclists by age-sex subgroups in baselineSubset, also store number of observations in every subgroup
     
     cyclistsPropBySubgroups <- data.frame(agesex = c('16.59Male','16.59Female','60plusMale','60plusFemale'), stringsAsFactors = FALSE)
@@ -113,10 +109,6 @@ directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baselin
          
       realCyclistsInSubgroup <- round(ifelse(round(cyclistsPropBySubgroups[i, ]$pplAdditionalCyclists, digits = 0) > cyclistsPropBySubgroups[i, ]$pplNonCyclist, cyclistsPropBySubgroups[i, ]$pplNonCyclist, cyclistsPropBySubgroups[i, ]$pplAdditionalCyclists), digits = 0)
       
-      
-      print(cyclistsPropBySubgroups[i, ]$agesex)
-      print(realCyclistsInSubgroup)
-      
       # pick up ppl who become cyclist but are not cyclist already
 
       subgroupIDsOfPplBecomeCyclist <- sample(unique(baselineSubset[baselineSubset$cyclist != 1 & baselineSubset$agesex == as.character(cyclistsPropBySubgroups[i, ]$agesex),]$ID), realCyclistsInSubgroup, replace = F)
@@ -127,12 +119,9 @@ directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baselin
 
       remainingCyclistsCounter <- remainingCyclistsCounter + ifelse(round(cyclistsPropBySubgroups[i, ]$pplAdditionalCyclists, digits = 0) - length(subgroupIDsOfPplBecomeCyclist) > 0, round(cyclistsPropBySubgroups[i, ]$pplAdditionalCyclists, digits = 0) - length(subgroupIDsOfPplBecomeCyclist), 0)
       
-      print('rem')
-      print(remainingCyclistsCounter)
-
     } 
     
-    print(cyclistsPropBySubgroups)
+    # print(cyclistsPropBySubgroups)
     
     # fill scenario with ppl from other subgroups if remaining ppl exist
     
@@ -142,8 +131,6 @@ directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baselin
       
       remainingPplCounter <- length(unique(baselineSubset[baselineSubset$cyclist != 1 & !(baselineSubset$ID %in% IDOfPplBecomingCyclist),]$ID))
       
-      print(paste('remainingPplCounter', remainingPplCounter))
-      
       if (remainingCyclistsCounter > remainingPplCounter){
         
         print('remainingCyclistsCounter > remainingPplCounter')
@@ -151,8 +138,6 @@ directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baselin
         remainingCyclistsCounter <- remainingPplCounter
         
       }
-      
-      print(paste('remainingCyclistsCounter', remainingCyclistsCounter))
       
       # pick up remaining cyclists
       

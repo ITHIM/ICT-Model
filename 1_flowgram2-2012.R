@@ -74,26 +74,12 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   baselineCoutry <- baseline
   
-  # tes
-  
-  print(paste('total before', length(unique(baselineCoutry[baselineCoutry$Cycled == 1, ]$ID))))
-  print(paste('total before', length(unique(baselineCoutry[baselineCoutry$cyclist == 1, ]$ID))))
-  
-  # te
-  
   baselineCoutry$HHoldGOR_B02ID <- 0
   
   IDOfPplCyclist = directProbRRPPLIDs(baselineCoutry, MS, ebikes, equity, pcycl_baseline)
   
   baselineCoutry[baselineCoutry$ID %in% IDOfPplCyclist,]$cyclist <- 1
-  
-  # tes
-  
-  print(paste('after', length(unique(baselineCoutry[baselineCoutry$cyclist == 1, ]$ID))/length(unique(baselineCoutry$ID)) ))
-  
-  
-  # te
-  
+
   # add baselineCoutry to baselineProcessed
   
   baselineProcessed <- rbind(baselineProcessed, baselineCoutry)
