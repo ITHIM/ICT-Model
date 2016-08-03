@@ -11,6 +11,13 @@ library(tcltk)
 ############   CALCULATE from BASELINE: Individuals
 bl <- readRDS('bl2014_p.rds')  #needs to be bl2014_p.Rds or bl2014.Rds?
 
+# For some reason the age_group is not correctly recorded in the baseline line
+# Recalculate the age_group variable
+# Read nts age group lookup table
+ag_lookup <- read.csv("nts-adjusted-age-groups.csv", header = T, as.is = T)
+# Create a new variable 'age_group' for baseline, which converts numeric age categories into age ranges
+bl$age_group <- ag_lookup$age[match(bl$Age_B01ID, ag_lookup$nts_group)]
+
 bl1 <- bl
 bl1$HHoldGOR_B02ID <- 0
 bl <- rbind(bl, bl1)
@@ -69,7 +76,7 @@ for (i1 in 1:length(listOfScenarios)) {
   tbl$TripTotalTime1 <- sc$TripTotalTime1
   AggScenarios6(tbl, as.character(listOfScenarios[i1]))
   
-  message('Scenario: ',as.character(listOfScenarios[i1]))
+  message('Scenario: ',as.character(listOfScenarios[i1]), " index ", i1)
   
 }  #END main loop
 

@@ -1,4 +1,0 @@
-"location_name","cause","cause_name","sex","sex_name","age","age_name","year","nm_mean","rt_mean","pc_mean","metric_name"
-"North West England",294,"All causes",1,"Male",22,"All Ages",2013,431964.89337882,12408.514565676,1,"YLDs"
-"North West England",294,"All causes",2,"Female",22,"All Ages",2013,503765.68241839,14037.99126699,1,"YLDs"
-"North West England",294,"All causes",3,"Both",22,"All Ages",2013,935730.57579721,13235.628859847,1,"YLDs"

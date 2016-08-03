@@ -1,0 +1,4 @@
+"location_name","cause","cause_name","sex","sex_name","age","age_name","year","nm_mean","rt_mean","pc_mean","metric_name"
+"South East England",294,"All causes",1,"Male",22,"All Ages",2013,533134.83069447,12392.051617129,1,"YLLs"
+"South East England",294,"All causes",2,"Female",22,"All Ages",2013,454570.61509293,10233.892908728,1,"YLLs"
+"South East England",294,"All causes",3,"Both",22,"All Ages",2013,987705.4457874,11295.746691204,1,"YLLs"

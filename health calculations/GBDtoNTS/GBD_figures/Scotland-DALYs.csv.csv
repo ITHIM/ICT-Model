@@ -1,4 +1,0 @@
-"location_name","cause","cause_name","sex","sex_name","age","age_name","year","nm_mean","rt_mean","pc_mean","metric_name"
-"Scotland",294,"All causes",1,"Male",22,"All Ages",2013,808202.59666943,31428.347505314,1,"DALYs"
-"Scotland",294,"All causes",2,"Female",22,"All Ages",2013,796539.66083055,29215.690349792,1,"DALYs"
-"Scotland",294,"All causes",3,"Both",22,"All Ages",2013,1604742.2575,30289.685439163,1,"DALYs"

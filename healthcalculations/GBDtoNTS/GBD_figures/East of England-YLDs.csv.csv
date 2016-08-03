@@ -1,0 +1,4 @@
+"location_name","cause","cause_name","sex","sex_name","age","age_name","year","nm_mean","rt_mean","pc_mean","metric_name"
+"East of England",294,"All causes",1,"Male",22,"All Ages",2013,376888.55129188,12942.576444426,1,"YLDs"
+"East of England",294,"All causes",2,"Female",22,"All Ages",2013,429080.87036904,14279.929045082,1,"YLDs"
+"East of England",294,"All causes",3,"Both",22,"All Ages",2013,805969.42166092,13621.737824482,1,"YLDs"

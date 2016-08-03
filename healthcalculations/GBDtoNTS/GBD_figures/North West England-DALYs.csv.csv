@@ -1,0 +1,4 @@
+"location_name","cause","cause_name","sex","sex_name","age","age_name","year","nm_mean","rt_mean","pc_mean","metric_name"
+"North West England",294,"All causes",1,"Male",22,"All Ages",2013,983398.81834596,28248.866397144,1,"DALYs"
+"North West England",294,"All causes",2,"Female",22,"All Ages",2013,949428.14937199,26456.871785183,1,"DALYs"
+"North West England",294,"All causes",3,"Both",22,"All Ages",2013,1932826.967718,27339.25881734,1,"DALYs"

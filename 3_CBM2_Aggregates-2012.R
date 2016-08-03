@@ -1,4 +1,3 @@
-
 #rm(list=ls())
 source('AggCalc.R')   
 
@@ -7,14 +6,37 @@ library(stringr)
 library(data.table)
 library(sqldf)
 
+# Check if listOfScenarios exists. If not, then read it from a csv file
+if (!exists("listOfScenarios") || length(listOfScenarios) != 28){
+  listOfScenarios <- read.csv("listofScenarios.csv", header = F, as.is = T)
+  listOfScenarios <- as.list(listOfScenarios$V1)
+}
+
 #read baseline (short walks already included)
 baseline <- readRDS('bl2014_p.rds')   #80+ people + Wales/Scotland (already removed)
-#baseline <- read.csv('bl2012_18_84ag_sw_reduced.csv', header=T, as.is = T)
-rm(bl)
 
-#create regions list (to process regional aggregates)
-regions <- sort(unique(baseline$HHoldGOR_B02ID))
-regions <- c(0,regions)[-c(10,11)]    #regions <- c('all',regions)[-c(10,11)]
+if (nrow(baseline) != nrow(get(as.character(listOfScenarios[1])))){
+  
+  bl1 <- baseline
+  bl1$HHoldGOR_B02ID <- 0
+  
+  # Rbind with itself setting region to 0, so that it becomes equal to the size of scenarios
+  baseline <- rbind(baseline, bl1)
+  
+  # Remove temporary variable
+  rm (bl1)
+  
+  #create regions list (to process regional aggregates)
+  regions <- sort(unique(baseline$HHoldGOR_B02ID))
+  
+} else{
+  
+  #create regions list (to process regional aggregates)
+  regions <- sort(unique(baseline$HHoldGOR_B02ID))
+  regions <- c(0,regions)[-c(10,11)]    #regions <- c('all',regions)[-c(10,11)]
+}
+
+
 
 
 
@@ -117,13 +139,19 @@ for (i in regions) {
 
 #DF to hold results
 df <- data.frame()
-num=0 
-listOfScenarios <- c('baseline', listOfScenarios) 
+num=0
+# Creata local variable
+# Please don't amend listOfScenarios, as it's a global variable
+local_listOfScenarios <- c('baseline', listOfScenarios) 
 
-for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
+# Add additional columns for baseline
+baseline$now_cycle <- 0
+baseline$ebike <- 0
+
+for (i1 in 1:length(local_listOfScenarios)) {  #reading files for aggregates
   
   for (j1 in regions)  {
-    sc <- get(as.character(listOfScenarios[i1]) )
+    sc <- get(as.character(local_listOfScenarios[i1]) )
     tbl <- baseline
     
     if (i1!=1 | j1!=0)  { sc <- subset(sc, subset= sc$HHoldGOR_B02ID==j1)   }
@@ -140,7 +168,7 @@ for (i1 in 1:length(listOfScenarios)) {  #reading files for aggregates
     tbl$TripTotalTime1 <- sc$TripTotalTime1
     # keeping 6 relevant variables from scenario
     
-    info <- AggCalc(tbl, as.character(listOfScenarios[i1]), j1)
+    info <- AggCalc(tbl, as.character(local_listOfScenarios[i1]), j1)
     if (num==0) {df<- info
     } else {df <- rbind(df,info)     }
     
@@ -158,7 +186,7 @@ df <-as.data.frame(df)
 rownames(df) <- NULL
 
 colnames(df) <-c('Scenario','MS','ebike','equity',
-                 "Car Miles Per person (per week)","Car Miles Reduced Per person (per/week)","Total Car Miles Cycled (per week)",
+                 "Car Miles Per person (per week)","Car Miles Reduced Per person (per week)","Total Car Miles Cycled (per week)",
                  "Total Miles Cycled (per week)", "Miles Cycled Per Male (per week)", "Miles Cycled Per Female (per week)", 
                  "Miles Cycled Per White Person (per week)", "Miles Cycled Per Non-White Person (per week)",
                  "Miles Cycled Per Person with Car-Access (per week)", "Miles Cycled Per Person with No Car-Access (per week)",
@@ -168,8 +196,12 @@ colnames(df) <-c('Scenario','MS','ebike','equity',
                  "% Cyclists in the Total Population","% of Trips by Bicycle",
                  "Region" )
 
+# Change column class from factor to character/numeric
+df$Scenario <- as.character(df$Scenario)
+for (i in 2:ncol(df)){
+  df[,i] <- as.numeric.factor(df[,i])
+}
 
 saveRDS(df,file='ICT_aggr_reg.rds')
-#write.csv(df,file='ICT_aggr_reg.csv', row.names=F)
 
 cat('All done !')

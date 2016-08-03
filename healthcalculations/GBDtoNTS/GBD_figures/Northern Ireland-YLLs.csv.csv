@@ -1,0 +1,4 @@
+"location_name","cause","cause_name","sex","sex_name","age","age_name","year","nm_mean","rt_mean","pc_mean","metric_name"
+"Northern Ireland",294,"All causes",1,"Male",22,"All Ages",2013,139095.2602416,15551.058819648,1,"YLLs"
+"Northern Ireland",294,"All causes",2,"Female",22,"All Ages",2013,103645.26530196,11189.321355019,1,"YLLs"
+"Northern Ireland",294,"All causes",3,"Both",22,"All Ages",2013,242740.52554356,13332.046233833,1,"YLLs"

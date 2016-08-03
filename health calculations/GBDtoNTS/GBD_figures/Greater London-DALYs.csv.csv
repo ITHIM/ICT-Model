@@ -1,4 +1,0 @@
-"location_name","cause","cause_name","sex","sex_name","age","age_name","year","nm_mean","rt_mean","pc_mean","metric_name"
-"Greater London",294,"All causes",1,"Male",22,"All Ages",2013,928287.21841539,22448.309302388,1,"DALYs"
-"Greater London",294,"All causes",2,"Female",22,"All Ages",2013,885984.57488834,20984.222198723,1,"DALYs"
-"Greater London",294,"All causes",3,"Both",22,"All Ages",2013,1814271.7933037,21708.651738725,1,"DALYs"
