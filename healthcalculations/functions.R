@@ -40,7 +40,7 @@ combine_health_and_pif <-
               
               n[str_replace_all(n$age.band, pattern=" ", repl="") == age_with_removed_spaces & 
                   n$gender == gender_with_removed_spaces 
-                & n$regions == uregions[reg], ][[cn[i]]] <- round((val * as.numeric(as.character(sub[[hm]]))) / baseline_val, 2)
+                & n$regions == uregions[reg], ][[cn[i]]] <- round((val * as.numeric(as.character(sub[[hm]]))) / baseline_val, 5)
               
               # cat(cn[i], " row: ", new_row, " - ", val , " * ",as.numeric(as.character(sub[[hm]])), "  = ", (val * as.numeric(as.character(sub[[hm]]))) , "\n")
               m[str_replace_all(m$age.band, pattern=" ", repl="") == age_with_removed_spaces & 
@@ -256,12 +256,12 @@ PAF <-
             m[mi, 2] = unique_gender [j]
             m[mi, 3] = uregions[reg]
             
-            for (k in 2:(length(cn))){
+            for (k in 2:length(cn)){
               sumPRRi <- 0
               sumPRRi <- (active_percent * sum (reduced_pop[[cn[k]]]) / nrow(reduced_pop))
               
               PRA <- (sumPRR - sumPRRi) / sumPRR
-              # cat(cn[k], " : ", size, " : " , unique_gender[j], " : ", unique_age_group[i], " : ", sumPRR, " : ", sumPRRi, " : ", PRA, "\n")
+              #cat(cn[k], " : ", size, " : " , unique_gender[j], " : ", unique_age_group[i], " : ", sumPRR, " : ", sumPRRi, " : ", PRA, "\n")
               m[mi, 2 + k] = round(PRA, digits = 3)
               
             }
