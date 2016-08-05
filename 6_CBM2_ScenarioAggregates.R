@@ -48,6 +48,8 @@ TripTotalTime0 <- sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.TripTotalTime)
 # in a new local variable - so that baseline object 'bl' remains unchanged
 local_bl <- subset(bl, select = c(ID, HHoldGOR_B02ID, TripDisIncSW, MainMode_B04ID, Cycled, MMETh, physical_activity_mmets, health_mmets))
 
+local_bl <- arrange(local_bl, ID, HHoldGOR_B02ID)
+
 # Add additional columns for baseline
 local_bl$now_cycle <- 0
 local_bl$ebike <- 0
@@ -63,6 +65,9 @@ for (i1 in 1:length(listOfScenarios)) {
   #DATA AGGREGATES
   tbl <- local_bl
   sc <- get(as.character(listOfScenarios[i1]) )
+  
+  # Sort the scenario file
+  sc <- arrange(sc, ID, HHoldGOR_B02ID)
   
   # Temporary solution
   # Conider only first half of the scenario objects (as they're twice the size of baseline)
@@ -92,7 +97,7 @@ colnames(PA_mmets)[scenarioStartingIndex:length(PA_mmets)] <- local_listOfScenar
 colnames(health_mmets)[scenarioStartingIndex:length(health_mmets)] <- local_listOfScenarios
 
 # Remove newly created local baseline file
-rm(local_bl)
+#rm(local_bl)
 
 
 # colnames(carMiles)[scenarioStartingIndex:length(carMiles)] <- local_listOfScenarios
