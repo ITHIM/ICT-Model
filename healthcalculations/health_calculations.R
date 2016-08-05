@@ -1,5 +1,7 @@
 source("init.R")
-source("health calculations/functions.R")
+source("healthcalculations/functions.R")
+require(dplyr)
+require(sqldf)
 
 b_hmmets <- health_mmets
 
@@ -40,7 +42,7 @@ rr <- mmet2RR(mmets, local_listOfScenarios)
 pif <- PAF(rr, T)
 pif <- data.frame(pif)
 pif <- arrange(pif, regions, age.band, gender)
-gbd <- read.csv("health calculations/GBDtoNTS/output/GBDtoNTS_output.csv", header = T, as.is = T)
+gbd <- read.csv("healthcalculations/GBDtoNTS/output/GBDtoNTS_output.csv", header = T, as.is = T)
 gbd <- arrange(gbd, region, age, gender)
 
 # Convert pif columns' classes from factor to character and numeric
@@ -57,6 +59,24 @@ yll <- as.data.frame(yll_dfs[1])
 yll_red <- as.data.frame(yll_dfs[2])
 
 
+# tdpif <- PAF(rr, T)
+# tdpif <- data.frame(tdpif)
+# tdpif <- arrange(tdpif, regions, age.band, gender)
+# 
+# 
+# td <- combine_health_and_pif(pif, gbd, "yll")
+# td1 <- as.data.frame(td[2])
+# 
+# td1$age.band <- reduced_age_lt$red.age.band[match(td1$age.band, reduced_age_lt$age.band)]
+# 
+# td1 <- aggregate(td1[-c(1, 2, 3)], by=list(td1$age.band, td1$gender, td1$regions),FUN=mean, na.rm=TRUE)
+# 
+# colnames(td1)[1:3] <- c("age.band", "gender", "regions")
+
+# Convert into percent by multiplying it with 100
+# td1[5:32] <- round(td1[5:32] * 100, 2)
+
+
 death_dfs <- combine_health_and_pif(pif, gbd, "death")
 
 death <- as.data.frame(death_dfs[1])
@@ -65,12 +85,15 @@ death_red <- as.data.frame(death_dfs[2])
 # yll <- combine_age_groups(yll)
 
 # Read a lookup table with reduced age groups
-reduced_age_lt <- read.csv("health calculations/reduced_age_lookuptable.csv", header = T)
+reduced_age_lt <- read.csv("healthcalculations/reduced_age_lookuptable.csv", header = T)
 yll$age.band <- reduced_age_lt$red.age.band[match(yll$age.band, reduced_age_lt$age.band)]
 
 yll <- aggregate(yll[-c(1, 2, 3)], by=list(yll$age.band, yll$gender, yll$regions),FUN=sum, na.rm=TRUE)
 
 colnames(yll)[1:3] <- c("age.band", "gender", "regions")
+
+# Round yll values
+yll[,4:ncol(yll)] <- round(yll[,4:ncol(yll)])
 
 
 death$age.band <- reduced_age_lt$red.age.band[match(death$age.band, reduced_age_lt$age.band)]
