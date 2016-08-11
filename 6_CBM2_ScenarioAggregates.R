@@ -9,7 +9,8 @@ library(sqldf)
 library(tcltk)
 
 ############   CALCULATE from BASELINE: Individuals
-bl <- readRDS('bl2014_p.rds')  #needs to be bl2014_p.Rds or bl2014.Rds?
+#bl <- readRDS('bl2014_p.rds')  #needs to be bl2014_p.Rds 
+bl <- readRDS('bl2014_p_v2.rds') 
 
 # For some reason the age_group is not correctly recorded in the baseline line
 # Recalculate the age_group variable

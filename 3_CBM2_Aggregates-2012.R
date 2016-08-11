@@ -13,7 +13,8 @@ if (!exists("listOfScenarios") || length(listOfScenarios) != 28){
 }
 
 #read baseline (short walks already included)
-baseline <- readRDS('bl2014_p.rds')   #80+ people + Wales/Scotland (already removed)
+#baseline <- readRDS('bl2014_p.rds')   #80+ people + Wales/Scotland (already removed)
+baseline <- readRDS('bl2014_p_v2.rds')
 
 if (nrow(baseline) != nrow(get(as.character(listOfScenarios[1])))){
   

@@ -7,7 +7,8 @@
 # Check if bl exists. If not, then read it from an rds file
 if (!exists("bl")){
   # Read baseline from the rds file
-  bl <- readRDS('bl2014_p.rds')
+  #bl <- readRDS('bl2014_p.rds')
+  bl <- readRDS('bl2014_p_v2.rds')
   
   # For some reason the age_group is not correctly recorded in the baseline line
   # Recalculate the age_group variable
