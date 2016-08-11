@@ -1,4 +1,8 @@
 # Script to generate rds file for the interface
+# PLEASE NOTE: It assumes that all scenarios have been generated, and three additional scripts have been run, which are:
+# 1. 3_CBM2_Aggregates-2012.R
+# 2. 6_CBM2_ScenarioAggregates.R
+# 3. /healthcalculations/health_calculations.R
 
 # Check if bl exists. If not, then read it from an rds file
 if (!exists("bl")){
