@@ -44,6 +44,17 @@ tripsdf <- subset(tripsdf, age_group != "80 - 84")
 # Assuming ICT is a sibling of ICT-Model repo
 saveRDS(tripsdf, "../ICT/app/data/csv/tripsdf_regional.rds")
 
+
+# Create trips time df
+tripstimedf <- create_trips(bl, listOfScenarios)
+
+# Remove 80+ from the dataset
+tripstimedf <- subset(tripstimedf, age_group != "80 - 84")
+
+# Save it as an rds file
+# Assuming ICT is a sibling of ICT-Model repo
+saveRDS(tripstimedf, "../ICT/app/data/csv/TripTotalTime1_regional.rds")
+
 # Remove "80 - 84" age group for PA_mmets as well
 PA_mmets <- subset(PA_mmets, age_group != "80 - 84")
 
@@ -71,14 +82,6 @@ milesCycled.pers <- subset(milesCycled.pers, age_group != "80 - 84")
 # milesCycled.pers: save it as a rds file
 
 saveRDS(milesCycled.pers, "../ICT/app/data/csv/milesCycled.pers_regional.rds")
-
-# TripTotalTime1: remove "80 - 84" age group
-
-TripTotalTime1 <- subset(TripTotalTime1, age_group != "80 - 84")
-
-# TripTotalTime1: save it as a rds file
-
-saveRDS(TripTotalTime1, "../ICT/app/data/csv/TripTotalTime1_regional.rds")
 
 ## HEALTH FILES
 # Generated after running health_calculations.R
