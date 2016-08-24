@@ -435,7 +435,8 @@ create_trips <-
     
     for (i in 1:length(lObj)){
       tbl <- bl
-      sc <- get(as.character(lObj[i]) )
+      #sc <- get(as.character(lObj[i]) )
+      sc <- readRDS(paste0('./temp_data_folder/output/repo_version/', as.character(lObj[i]), '.rds'))
       tbl$now_cycle <- sc$now_cycle
       tbl$ebike <- sc$ebike
       tbl$cyclist <- sc$cyclist

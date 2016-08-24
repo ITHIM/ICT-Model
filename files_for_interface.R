@@ -5,7 +5,7 @@
 # 3. /healthcalculations/health_calculations.R
 
 # Check if bl exists. If not, then read it from an rds file
-if (!exists("bl")){
+#if (!exists("bl")){
   # Read baseline from the rds file
   #bl <- readRDS('bl2014_p.rds')
   bl <- readRDS('bl2014_p_v2.rds')
@@ -22,7 +22,7 @@ if (!exists("bl")){
   bl1$HHoldGOR_B02ID <- 0
   bl <- rbind(bl, bl1)
   rm (bl1)
-}
+#}
 
 #transforms MainMode_B04ID >> to our own modes
 lookup <- data.frame(MainMode_B04ID=c(1,2,3,4,5,6,7,8,9,10,11,12,13),modefinal=c(1,2,3,4,3,7,5,5,5,6,6,7,7))
@@ -55,6 +55,30 @@ CO2.Tm <- subset(CO2.Tm, age_group != "80 - 84")
 
 # Save it as an rds file
 saveRDS(PA_mmets, "../ICT/app/data/csv/co2.rds")
+
+# carMiles: remove "80 - 84" age group
+
+carMiles <- subset(carMiles, age_group != "80 - 84")
+
+# carMiles: save it as a rds file
+
+saveRDS(carMiles, "../ICT/app/data/csv/carMiles_regional.rds")
+
+# milesCycled.pers: remove "80 - 84" age group
+
+milesCycled.pers <- subset(milesCycled.pers, age_group != "80 - 84")
+
+# milesCycled.pers: save it as a rds file
+
+saveRDS(milesCycled.pers, "../ICT/app/data/csv/milesCycled.pers_regional.rds")
+
+# TripTotalTime1: remove "80 - 84" age group
+
+TripTotalTime1 <- subset(TripTotalTime1, age_group != "80 - 84")
+
+# TripTotalTime1: save it as a rds file
+
+saveRDS(TripTotalTime1, "../ICT/app/data/csv/TripTotalTime1_regional.rds")
 
 ## HEALTH FILES
 # Generated after running health_calculations.R

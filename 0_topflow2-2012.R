@@ -71,7 +71,7 @@ baseline <- rbind(baseline,shortwalks)
 baseline <- baseline[order(baseline$ID),]
 
 #add people w/o trips to baseline
-fnotrips  <- readRDS('people_notrips2014_v2.rds')
+fnotrips  <- readRDS('people_notrips2014_v2.Rds')
 #fnotrips  <- read.csv('People_w_NoTrips2012_ENG_v6_anon.csv',header=T,as.is=T)
 
 # Remove 85+ age group + Wales/Scotland
@@ -111,7 +111,7 @@ rm(shortwalks, df)
 #Sample before running scenarios -
 
 # Removed NAs from the data.frame
-hsematch <- readRDS('hse-nts_match_v2.rds')
+hsematch <- readRDS('hse-nts_match_v2.Rds')
 #names(hsematch)[c(1,7,8)] <- c('ID', 'health_mmets', 'physical_activity_mmets')
 #hsematch = hsematch[, c(1,7,8)]
 
@@ -160,11 +160,11 @@ baseline$prob[baseline$TravDay==0 ] <- 0
 
 
 #keep bl as backup for future scenarios core values
-# bl <- baseline
-# 
-# #save PROCESSED baseline in scenarios folder
-# saveRDS(bl,file='bl2014_p_v2.rds')
-# rm(bl)
+bl <- baseline
+
+#save PROCESSED baseline in scenarios folder
+saveRDS(bl,file='bl2014_p_v2.rds')
+rm(bl)
 
 #write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
 
@@ -214,7 +214,9 @@ for (ebikes in m) {
     for  (MS in directProbs) { # all occurences of MS should be replaced
       cat(ebikes, equity, MS, "\n") 
       scenario_name <- paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep="")
-      assign(scenario_name,flowgram(baseline, MS,ebikes,equity, pcycl_baseline))      
+      #assign(scenario_name,flowgram(baseline, MS,ebikes,equity, pcycl_baseline))
+      tempSc <- flowgram(baseline, MS,ebikes,equity, pcycl_baseline)
+      saveRDS(tempSc, paste0('./temp_data_folder/output/repo_version/', scenario_name, '.rds'))
 
       listOfScenarios[[num]] <- scenario_name
       num <- num + 1
