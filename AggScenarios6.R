@@ -64,14 +64,14 @@ AggScenarios6 <- function (f, fname) {
   #   
   #   carMilesCycledAggr <<- cbind(carMilesCycledAggr,f.carMilesCycled[,2])
   #   
-  #   # 4-milesCycled.pers    
-  #   f.milesCycled <- sqldf ('SELECT f.ID,f.HHoldGOR_B02ID, sum(f.TripDisIncSW) AS milesCycled FROM f WHERE f.[now_cycle]=1 OR f.[Cycled]=1  
-  #                          GROUP BY f.ID, f.HHoldGOR_B02ID')
-  #   
-  #   f.milesCycled [,2] <- f.milesCycled[,2]
-  #   f.milesCycled  <- left_join(bl.indiv,f.milesCycled,by = c("ID" = "ID", "HHoldGOR_B02ID" = "HHoldGOR_B02ID"))
-  #   
-  #   milesCycled.pers <<- cbind(milesCycled.pers,f.milesCycled[,2])
+  # 4-milesCycled.pers
+  f.milesCycled <- sqldf ('SELECT f.ID,f.HHoldGOR_B02ID, sum(f.TripDisIncSW) AS milesCycled FROM f WHERE f.[now_cycle]=1 OR f.[Cycled]=1
+                         GROUP BY f.ID, f.HHoldGOR_B02ID')
+
+  #f.milesCycled [,2] <- f.milesCycled[,2]
+  f.milesCycled  <- left_join(bl.indiv,f.milesCycled,by = c("ID" = "ID", "HHoldGOR_B02ID" = "HHoldGOR_B02ID"))
+
+  milesCycled.pers <<- cbind(milesCycled.pers,f.milesCycled[,7])
   #   
   #   
   #   # 5-METh   
@@ -94,11 +94,11 @@ AggScenarios6 <- function (f, fname) {
   #   
   #   TripDisIncSW  <<- cbind(TripDisIncSW,f.TripDisIncSW[,3])
   #   
-  #   # 10-TripTotalTime1   
-  #   f.TripTotalTime1 <- sqldf('select f.ID, f.HHoldGOR_B02ID, sum(f.TripTotalTime1) FROM f GROUP BY f.ID, f.HHoldGOR_B02ID')
-  #   colnames(f.TripTotalTime1)[3] <- fname
-  #   
-  #   TripTotalTime1 <<- cbind(TripTotalTime1, f.TripTotalTime1[,3])
+  # 10-TripTotalTime1
+  f.TripTotalTime1 <- sqldf('select f.ID, f.HHoldGOR_B02ID, sum(f.TripTotalTime1) FROM f GROUP BY f.ID, f.HHoldGOR_B02ID')
+  colnames(f.TripTotalTime1)[3] <- fname
+
+  TripTotalTime1 <<- cbind(TripTotalTime1, f.TripTotalTime1[,3])
   #   
   #   # 11- timeSaved.Total.h
   #   f.timeSaved   <- as.data.frame(f.TripTotalTime1[,3] - TripTotalTime0[,3])

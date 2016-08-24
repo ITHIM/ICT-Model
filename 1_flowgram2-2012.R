@@ -51,7 +51,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   # iterate over all regions
   
   for (region in unique(baseline$HHoldGOR_B02ID)){
-
+    
     # subset data for a particular region
 
     baselineSubset <- subset(baseline, HHoldGOR_B02ID == region)
@@ -88,6 +88,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   baseline <- baselineProcessed
   rm(baselineProcessed)
+  gc()
   # end of direct probs
   
   baseline$newtime <- baseline$TripDisIncSW / apply(data.frame(baseline$Age, baseline$Sex), 1, function(x) tripspeed(x[1], x[2], 0))

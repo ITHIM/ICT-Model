@@ -152,7 +152,12 @@ baseline$ebike <- 0
 for (i1 in 1:length(local_listOfScenarios)) {  #reading files for aggregates
   
   for (j1 in regions)  {
-    sc <- get(as.character(local_listOfScenarios[i1]) )
+    #sc <- get(as.character(local_listOfScenarios[i1]) )
+    if (local_listOfScenarios[i1] == 'baseline'){
+      sc <- get(as.character(local_listOfScenarios[i1]) )
+    } else {
+      sc <- readRDS(paste0('./temp_data_folder/output/repo_version/', as.character(local_listOfScenarios[i1]), '.rds'))
+    }
     tbl <- baseline
     
     if (i1!=1 | j1!=0)  { sc <- subset(sc, subset= sc$HHoldGOR_B02ID==j1)   }
