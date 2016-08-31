@@ -432,11 +432,13 @@ create_trips <-
   {
     
     bl <- subset(bl, select = c(ID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, MainMode_Reduced, Cycled, HHoldGOR_B02ID))
+    #cat("nrow bl: ", nrow(bl), "\n")
     
     for (i in 1:length(lObj)){
       tbl <- bl
       #sc <- get(as.character(lObj[i]) )
       sc <- readRDS(paste0('./temp_data_folder/output/repo_version/', as.character(lObj[i]), '.rds'))
+      #cat("sc ", as.character(lObj[i]),  " - ",  nrow(sc), "\n")
       tbl$now_cycle <- sc$now_cycle
       tbl$ebike <- sc$ebike
       tbl$cyclist <- sc$cyclist
@@ -447,6 +449,7 @@ create_trips <-
       
       
       bl[[as.character(lObj[i])]] <- tbl$MainMode_Reduced
+      rm(sc)
     }
     bl
     
@@ -469,6 +472,7 @@ create_triptime <-
       tbl$ebike <- sc$ebike
       tbl$cyclist <- sc$cyclist
       bl[[as.character(lObj[i])]] <- sc$TripTotalTime1
+      rm(sc)
     }
     bl
     
