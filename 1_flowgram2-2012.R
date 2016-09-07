@@ -56,7 +56,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
 
     baselineSubset <- subset(baseline, HHoldGOR_B02ID == region)
 
-    IDOfPplCyclist = directProbRRPPLIDs(baselineSubset, MS, ebikes, equity, pcycl_baseline)
+    IDOfPplCyclist <- directProbRRPPLIDs(baselineSubset, MS, ebikes, equity, pcycl_baseline, region)
 
     baselineSubset[baselineSubset$ID %in% IDOfPplCyclist,]$cyclist <- 1
 
@@ -76,7 +76,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   baselineCoutry$HHoldGOR_B02ID <- 0
   
-  IDOfPplCyclist = directProbRRPPLIDs(baselineCoutry, MS, ebikes, equity, pcycl_baseline)
+  IDOfPplCyclist <- directProbRRPPLIDs(baselineCoutry, MS, ebikes, equity, pcycl_baseline, 0)
   
   baselineCoutry[baselineCoutry$ID %in% IDOfPplCyclist,]$cyclist <- 1
 

@@ -1,8 +1,8 @@
 #' Return IDs of all ppl (including also these who were cyclist already) who became potential cyclist using relative risk approach
 
-directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baseline) {
+directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baseline, region) {
   
-  # if DP == 1 -> don't process just return all IDs
+  # if DP == 1 -> don't process just return all IDs assuming that there is no population in which cyclists are 100%
   
   if (DP == 1){
     
@@ -20,6 +20,12 @@ directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baselin
   shareOfCyclistInBaselineSubset <- totalNumberOfCyclistInBaselineSubset / length(unique(baselineSubset$ID))
   
   if (shareOfCyclistInBaselineSubset > DP){
+    
+    # save that case in directProbCasesAboveGivenPerc
+    
+    directProbCasesAboveGivenPerc[nrow(directProbCasesAboveGivenPerc) + 1, ] <<- list(DP, ebikes, equity, region)
+    
+    # print info
     
     print('Observed > DP')
     print(shareOfCyclistInBaselineSubset)
@@ -173,9 +179,9 @@ directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baselin
 
 #' Return IDs of all ppl (including also these who were cyclist already) who became potential cyclist using proportions of cyclists group
 
-directProbProportionsPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baseline) {
+directProbProportionsPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baseline, region) {
   
-  # if DP == 1 -> don't process just return all IDs
+  # if DP == 1 -> don't process just return all IDs assuming that there is no population in which cyclists are 100%
   
   if (DP == 1){
     
@@ -193,6 +199,12 @@ directProbProportionsPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcyc
   shareOfCyclistInBaselineSubset <- totalNumberOfCyclistInBaselineSubset / length(unique(baselineSubset$ID))
   
   if (shareOfCyclistInBaselineSubset > DP){
+    
+    # save that case in directProbCasesAboveGivenPerc
+    
+    directProbCasesAboveGivenPerc[nrow(directProbCasesAboveGivenPerc) + 1, ] <<- list(DP, ebikes, equity, region)
+    
+    # print info
     
     print('Observed > DP')
     print(shareOfCyclistInBaselineSubset)

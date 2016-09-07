@@ -3,6 +3,7 @@
 # 1. 3_CBM2_Aggregates-2012.R
 # 2. 6_CBM2_ScenarioAggregates.R
 # 3. /healthcalculations/health_calculations.R
+# 4. 0_topflow2-2012 (to generate directProbCasesAboveGivenPerc)
 
 # Check if bl exists. If not, then read it from an rds file
 #if (!exists("bl")){
@@ -116,3 +117,7 @@ for (i in 2:ncol(yll_aggr)){
 }
 
 saveRDS(df, "../ICT/app/data/csv/ICT_aggr_regional.rds")
+
+# save directProbCasesAboveGivenPerc which main role is to store info of every case in which Observed > DP
+
+saveRDS(directProbCasesAboveGivenPerc, "../ICT/app/data/csv/dp_cases_above_given.rds")
