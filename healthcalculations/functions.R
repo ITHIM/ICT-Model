@@ -463,6 +463,7 @@ create_triptime <-
     
     bl <- subset(bl, select = c(ID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, TripTotalTime1, Cycled, HHoldGOR_B02ID))
     
+    
     for (i in 1:length(lObj)){
       tbl <- bl
       #sc <- get(as.character(lObj[i]) )

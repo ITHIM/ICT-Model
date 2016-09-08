@@ -184,6 +184,13 @@ CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-4,2)   #(in metric Tons)
 
 #i <- c(2,4,8,16,32,64)
 
+# DF which main role is to store info of every case in which Observed > DP. Used in UI to filter out mentioned cases (used in 1_flowgram2-2012)
+
+directProbCasesAboveGivenPerc <- data.frame(MS = numeric(0),
+                                            ebikes = numeric(0),
+                                            equity = numeric(0),
+                                            region = numeric(0))
+
 # TODO: directProbs temp values - should be replaced with the final values
 
 directProbs <- c(0.05, 0.1, 0.15, 0.25, 0.5, 0.75, 1)
