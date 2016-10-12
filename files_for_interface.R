@@ -103,19 +103,13 @@ saveRDS(directProbCasesAboveGivenPerc, "../ICT/app/data/csv/dp_cases_above_given
 
 
 # Create trips df
-#tripsdf <- create_trips(bl, listOfScenarios)
-
-# temp read - Read trip data as an rds file
-tripsdf <- readRDS("../ICT/app/data/csv/tripsdf_regional.rds")
+tripsdf <- create_trips(bl, listOfScenarios)
 
 # Remove 80+ from the dataset
 tripsdf <- subset(tripsdf, age_group != "80 - 84")
 
 # Create trips time df
-#tripstimedf <- create_triptime(bl, listOfScenarios)
-
-# temp read - Read trip time
-tripstimedf <- readRDS("../ICT/app/data/csv/TripTotalTime1_regional.rds")
+tripstimedf <- create_triptime(bl, listOfScenarios)
 
 # Remove 80+ from the dataset
 tripstimedf <- subset(tripstimedf, age_group != "80 - 84")
