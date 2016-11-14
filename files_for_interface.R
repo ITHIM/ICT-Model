@@ -162,11 +162,7 @@ rm(temp)
 # end of moved part
 names(tripsdf)[names(tripsdf)=="MainMode_Reduced"] <- "baseline"
 
-# Save tripsdf as an rds file
-# Assuming ICT is a sibling of ICT-Model repo
-saveRDS(tripsdf, "../ICT/app/data/csv/tripsdf_regional.rds")
-
-# Aggregate trips used in "Journey Time" tab
+# Precalculate trips used in "Journey Time" tab
 
 TripTotalTimeCalcs <- function(tripTime, tripMode){
   # all possible age_group + 'All'
@@ -187,7 +183,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
   
   # all possible scenarios - not very elegant way
   
-  aaScenarios <- colnames(tripTime)[10:length(colnames(tripTime))-1]
+  aaScenarios <- colnames(tripTime)[9:(length(colnames(tripTime))-1)]
   
   # all possible regions
   
@@ -344,14 +340,14 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
                 data <- subset(data, age_group == aaAgeGroup)
               }
               if (aaSex != 3)
-                data <- subset(data, Sex_B01ID %in% aaSex)
+                data <- subset(data, Sex_B01ID %in% as.integer(aaSex))
               
               if (aaSES != "All"){
-                data <- subset(data, NSSec_B03ID %in% aaSES)
+                data <- subset(data, NSSec_B03ID %in% as.integer(aaSES))
               }
               
               if (aaEthnicity != "All"){
-                data <- subset(data, EthGroupTS_B02ID %in% aaEthnicity)
+                data <- subset(data, EthGroupTS_B02ID %in% as.integer(aaEthnicity))
               }
               data[is.na(data)] <- 0
               
@@ -506,3 +502,198 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
 }
 
 TripTotalTimeCalcs(tripstimedf, tripsdf)
+
+# Precalculate trips used in "Mode Share" tab
+
+tripsDFCalcs <- function(tripMode){
+  
+  appendMissingFrequencies <- function( df1, df2){
+    
+    # store names in case if df2 is empty
+    
+    df2Names <- colnames(df2)
+    
+    missingModes <- setdiff(df1[,2], df2[,1])
+    if (nrow(df2) < 8){
+      for (i in (1:length(missingModes))){
+        df2 <- rbind(df2,c(missingModes[i], 0))
+      }
+    }
+    
+    colnames(df2) <- df2Names
+    df2
+  }
+  
+  # tp_mode also defined in data-processing.R in ICT
+  
+  tp_mode <- data.frame (mode = c("Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"), code = c(1, 2, 2.5, c(3:7)))
+  
+  outputMainFolder <- './data/csv/tripsdf_regional/'
+  
+  # all possible age_group + 'All'
+  
+  aaAgeGroups <- c(sort(unique(tripMode[, c("age_group")])), 'All')
+  
+  # all possible Sex + 3 (all)
+  
+  aaSexs <- c(sort(unique(tripMode[, c("Sex_B01ID")])), '3')
+  
+  # all possible Ethnicity + 'All'
+  
+  aaEthnicities <- c(sort(unique(tripMode[, c("EthGroupTS_B02ID")])), 'All')
+  
+  # all possible SES + 'All'
+  
+  aaSESs <- c(sort(unique(tripMode[, c("NSSec_B03ID")])), 'All')
+  
+  # all possible scenarios (baseline should be amongst scenarios) - not very elegant way
+  
+  aaScenarios <- colnames(tripMode)[7:(length(colnames(tripMode))-1)]
+  
+  # all possible regions
+  
+  aaRegions <- sort(unique(tripMode[, c("HHoldGOR_B02ID")]))
+  
+  # for every region
+  
+  for (aaRegion in aaRegions){
+    
+    print(aaRegion)
+    
+    dir.create(paste0(outputMainFolder, 'full/', aaRegion), showWarnings = FALSE, recursive = TRUE)
+    dir.create(paste0(outputMainFolder, 'filtered/', aaRegion), showWarnings = FALSE, recursive = TRUE)
+    
+    # select data for region
+    
+    tripModeRegion <- subset(tripMode, HHoldGOR_B02ID == aaRegion)
+    
+    # for every scenario (including baseline)
+    
+    for (aaScenario in aaScenarios){
+      
+      print (aaScenario)
+      
+      # calc full data - all scenarios + baseline
+      
+      # TODO: check - in prev version instead of fullScenarioData names: baseline and scenario were used - not sure if this is needed
+      
+      fullScenario <- data.frame(fullScenarioData = tripModeRegion[[aaScenario]])
+      
+      fullScenario <- count(fullScenario)
+      
+      total_population <- sum(fullScenario$freq, na.rm = T)
+      
+      fullScenario$freq <- round(fullScenario$freq / sum(fullScenario$freq) * 100, digit = 1)
+      # Remove NA row from the dataset
+      fullScenario <- subset(fullScenario, !is.na(fullScenario[,1]))
+      
+      fullScenario <- appendMissingFrequencies(tp_mode, fullScenario)
+      
+      fullScenario <- arrange(fullScenario, fullScenario[,1])
+      
+      fullScenario$total_population <- total_population
+      
+      # calc filtered data - all scenarios + baseline
+      
+      # df for results
+      
+      filteredScenario <- data.frame(stringsAsFactors = FALSE)
+      
+      # get only one scenario/baseline column
+      
+      colList <- c("ID","age_group", "Sex_B01ID", "NSSec_B03ID", "EthGroupTS_B02ID", aaScenario)
+      
+      dataRegion <- tripModeRegion[,colList]
+      
+      # iterate over combination of all filters
+      
+      for (aaAgeGroup in aaAgeGroups){
+        
+        print(paste("age:", aaAgeGroup))
+        
+        for (aaSex in aaSexs){
+          
+          print(paste("sex:", aaSex))
+          
+          for (aaEthnicity in aaEthnicities){
+            
+            for (aaSES in aaSESs){
+              
+              data <- dataRegion
+              
+              if (aaAgeGroup != 'All'){
+                
+                data <- subset(data, age_group == aaAgeGroup)
+              }
+              
+              if (aaSex != 3){
+                
+                data <- subset(data, Sex_B01ID %in% as.integer(aaSex))
+              }
+              
+              if (aaSES != "All"){
+                
+                data <- subset(data, NSSec_B03ID %in% as.integer(aaSES))
+              }
+              
+              if (aaEthnicity != "All"){
+                
+                data <- subset(data, EthGroupTS_B02ID %in% as.integer(aaEthnicity))
+              }
+              
+              filteredScenarioTemp <- count(data, aaScenario)
+              
+              names(filteredScenarioTemp)[names(filteredScenarioTemp)== aaScenario] <- "filteredScenarioData"
+              
+              total_population <- sum(filteredScenarioTemp$freq, na.rm = T)
+              
+              filteredScenarioTemp$freq <- round(filteredScenarioTemp$freq / sum(filteredScenarioTemp$freq) * 100, digit = 1)
+              # Remove NA row from the dataset
+              filteredScenarioTemp <- subset(filteredScenarioTemp, !is.na(filteredScenarioTemp[,1]))
+              
+              filteredScenarioTemp <- appendMissingFrequencies(tp_mode, filteredScenarioTemp)
+              
+              filteredScenarioTemp <- arrange(filteredScenarioTemp, filteredScenarioTemp[,1])
+              
+              filteredScenarioTemp$total_population <- total_population
+              
+              # add columns with filtered combinations
+              
+              filteredScenarioTemp[,c('agegroup')] <- aaAgeGroup
+              filteredScenarioTemp[,c('gender')] <- aaSex
+              filteredScenarioTemp[,c('ethnicity')] <- aaEthnicity
+              filteredScenarioTemp[,c('ses')] <- aaSES
+              
+              # add data to whole region-scenario data
+              
+              filteredScenario <- bind_rows(filteredScenario, filteredScenarioTemp)
+              
+            }
+          }
+        }
+      }
+      
+      # add region data
+      
+      fullScenario[,c('region')] <- aaRegion
+      
+      filteredScenario[,c('region')] <- aaRegion
+      
+      # save full data as rds file
+      
+      saveRDS(fullScenario, paste0(outputMainFolder, 'full/', aaRegion, '/', aaScenario, '.rds'))
+      
+      saveRDS(filteredScenario, paste0(outputMainFolder, 'filtered/', aaRegion, '/', aaScenario, '.rds'))
+      
+      rm(list=c("fullScenario", "filteredScenario"))
+      
+    }
+    
+    rm("tripModeRegion")
+    
+    gc()
+  }
+  
+}
+
+tripsDFCalcs(tripsdf)
