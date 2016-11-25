@@ -132,7 +132,7 @@ for (i in regions) {
   aggr[ichar, 'MMETh0.pers'] <-round(aggr[ichar, 'MMETh0' ]/ aggr[ichar, 'nopeople'],1)
   
   # Using new Christian's average CO2 value of 0.31 grams 
-  aggr[ichar, 'CO20'] <- round(aggr[ichar, 'carMiles0'] * 1.61 * (3.1 / 1.61) * 1e-4,2)   #(in metric Tons)
+  aggr[ichar, 'CO20'] <- round(aggr[ichar, 'carMiles0'] * 1.61 * (3.1 / 1.61) * 1e-1,2)   #(in Kg)
   
   aggr[ichar, 'TripTotalTime0'] <- round(sum(blreg$TripTotalTime),1)
   
