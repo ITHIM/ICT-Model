@@ -28,10 +28,10 @@ local_bl <- bl
 local_bl <- subset(local_bl, age_group != "80 - 84")
 
 
-listOfScenarios=listOfScenarios[1:2]
+listOfScenarios=listOfScenarios[1:9]
 
 
-
+library(dplyr)
 
 # Create trips df
 tripsdf <- create_trips(bl, listOfScenarios)
@@ -64,7 +64,7 @@ tripsdf$Cycled <- NULL
 
 # Get row numbers with NA
 
-temp <- data.frame(rn = which( is.na(tripsdf$MainMode_Reduced), arr.ind=TRUE))
+temp <- data.frame(rn = which( is.na(tripsdf$baseline), arr.ind=TRUE))
 
 tripsdf$X <- c(1:nrow(tripsdf))
 
