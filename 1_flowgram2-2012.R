@@ -84,6 +84,12 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   baselineProcessed <- rbind(baselineProcessed, baselineCoutry)
   rm(baselineCoutry)
+  
+  # add tripIDRegional column with unique value for every trip on regional level
+  # (since TripID is duplicated because region 0 is just a copy of all other regions)
+  
+  baselineProcessed$TripIDRegional <- seq.int(nrow(baselineProcessed))
+  
   # baselineProcessed shoud be now baseline
   
   baseline <- baselineProcessed
@@ -177,7 +183,7 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   # Fixed a bug: replaced colnames with c
   # Removed TripTravelTime1
-  blsave <- baseline[,c('ID','HHoldGOR_B02ID','now_cycle','ebike','cyclist','METh','MMETh','TripTotalTime1')]
+  blsave <- baseline[,c('ID','HHoldGOR_B02ID','TripID','TripIDRegional','now_cycle','ebike','cyclist','METh','MMETh','TripTotalTime1')]
   
   # write.csv(blsave,file=paste(scenarioFolderNameAndPath, nombre, sep = "\\"), row.names=F)
   cat("size: ", nrow(blsave), " - ", nombre,'\n',' done !!','\n') 
