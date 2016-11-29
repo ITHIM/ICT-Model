@@ -45,7 +45,7 @@ saveRDS(PA_mmets, "../ICT/app/data/csv/mmets_regional.rds")
 CO2.Tm <- subset(CO2.Tm, age_group != "80 - 84")
 
 # Save it as an rds file
-saveRDS(PA_mmets, "../ICT/app/data/csv/co2.rds")
+saveRDS(CO2.Tm, "../ICT/app/data/csv/co2.rds")
 
 # carMiles: remove "80 - 84" age group
 
@@ -142,7 +142,7 @@ tripstimedf <- (subset(tripstimedf, !(X %in% temp$rn) ))
 rm(temp)
 
 
-# Precalculate trips used in "Journey Time" tab
+# Precalculate trips used in "Journey Time" tab-
 
 TripTotalTimeCalcs <- function(tripTime, tripMode){
   # all possible age_group + 'All'
@@ -170,6 +170,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
   # all possible regions
   
   aaRegions <- sort(unique(tripTime[, c("HHoldGOR_B02ID")]))
+  #aud: aaRegions <- aaRegions[1:3] # ADDED FOR TESTING - 
   
   # for every region
   
@@ -408,6 +409,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
                 bc[,c('ses')] <- aaSES
 
                 tempScenarioFilteredHistogramFreq <- bind_rows(tempScenarioFilteredHistogramFreq, bc)
+                write.csv(tempScenarioFilteredHistogramFreq,paste('c:/Temp/tempScenarioFilteredHistogramFreq',umode[i],'.csv'))
               }
               
               # other data
@@ -438,6 +440,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
                 data[,c('ses')] <- aaSES
                 
                 tempScenarioFilteredOtherFreq <- bind_rows(tempScenarioFilteredOtherFreq, data)
+                
               }
               
               rm("scFilteredTripTimeTraveldata", "bc", "data")

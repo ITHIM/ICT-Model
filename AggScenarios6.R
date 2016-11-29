@@ -22,31 +22,29 @@ AggScenarios6 <- function (f, fname) {
   f.carMiles  <- sqldf ('SELECT f.ID,f.HHoldGOR_B02ID, sum(f.TripDisIncSW) as var FROM f WHERE (f.MainMode_B04ID IN (3,4,5,12) 
                     AND (f.now_cycle=0 AND f.Cycled=0) ) GROUP BY f.ID, f.HHoldGOR_B02ID')
   
-  f.carMiles[,2] <- f.carMiles[,2]
   f.carMiles <- left_join(bl.indiv, f.carMiles, by = c("ID" = "ID", "HHoldGOR_B02ID" = "HHoldGOR_B02ID"))
-  colnames(f.carMiles)[ncol(f.carMiles)] <- fname #rename column
-  
-  carMiles <<- cbind(carMiles, f.carMiles[, ncol(f.carMiles)])
+  carMiles <<- cbind(carMiles,  f.carMiles[, ncol(f.carMiles)])
   
   # 8-CO2.Tm           
   # Using new Christian's average CO2 value of 0.31 grams 
-  CO2.Tm <<- cbind(CO2.Tm, 1.61 * (3.1 / 1.61) * 1e-1 * f.carMiles[, ncol(f.carMiles)])    #this is KG !! No TDR as it's been 
+  CO2.emiss = 1.61 * (3.1 / 1.61) * 1e-1 *  f.carMiles[, ncol(f.carMiles)]   #in Kg
+  CO2.Tm <<- cbind(CO2.Tm, CO2.emiss)    
   
   # 7-MMETh            
   f.MMETh <- sqldf('select f.ID,f.HHoldGOR_B02ID, sum(f.MMETh) as mmets FROM f GROUP BY f.ID, f.HHoldGOR_B02ID')
-  MMETh <<- cbind(MMETh, f.MMETh[,3])
+  MMETh <<- cbind(MMETh,  f.MMETh[,3])
    
   # 12-Health_mmts   
   f.hmmets <- sqldf('Select f.ID, f.HHoldGOR_B02ID, sum(f.MMETh) as mmets, f.health_mmets from f GROUP BY f.ID, f.HHoldGOR_B02ID')
   f.hmmets$health_mmets <- f.hmmets$health_mmets + f.MMETh$mmets
   #colnames(f.hmmets$health_mmets) <- fname
-  health_mmets <<- cbind(health_mmets,f.hmmets$health_mmets)
+  health_mmets <<- cbind(health_mmets, f.hmmets$health_mmets)
   
   # 13-PA_mmets
   f.PA_mmets <- sqldf('Select f.ID, f.HHoldGOR_B02ID, f.physical_activity_mmets from f GROUP BY f.ID, f.HHoldGOR_B02ID')
   f.PA_mmets$physical_activity_mmets <- f.PA_mmets$physical_activity_mmets + f.MMETh$mmets
   #colnames(f.PA_mmets$physical_activity_mmets) <- fname
-  PA_mmets <<- cbind(PA_mmets,f.PA_mmets$physical_activity_mmets)
+  PA_mmets <<- cbind(PA_mmets, f.PA_mmets$physical_activity_mmets)
   
   
   #   # 2-carMilesR           
@@ -71,7 +69,7 @@ AggScenarios6 <- function (f, fname) {
   #f.milesCycled [,2] <- f.milesCycled[,2]
   f.milesCycled  <- left_join(bl.indiv,f.milesCycled,by = c("ID" = "ID", "HHoldGOR_B02ID" = "HHoldGOR_B02ID"))
 
-  milesCycled.pers <<- cbind(milesCycled.pers,f.milesCycled[,7])
+  milesCycled.pers <<- cbind(milesCycled.pers,  f.milesCycled[,7])
   #   
   #   
   #   # 5-METh   
@@ -95,10 +93,9 @@ AggScenarios6 <- function (f, fname) {
   #   TripDisIncSW  <<- cbind(TripDisIncSW,f.TripDisIncSW[,3])
   #   
   # 10-TripTotalTime1
-  f.TripTotalTime1 <- sqldf('select f.ID, f.HHoldGOR_B02ID, sum(f.TripTotalTime1) FROM f GROUP BY f.ID, f.HHoldGOR_B02ID')
-  colnames(f.TripTotalTime1)[3] <- fname
-
-  TripTotalTime1 <<- cbind(TripTotalTime1, f.TripTotalTime1[,3])
+  f.TripTotalTime1 <- sqldf('select f.ID, f.HHoldGOR_B02ID, sum(f.TripTotalTime1) as var FROM f GROUP BY f.ID, f.HHoldGOR_B02ID')
+  
+  TripTotalTime1 <<- cbind(TripTotalTime1,  f.TripTotalTime1[,3])
   #   
   #   # 11- timeSaved.Total.h
   #   f.timeSaved   <- as.data.frame(f.TripTotalTime1[,3] - TripTotalTime0[,3])

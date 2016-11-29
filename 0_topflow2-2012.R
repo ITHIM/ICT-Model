@@ -178,7 +178,7 @@ METh0 <- round(sum(baseline$METh),1)
 MMETh0 <- round(sum(baseline$MMETh),1)
 # Miles to Kilometres, Grams to metric tonnes, 0.0001
 # Using new Christian's average CO2 value of 0.31 grams
-CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-4,2)   #(in metric Tons)
+CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-1,2)   #(in Kg)
 
 # df <- data.frame()
 
@@ -193,7 +193,7 @@ directProbCasesAboveGivenPerc <- data.frame(MS = numeric(0),
 
 # TODO: directProbs temp values - should be replaced with the final values
 
-directProbs <- c(0.05, 0.1, 0.15, 0.25, 0.5, 0.75, 1)
+directProbs <- c(0.05, 0.1,0.25, 0.5, 0.75, 1)
 
 # Removing TDR
 # TDR

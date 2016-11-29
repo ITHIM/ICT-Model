@@ -50,7 +50,7 @@ AggCalc  <- function (f, fname, region) {    #calculates all agregates of a give
   
   
   #2-co2       !!!!!!
-  CO2 <- round(carMiles * 1.61 * 1.50 * 1e-4,2)
+  CO2 <- round(carMiles * 1.61 * 3.1 * 1e-1,2)  #in Kg
   CO2R <- round(100 * (CO20-CO2)/CO20,1) 
   CO2.pers <- CO2/(aggr[region+1, 'nopeople'] + aggr[region+1, 'notripspeople'])
   
