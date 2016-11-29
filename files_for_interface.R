@@ -115,25 +115,19 @@ tripstimedf <- create_triptime(bl, listOfScenarios)
 tripstimedf <- subset(tripstimedf, age_group != "80 - 84")
 
 # Rename MainMode_Reduced columns to baseline
-tripsdf$baseline <- tripsdf$MainMode_Reduced
-tripsdf$MainMode_Reduced <- NULL
+# tripsdf$baseline <- tripsdf$MainMode_Reduced
+# tripsdf$MainMode_Reduced <- NULL
+
+# Rename MainMode_Reduced columns to baseline - simpler approach 
+
+names(tripsdf)[names(tripsdf)=='MainMode_Reduced'] <- 'baseline'
+
 tripsdf$Cycled <- NULL
 
-# # names(tripTime)[names(tripTime)=="MainMode_Reduced"] <- "baseline"
-# 
-# # "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
-# # Reduce the number of modes to 4
-# # walk, bicycle, car, others
-# lookup <- data.frame(mode=c(1.0,2.0,2.5,3.0,4.0,5.0,6.0,7.0),red_mode=c(1.0,2.0,2.0,3.0,3.0,4.0,4.0,4.0))
-# 
-# # Replace number of modes in each of the scenarios and the baseline to 4
-# for (i in 7:ncol(tripMode)){
-#   tripMode[,i] <- lookup$red_mode[match(tripMode[,i], lookup$mode)]
-# }
 
 # Get row numbers with NA
 
-temp <- data.frame(rn = which( is.na(tripsdf$MainMode_Reduced), arr.ind=TRUE))
+temp <- data.frame(rn = which( is.na(tripsdf$baseline), arr.ind=TRUE))
 
 tripsdf$X <- c(1:nrow(tripsdf))
 
@@ -147,20 +141,6 @@ tripstimedf <- (subset(tripstimedf, !(X %in% temp$rn) ))
 
 rm(temp)
 
-# moved from the ICT
-# # # "Walk", "Bicycle", "Ebike", "Car Driver", "Car Passenger", "Bus", "Train", "Other"
-# # # Reduce the number of modes to 4
-# # # walk, bicycle, car, others
-# # lookup <- data.frame(mode=c(1.0,2.0,2.5,3.0,4.0,5.0,6.0,7.0),red_mode=c(1.0,2.0,2.0,3.0,3.0,4.0,4.0,4.0))
-# # 
-# # # Replace number of modes in each of the scenarios and the baseline to 4
-# # for (i in 7:31){
-# #   tripMode[,i] <- lookup$red_mode[match(tripMode[,i], lookup$mode)]
-# # }
-# 
-# 
-# end of moved part
-names(tripsdf)[names(tripsdf)=="MainMode_Reduced"] <- "baseline"
 
 # Precalculate trips used in "Journey Time" tab
 
@@ -183,7 +163,9 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
   
   # all possible scenarios - not very elegant way
   
-  aaScenarios <- colnames(tripTime)[9:(length(colnames(tripTime))-1)]
+  aaScenarios <- colnames(tripTime)[10:(length(colnames(tripTime))-1)]
+  
+  print(aaScenarios)
   
   # all possible regions
   
@@ -195,8 +177,8 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
     
     print(aaRegion)
     
-    dir.create(paste0('../ICT/app/data/csv/TripTotalTime1_regional/baseline/', aaRegion, '/histogram'), showWarnings = FALSE, recursive = TRUE)
-    dir.create(paste0('../ICT/app/data/csv/TripTotalTime1_regional/baseline/', aaRegion, '/other'), showWarnings = FALSE, recursive = TRUE)
+    dir.create(paste0('../ICT/app/data/csv/TripTotalTime1_regional/full/', aaRegion, '/histogram'), showWarnings = FALSE, recursive = TRUE)
+    dir.create(paste0('../ICT/app/data/csv/TripTotalTime1_regional/full/', aaRegion, '/other'), showWarnings = FALSE, recursive = TRUE)
     dir.create(paste0('../ICT/app/data/csv/TripTotalTime1_regional/filtered/', aaRegion, '/histogram'), showWarnings = FALSE, recursive = TRUE)
     dir.create(paste0('../ICT/app/data/csv/TripTotalTime1_regional/filtered/', aaRegion, '/other'), showWarnings = FALSE, recursive = TRUE)
     
@@ -209,7 +191,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
       
       print(aaScenario)
       
-      # scenario baseline shouldn't be calculated every time, only once for every scenario to reduce number of operations
+      # scenario full data shouldn't be calculated every time, only once for every scenario to reduce number of operations
       
       tempScenarioHistogramFreq <- data.frame(stringsAsFactors = FALSE)
       tempScenarioOtherFreq <- data.frame(stringsAsFactors = FALSE)
@@ -470,15 +452,15 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
         
       }
       
-      # for scenario baseline - add region column, add scenario values
+      # for scenario full - add region column, add scenario values
       
       tempScenarioHistogramFreq[,c('region')] <- aaRegion
 
-      saveRDS(tempScenarioHistogramFreq, paste0('../ICT/app/data/csv/TripTotalTime1_regional/baseline/', aaRegion, '/histogram/', aaScenario, '.rds'))
+      saveRDS(tempScenarioHistogramFreq, paste0('../ICT/app/data/csv/TripTotalTime1_regional/full/', aaRegion, '/histogram/', aaScenario, '.rds'))
       
       tempScenarioOtherFreq[,c('region')] <- aaRegion
       
-      saveRDS(tempScenarioOtherFreq, paste0('../ICT/app/data/csv/TripTotalTime1_regional/baseline/', aaRegion, '/other/', aaScenario, '.rds'))
+      saveRDS(tempScenarioOtherFreq, paste0('../ICT/app/data/csv/TripTotalTime1_regional/full/', aaRegion, '/other/', aaScenario, '.rds'))
       
       rm(list=c("tempScenarioHistogramFreq", "tempScenarioOtherFreq"))
       
@@ -502,6 +484,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
 }
 
 TripTotalTimeCalcs(tripstimedf, tripsdf)
+
 
 # Precalculate trips used in "Mode Share" tab
 
@@ -548,7 +531,9 @@ tripsDFCalcs <- function(tripMode){
   
   # all possible scenarios (baseline should be amongst scenarios) - not very elegant way
   
-  aaScenarios <- colnames(tripMode)[7:(length(colnames(tripMode))-1)]
+  aaScenarios <- colnames(tripMode)[9:(length(colnames(tripMode))-1)]
+  
+  print(aaScenarios)
   
   # all possible regions
   

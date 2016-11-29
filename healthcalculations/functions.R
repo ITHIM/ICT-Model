@@ -431,24 +431,37 @@ create_trips <-
   function (bl, lObj)
   {
     
-    bl <- subset(bl, select = c(ID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, MainMode_Reduced, Cycled, HHoldGOR_B02ID))
+    bl <- subset(bl, select = c(ID, TripID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, MainMode_Reduced, Cycled, HHoldGOR_B02ID))
     #cat("nrow bl: ", nrow(bl), "\n")
     
     for (i in 1:length(lObj)){
       tbl <- bl
-      #sc <- get(as.character(lObj[i]) )
+      
       sc <- readRDS(paste0('./temp_data_folder/output/repo_version/', as.character(lObj[i]), '.rds'))
-      #cat("sc ", as.character(lObj[i]),  " - ",  nrow(sc), "\n")
-      tbl$now_cycle <- sc$now_cycle
-      tbl$ebike <- sc$ebike
-      tbl$cyclist <- sc$cyclist
-      # f$now_cycle==1 | f$Cycled==1)
+      
+      # select only needed for joining columns and with needed data
+      
+      sc <- sc[, c('TripID', 'HHoldGOR_B02ID', 'now_cycle', 'ebike', 'cyclist')]
+      
+      tbl <- inner_join(tbl, sc, by=c('HHoldGOR_B02ID', 'TripID'))
+      
       tbl[tbl$now_cycle == 1 | tbl$Cycled == 1 ,]$MainMode_Reduced <- 2
       if (nrow(tbl[tbl$ebike == 1,]) > 0)
         tbl[tbl$ebike == 1,]$MainMode_Reduced <- 2.5
       
+      # select only needed for joining columns and with needed data
       
-      bl[[as.character(lObj[i])]] <- tbl$MainMode_Reduced
+      tbl <- tbl[, c('TripID', 'HHoldGOR_B02ID', 'MainMode_Reduced')]
+      
+      # rename column with value -> new name equals name of the scenario
+      
+      names(tbl)[names(tbl)=='MainMode_Reduced'] <- as.character(lObj[i])
+      
+      # join data using both region and TripID since there are at least two trips with the same TripID (because of region 0)
+      
+      bl <- inner_join(bl, tbl, by=c('HHoldGOR_B02ID', 'TripID'))
+      
+      #bl[[as.character(lObj[i])]] <- tbl$MainMode_Reduced
       rm(sc)
     }
     bl
@@ -460,18 +473,26 @@ create_trips <-
 create_triptime <-
   function (bl, lObj)
   {
-    
-    bl <- subset(bl, select = c(ID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, TripTotalTime1, Cycled, HHoldGOR_B02ID))
-    
+    bl <- subset(bl, select = c(ID, TripID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, TripTotalTime1, Cycled, HHoldGOR_B02ID))
     
     for (i in 1:length(lObj)){
       tbl <- bl
       #sc <- get(as.character(lObj[i]) )
       sc <- readRDS(paste0('./temp_data_folder/output/repo_version/', as.character(lObj[i]), '.rds'))
-      tbl$now_cycle <- sc$now_cycle
-      tbl$ebike <- sc$ebike
-      tbl$cyclist <- sc$cyclist
-      bl[[as.character(lObj[i])]] <- sc$TripTotalTime1
+      
+      # select only needed columns ('TripID', 'HHoldGOR_B02ID' - used for joining, 'TripTotalTime1' - with data)
+      
+      tbl <- sc[, c('TripID', 'HHoldGOR_B02ID', 'TripTotalTime1')]
+      
+      # rename column with value -> new name equals name of the scenario
+      
+      names(tbl)[names(tbl)=='TripTotalTime1'] <- as.character(lObj[i])
+      
+      # join data using both region and TripID since there are at least two trips with the same TripID (because of region 0)
+      
+      bl <- inner_join(bl, tbl, by=c('HHoldGOR_B02ID', 'TripID'))
+
+      # bl[[as.character(lObj[i])]] <- sc$TripTotalTime1
       rm(sc)
     }
     bl
