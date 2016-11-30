@@ -194,7 +194,7 @@ directProbCasesAboveGivenPerc <- data.frame(MS = numeric(0),
 
 # TODO: directProbs temp values - should be replaced with the final values
 
-directProbs <- c(0.05, 0.1,0.25, 0.5, 0.75, 1)
+directProbs <- c(0.05, 0.1, 0.25, 0.5, 0.75, 1)
 
 # Removing TDR
 # TDR
@@ -206,7 +206,7 @@ num = 1
 
 #keep only used variables
 baseline <-baseline[ , c('Age_B01ID', 'Sex_B01ID', 'HHoldGOR_B02ID', 'CarAccess_B01ID',
-                         'NSSec_B03ID', 'IndIncome2002_B02ID', 'EthGroupTS_B02ID', 'ID',
+                         'NSSec_B03ID', 'IndIncome2002_B02ID', 'EthGroupTS_B02ID', 'TripID', 'ID',
                          'MainMode_B03ID', 'MainMode_B04ID', 'MainMode_B11ID', 
                          'TripTotalTime', 'TripTravTime', 'TripDisIncSW',
                          'agesex', 'Cycled', 'METh', 'MMETh', 'cyclist',
