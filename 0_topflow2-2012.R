@@ -138,6 +138,7 @@ baseline$TripID  <- as.numeric(factor(baseline$TripID))
 
 #hsematch <- hsematch[,c(8,9)]  #keep only first and last column > IndivID, mMETs
 hse1 <- setDT(hsematch)[,if(.N<1) .SD else .SD[sample(.N,1,replace=F)],by=ID]
+hse1 = as.data.frame(hse1)
 
 #add times cols. to baseline (used for travel time after cycle switch takes place)
 TripTotalTime1 <- 0
