@@ -39,13 +39,13 @@ local_bl <- subset(local_bl, age_group != "80 - 84")
 PA_mmets <- subset(PA_mmets, age_group != "80 - 84")
 
 # Save it as an rds file
-saveRDS(PA_mmets, "../ICT/app/data/csv/mmets_regional.rds")
+saveRDS(PA_mmets, "./data/csv/mmets_regional.rds")
 
 # Similar to mmets, remove "80 - 84" for CO2
 CO2.Tm <- subset(CO2.Tm, age_group != "80 - 84")
 
 # Save it as an rds file
-saveRDS(CO2.Tm, "../ICT/app/data/csv/co2.rds")
+saveRDS(CO2.Tm, "./data/csv/co2.rds")
 
 # carMiles: remove "80 - 84" age group
 
@@ -53,7 +53,7 @@ carMiles <- subset(carMiles, age_group != "80 - 84")
 
 # carMiles: save it as a rds file
 
-saveRDS(carMiles, "../ICT/app/data/csv/carMiles_regional.rds")
+saveRDS(carMiles, "./data/csv/carMiles_regional.rds")
 
 # milesCycled.pers: remove "80 - 84" age group
 
@@ -61,18 +61,18 @@ milesCycled.pers <- subset(milesCycled.pers, age_group != "80 - 84")
 
 # milesCycled.pers: save it as a rds file
 
-saveRDS(milesCycled.pers, "../ICT/app/data/csv/milesCycled.pers_regional.rds")
+saveRDS(milesCycled.pers, "./data/csv/milesCycled.pers_regional.rds")
 
 ## HEALTH FILES
 # Generated after running health_calculations.R
 
 # YLLs
-saveRDS(yll, "../ICT/app/data/csv/ylls.rds")
-saveRDS(yll_red, "../ICT/app/data/csv/yll_reduction.rds")
+saveRDS(yll, "./data/csv/ylls.rds")
+saveRDS(yll_red, "./data/csv/yll_reduction.rds")
 
 # Deaths
-saveRDS(death, "../ICT/app/data/csv/deaths.rds")
-saveRDS(death_red, "../ICT/app/data/csv/deaths_reduction.rds")
+saveRDS(death, "./data/csv/deaths.rds")
+saveRDS(death_red, "./data/csv/deaths_reduction.rds")
 
 # 
 # Aggregate file
@@ -145,6 +145,9 @@ rm(temp)
 # Precalculate trips used in "Journey Time" tab-
 
 TripTotalTimeCalcs <- function(tripTime, tripMode){
+  
+  outputMainFolder <- './data/csv/TripTotalTime1_regional/'
+  
   # all possible age_group + 'All'
   
   aaAgeGroups <- c(sort(unique(tripTime[, c("age_group")])), 'All')
@@ -178,10 +181,10 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
     
     print(aaRegion)
     
-    dir.create(paste0('../ICT/app/data/csv/TripTotalTime1_regional/full/', aaRegion, '/histogram'), showWarnings = FALSE, recursive = TRUE)
-    dir.create(paste0('../ICT/app/data/csv/TripTotalTime1_regional/full/', aaRegion, '/other'), showWarnings = FALSE, recursive = TRUE)
-    dir.create(paste0('../ICT/app/data/csv/TripTotalTime1_regional/filtered/', aaRegion, '/histogram'), showWarnings = FALSE, recursive = TRUE)
-    dir.create(paste0('../ICT/app/data/csv/TripTotalTime1_regional/filtered/', aaRegion, '/other'), showWarnings = FALSE, recursive = TRUE)
+    dir.create(paste0(outputMainFolder, 'full/', aaRegion, '/histogram'), showWarnings = FALSE, recursive = TRUE)
+    dir.create(paste0(outputMainFolder, 'full/', aaRegion, '/other'), showWarnings = FALSE, recursive = TRUE)
+    dir.create(paste0(outputMainFolder, 'filtered/', aaRegion, '/histogram'), showWarnings = FALSE, recursive = TRUE)
+    dir.create(paste0(outputMainFolder, 'filtered/', aaRegion, '/other'), showWarnings = FALSE, recursive = TRUE)
     
     # select data for region
     
@@ -264,6 +267,10 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
         # add column with umode
 
         bc[,c('umode')] <- umode[i]
+        
+        # add total population
+        
+        bc[,c('total_population')] <- nrow(scTripTimeTraveldata)
 
         tempScenarioHistogramFreq <- bind_rows(tempScenarioHistogramFreq, bc)
 
@@ -289,6 +296,10 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
         # add column with umode
         
         data[,c('umode')] <- umode[i]
+        
+        # add total population
+        
+        data[,c('total_population')] <- nrow(scTripTimeTraveldata)
         
         tempScenarioOtherFreq <- bind_rows(tempScenarioOtherFreq, data)
         
@@ -407,9 +418,13 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
                 bc[,c('gender')] <- aaSex
                 bc[,c('ethnicity')] <- aaEthnicity
                 bc[,c('ses')] <- aaSES
+                
+                # add sample size
+                
+                bc[,c('total_population')] <- nrow(scFilteredTripTimeTraveldata)
 
                 tempScenarioFilteredHistogramFreq <- bind_rows(tempScenarioFilteredHistogramFreq, bc)
-                write.csv(tempScenarioFilteredHistogramFreq,paste('c:/Temp/tempScenarioFilteredHistogramFreq',umode[i],'.csv'))
+
               }
               
               # other data
@@ -439,6 +454,10 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
                 data[,c('ethnicity')] <- aaEthnicity
                 data[,c('ses')] <- aaSES
                 
+                # add sample size
+                
+                data[,c('total_population')] <- nrow(scFilteredTripTimeTraveldata)
+                
                 tempScenarioFilteredOtherFreq <- bind_rows(tempScenarioFilteredOtherFreq, data)
                 
               }
@@ -459,11 +478,11 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
       
       tempScenarioHistogramFreq[,c('region')] <- aaRegion
 
-      saveRDS(tempScenarioHistogramFreq, paste0('../ICT/app/data/csv/TripTotalTime1_regional/full/', aaRegion, '/histogram/', aaScenario, '.rds'))
+      saveRDS(tempScenarioHistogramFreq, paste0(outputMainFolder, 'full/', aaRegion, '/histogram/', aaScenario, '.rds'))
       
       tempScenarioOtherFreq[,c('region')] <- aaRegion
       
-      saveRDS(tempScenarioOtherFreq, paste0('../ICT/app/data/csv/TripTotalTime1_regional/full/', aaRegion, '/other/', aaScenario, '.rds'))
+      saveRDS(tempScenarioOtherFreq, paste0(outputMainFolder, 'full/', aaRegion, '/other/', aaScenario, '.rds'))
       
       rm(list=c("tempScenarioHistogramFreq", "tempScenarioOtherFreq"))
       
@@ -471,11 +490,11 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
       
       tempScenarioFilteredHistogramFreq[,c('region')] <- aaRegion
 
-      saveRDS(tempScenarioFilteredHistogramFreq, paste0('../ICT/app/data/csv/TripTotalTime1_regional/filtered/', aaRegion, '/histogram/', aaScenario, '.rds'))
+      saveRDS(tempScenarioFilteredHistogramFreq, paste0(outputMainFolder, 'filtered/', aaRegion, '/histogram/', aaScenario, '.rds'))
       
       tempScenarioFilteredOtherFreq[,c('region')] <- aaRegion
       
-      saveRDS(tempScenarioFilteredOtherFreq, paste0('../ICT/app/data/csv/TripTotalTime1_regional/filtered/', aaRegion, '/other/', aaScenario, '.rds'))
+      saveRDS(tempScenarioFilteredOtherFreq, paste0(outputMainFolder, 'filtered/', aaRegion, '/other/', aaScenario, '.rds'))
       
       rm(list=c("tempScenarioFilteredHistogramFreq", "tempScenarioFilteredOtherFreq"))
       
@@ -532,9 +551,9 @@ tripsDFCalcs <- function(tripMode){
   
   aaSESs <- c(sort(unique(tripMode[, c("NSSec_B03ID")])), 'All')
   
-  # all possible scenarios (baseline should be amongst scenarios) - not very elegant way
+  # all possible scenarios (baseline should be added) - not very elegant way
   
-  aaScenarios <- colnames(tripMode)[9:(length(colnames(tripMode))-1)]
+  aaScenarios <- c('baseline', colnames(tripMode)[9:(length(colnames(tripMode))-1)])
   
   print(aaScenarios)
   
@@ -567,7 +586,7 @@ tripsDFCalcs <- function(tripMode){
       
       fullScenario <- data.frame(fullScenarioData = tripModeRegion[[aaScenario]])
       
-      fullScenario <- count(fullScenario)
+      fullScenario <- plyr::count(fullScenario)
       
       total_population <- sum(fullScenario$freq, na.rm = T)
       
@@ -629,7 +648,7 @@ tripsDFCalcs <- function(tripMode){
                 data <- subset(data, EthGroupTS_B02ID %in% as.integer(aaEthnicity))
               }
               
-              filteredScenarioTemp <- count(data, aaScenario)
+              filteredScenarioTemp <- plyr::count(data, aaScenario)
               
               names(filteredScenarioTemp)[names(filteredScenarioTemp)== aaScenario] <- "filteredScenarioData"
               
