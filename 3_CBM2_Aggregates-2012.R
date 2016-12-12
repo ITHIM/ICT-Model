@@ -14,7 +14,6 @@ if (!exists("listOfScenarios") || length(listOfScenarios) != 28){
 }
 
 #read baseline (short walks already included)
-#baseline <- readRDS('bl2014_p.rds')   #80+ people + Wales/Scotland (already removed)
 baseline <- readRDS('bl2014_p_v2.rds')
 assign(as.character(listOfScenarios[1]), readRDS(paste0('./temp_data_folder/output/repo_version/', as.character(listOfScenarios[1]), '.rds')))
 if (nrow(baseline) != nrow(get(as.character(listOfScenarios[1])))){
@@ -25,8 +24,14 @@ if (nrow(baseline) != nrow(get(as.character(listOfScenarios[1])))){
   # Rbind with itself setting region to 0, so that it becomes equal to the size of scenarios
   baseline <- rbind(baseline, bl1)
   
-  # Remove temporary variable
-  rm (bl1)
+  #same for people w/o trips
+  fnotrips1= fnotrips
+  fnotrips1$HHoldGOR_B02ID <- 0
+  
+  fnotrips <- rbind(fnotrips, fnotrips1)
+  
+  # Remove temporary variables
+  rm (bl1, fnotrips1)
   
   #create regions list (to process regional aggregates)
   regions <- sort(unique(baseline$HHoldGOR_B02ID))
@@ -62,16 +67,19 @@ aggr <- matrix(data=0, nrow = length(regions),ncol = length(params))
 colnames(aggr) <- params
 row.names(aggr) <- regions
 
-blreg <-  baseline
-fnotripsreg <-  fnotrips
+blreg <-  baseline       # ALREADY includes no trips data
+fnotripsreg <-  fnotrips # this variable used only for no-trips people calculations
 
 # calculate 33 key figures (nat. & by region)
 for (i in regions) {
   
+  blreg <-  baseline
+  fnotripsreg <-  fnotrips
+  
   #filter data sources for region                      
-  if (i!=0)  { blreg <- subset(baseline, subset = baseline$HHoldGOR_B02ID==i)     #if (i!='all')
-  fnotripsreg <- subset(fnotrips, subset = fnotrips$HHoldGOR_B02ID==i)
-  }  
+  blreg <- subset(baseline, subset = baseline$HHoldGOR_B02ID==i)     #if (i!='all')
+  fnotripsreg <- subset(fnotrips, subset = fnotripsreg$HHoldGOR_B02ID==i)
+    
   
   ichar <- as.character(i)
   
@@ -120,11 +128,11 @@ for (i in regions) {
   
   #cyclists in baseline
   aggr[ichar, 'ncyclists0'] <-length(unique(blreg$ID[blreg$Cycled==1]))  
-  aggr[ichar, 'cyclists0.perc'] <-round(100* aggr[ichar,'ncyclists0'] /(length(unique(blreg$ID))+ aggr[ichar, 'notripspeople']),1)
+  aggr[ichar, 'cyclists0.perc'] <-round(100* aggr[ichar,'ncyclists0'] /length(unique(blreg$ID)), 1)
   
   # car Miles blreg nos.
   aggr[ichar, 'carMiles0'] <-sum(blreg[blreg$MainMode_B04ID %in% c(3,4,5,12),'TripDisIncSW'])
-  aggr[ichar, 'carMiles0.pers'] <-round(aggr[ichar,'carMiles0'] /(aggr[ichar, 'nopeople'] + aggr[ichar, 'notripspeople'] ),1)
+  aggr[ichar, 'carMiles0.pers'] <-round(aggr[ichar,'carMiles0'] /aggr[ichar, 'nopeople'],1)
   
   # METs blreg nos.
   aggr[ichar, 'METh0'] <-sum(blreg$METh)
@@ -153,19 +161,17 @@ baseline$ebike <- 0
 for (i1 in 1:length(local_listOfScenarios)) {  #reading files for aggregates
   
   for (j1 in regions)  {
-    #sc <- get(as.character(local_listOfScenarios[i1]) )
-    if (local_listOfScenarios[i1] == 'baseline'){
+
+        if (local_listOfScenarios[i1] == 'baseline'){
       sc <- get(as.character(local_listOfScenarios[i1]) )
     } else {
       sc <- readRDS(paste0('./temp_data_folder/output/repo_version/', as.character(local_listOfScenarios[i1]), '.rds'))
     }
     tbl <- baseline
     
-    if (i1!=1 | j1!=0)  { sc <- subset(sc, subset= sc$HHoldGOR_B02ID==j1)   }
+    sc <- subset(sc, subset= sc$HHoldGOR_B02ID==j1)
     
-    if (j1!=0)  { tbl <- subset(baseline, subset = baseline$HHoldGOR_B02ID==j1)  } #(j1!='all')
-    
-    
+    tbl <- subset(baseline, subset = baseline$HHoldGOR_B02ID==j1)
     
     tbl$now_cycle <- sc$now_cycle
     tbl$ebike <- sc$ebike
@@ -203,8 +209,10 @@ colnames(df) <-c('Scenario','MS','ebike','equity',
                  "% Cyclists in the Total Population","% of Trips by Bicycle",
                  "Region" )
 
-# Change column class from factor to character/numeric
+# Column  to character
 df$Scenario <- as.character(df$Scenario)
+
+#rest to numeric
 for (i in 2:ncol(df)){
   df[,i] <- as.numeric.factor(df[,i])
 }

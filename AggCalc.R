@@ -21,27 +21,27 @@ AggCalc  <- function (f, fname, region) {    #calculates all agregates of a give
   carMilesR <- round(aggr[region+1,'carMiles0'] - carMiles,2)
   
   # !!!!!
-  carMiles.pers <- round(carMiles/(aggr[region+1, 'nopeople'] + aggr[region+1,'notripspeople'] ),1)
-  carMilesR.pers <- round((aggr[region+1, 'carMiles0'] - carMiles)/(aggr[region+1, 'nopeople'] + aggr[region+1, 'notripspeople']),1)
+  carMiles.pers <- round(carMiles/(aggr[region+1, 'nopeople'] ),1)
+  carMilesR.pers <- round((aggr[region+1, 'carMiles0'] - carMiles)/(aggr[region+1, 'nopeople'] ),1)
   carMilesCycled <- sum(f[(f$MainMode_B04ID %in% c(3,4,5,12)) & (f$now_cycle==1 | f$Cycled==1),'TripDisIncSW']) #no need for Cycled=1!
   carMilesCycled <-round(carMilesCycled,1)
   # !!!!!
   
   #!!!!!
-  milesCycled <- (sum(f[(f$now_cycle==1|f$Cycled==1),'TripDisIncSW']))/(aggr[region+1, 'nopeople'] + aggr[region+1, 'notripspeople'])
+  milesCycled <- (sum(f[(f$now_cycle==1|f$Cycled==1),'TripDisIncSW']))/(aggr[region+1, 'nopeople'] )
   milesCycled <- round(milesCycled,2)
   
-  milesCycled.male <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$Sex=='Male','TripDisIncSW']))/(aggr[region+1,'no.males'] + aggr[region+1,'no.males.wotrips']),2)
-  milesCycled.female <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$Sex=='Female','TripDisIncSW']))/( aggr[region+1,'no.females'] + aggr[region+1,'no.females.wotrips'] ),2)
+  milesCycled.male <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$Sex=='Male','TripDisIncSW']))/(aggr[region+1,'no.males'] ),2)
+  milesCycled.female <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$Sex=='Female','TripDisIncSW']))/( aggr[region+1,'no.females']  ),2)
   # !!!!!
   
   
   # !!!!!
-  milesCycled.white <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$EthGroupTS_B02ID==1,'TripDisIncSW']))/( aggr[region+1,'no.white'] + aggr[region+1, 'no.white.wotrips'] ),2)
-  milesCycled.nonwhite <- round( (sum(f[(f$now_cycle==1|f$Cycled==1) & f$EthGroupTS_B02ID==2,'TripDisIncSW']))/(aggr[region+1,'no.nonwhite'] + aggr[region+1, 'no.nonwhite.wotrips']),2)
+  milesCycled.white <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$EthGroupTS_B02ID==1,'TripDisIncSW']))/( aggr[region+1,'no.white']  ),2)
+  milesCycled.nonwhite <- round( (sum(f[(f$now_cycle==1|f$Cycled==1) & f$EthGroupTS_B02ID==2,'TripDisIncSW']))/(aggr[region+1,'no.nonwhite'] ),2)
   
-  milesCycled.caraccess <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$CarAccess_B01ID %in% c(1,2,3,4),'TripDisIncSW']))/( aggr[region+1, 'no.caraccess'] + aggr[region+1,'no.caraccess.wotrips']),2)
-  milesCycled.noncaraccess <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$CarAccess_B01ID %in% c(5,6),'TripDisIncSW']))/(aggr[region+1, 'no.noncaraccess'] + aggr[region+1,'no.noncaraccess.wotrips']),2)
+  milesCycled.caraccess <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$CarAccess_B01ID %in% c(1,2,3,4),'TripDisIncSW']))/( aggr[region+1, 'no.caraccess'] ),2)
+  milesCycled.noncaraccess <- round((sum(f[(f$now_cycle==1|f$Cycled==1) & f$CarAccess_B01ID %in% c(5,6),'TripDisIncSW']))/(aggr[region+1, 'no.noncaraccess'] ),2)
   
   # !!!!!
   
@@ -52,7 +52,7 @@ AggCalc  <- function (f, fname, region) {    #calculates all agregates of a give
   #2-co2       !!!!!!
   CO2 <- round(carMiles * 1.61 * 3.1 * 1e-1,2)  #in Kg
   CO2R <- round(100 * (CO20-CO2)/CO20,1) 
-  CO2.pers <- CO2/(aggr[region+1, 'nopeople'] + aggr[region+1, 'notripspeople'])
+  CO2.pers <- CO2/(aggr[region+1, 'nopeople'] )
   
   #3-METs
   METh<-round(sum(f$METh),1)
@@ -98,7 +98,7 @@ AggCalc  <- function (f, fname, region) {    #calculates all agregates of a give
   
   
   # !!
-  cyclist.perc <- round(100 * nocyclists/(aggr[region+1, 'nopeople'] + aggr[region+1, 'notripspeople']) ,1)     
+  cyclist.perc <- round(100 * nocyclists/(aggr[region+1, 'nopeople'] ) ,1)     
   cyclist.incr <- round(100 * (nocyclists- aggr[region+1, 'ncyclists0'])/ aggr[region+1, 'ncyclists0'] ,1)
   
   
