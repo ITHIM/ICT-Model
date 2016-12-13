@@ -68,7 +68,9 @@ AggScenarios6 <- function (f, fname) {
 
   #f.milesCycled [,2] <- f.milesCycled[,2]
   f.milesCycled  <- left_join(bl.indiv,f.milesCycled,by = c("ID" = "ID", "HHoldGOR_B02ID" = "HHoldGOR_B02ID"))
-
+  f.milesCycled$milesCycled[is.na(f.milesCycled$milesCycled)] = 0
+  names(f.milesCycled)[7] <- fname
+  
   milesCycled.pers <<- cbind(milesCycled.pers,  f.milesCycled[,7])
   #   
   #   

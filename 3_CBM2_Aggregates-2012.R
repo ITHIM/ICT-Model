@@ -8,7 +8,7 @@ library(data.table)
 library(sqldf)
 
 # Check if listOfScenarios exists. If not, then read it from a csv file
-if (!exists("listOfScenarios") || length(listOfScenarios) != 28){
+if (!exists("listOfScenarios") || length(listOfScenarios) != 24){
   listOfScenarios <- read.csv("listofScenarios.csv", header = F, as.is = T)
   listOfScenarios <- as.list(listOfScenarios$V1)
 }

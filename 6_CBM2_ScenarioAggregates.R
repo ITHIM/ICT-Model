@@ -2,7 +2,6 @@ source("init.R")
 source('AggScenarios6.R')
 
 library(dplyr)
-library(plyr)
 library(stringr)
 library(data.table)
 library(sqldf)
