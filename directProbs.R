@@ -152,9 +152,10 @@ directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baselin
       IDOfPplBecomingCyclist <- append(IDOfPplBecomingCyclist, filledIDsOfPplBecomeCyclist)
     }
     
-    # combine IDOfPplAlreadyCyclist, IDOfPplBecomingCyclist
+    # IDOfPplAlreadyCyclist are not included thus it means that trips which belong to already cyclist
+    # but are not cycled will be never drawn
     
-    IDOfPplAllCyclistOutput <- append(IDOfPplAlreadyCyclist, IDOfPplBecomingCyclist)
+    IDOfPplAllCyclistOutput <- IDOfPplBecomingCyclist
     
     # return IDs
     
@@ -166,9 +167,10 @@ directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baselin
     
     IDOfPplBecomingCyclist <- sample(unique(baselineSubset[baselineSubset$cyclist != 1,]$ID), howManyCyclistNeeded, replace = F)
     
-    # combine IDOfPplAlreadyCyclist, IDOfPplBecomingCyclist
+    # IDOfPplAlreadyCyclist are not included thus it means that trips which belong to already cyclist
+    # but are not cycled will be never drawn
     
-    IDOfPplAllCyclistOutput <- append(IDOfPplAlreadyCyclist, IDOfPplBecomingCyclist)
+    IDOfPplAllCyclistOutput <- IDOfPplBecomingCyclist
     
     # return IDs
     
@@ -287,9 +289,10 @@ directProbProportionsPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcyc
       IDOfPplBecomingCyclist <- append(IDOfPplBecomingCyclist, filledIDsOfPplBecomeCyclist)
     }
     
-    # combine IDOfPplAlreadyCyclist, IDOfPplBecomingCyclist
+    # IDOfPplAlreadyCyclist are not included thus it means that trips which belong to already cyclist
+    # but are not cycled will be never drawn
     
-    IDOfPplAllCyclistOutput <- append(IDOfPplAlreadyCyclist, IDOfPplBecomingCyclist)
+    IDOfPplAllCyclistOutput <- IDOfPplBecomingCyclist
     
     # return IDs
     
@@ -301,9 +304,10 @@ directProbProportionsPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcyc
     
     IDOfPplBecomingCyclist <- sample(unique(baselineSubset[baselineSubset$cyclist != 1,]$ID), howManyCyclistNeeded, replace = F)
     
-    # combine IDOfPplAlreadyCyclist, IDOfPplBecomingCyclist
+    # IDOfPplAlreadyCyclist are not included thus it means that trips which belong to already cyclist
+    # but are not cycled will be never drawn
     
-    IDOfPplAllCyclistOutput <- append(IDOfPplAlreadyCyclist, IDOfPplBecomingCyclist)
+    IDOfPplAllCyclistOutput <- IDOfPplBecomingCyclist
     
     # return IDs
     
