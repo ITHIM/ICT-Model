@@ -26,4 +26,13 @@ print(addmargins(table(testBaseline$agesex, testBaseline$Cycled)),1)
 
 IDOfPplCyclist = directProbRRPPLIDs(testBaseline, 0.70, 0, 0, testBaseline)
 
-length(unique(IDOfPplCyclist)) == 70
+testBaselineAfter <- testBaseline
+testBaselineAfter[testBaselineAfter$ID %in% IDOfPplCyclist, ]$cyclist <- 1
+
+print(addmargins(table(testBaselineAfter$agesex, testBaselineAfter$cyclist)),1)
+
+# because IDs of ppl who are cyclist already are not returned via directProbRRPPLIDs, thus it should be added manually
+
+cyclistsAfter <- append(IDOfPplCyclist, unique(testBaseline[testBaseline$Cycled == 1, ]$ID))
+
+length(cyclistsAfter) == 70
