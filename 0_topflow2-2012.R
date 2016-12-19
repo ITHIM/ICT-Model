@@ -163,8 +163,8 @@ baseline$prob[baseline$TravDay==0 ] <- 0
 #keep bl as backup for future scenarios core values
 bl <- baseline
 
-#save PROCESSED baseline in scenarios folder
-#saveRDS(bl,file='bl2014_p_v2.rds')
+#save PROCESSED baseline in main folder
+saveRDS(bl,file='bl2014_p_v2.rds')
 rm(bl)
 
 #write.csv(bl,file='bl2012_18_84ag_sw_reduced.csv', row.names=F)
