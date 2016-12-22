@@ -1,5 +1,5 @@
 # Script to generate rds file for the interface
-# PLEASE NOTE: It assumes that all scenarios have been generated, and three additional scripts have been run, which are:
+# PLEASE NOTE: It assumes that all scenarios have been generated, and four additional scripts have been run, which are:
 # 1. 3_CBM2_Aggregates-2012.R
 # 2. 6_CBM2_ScenarioAggregates.R
 # 3. /healthcalculations/health_calculations.R
@@ -95,11 +95,11 @@ for (i in 2:ncol(yll_aggr)){
   df[["Years of Life Lost (YLL)"]][sindex:eindex] <- val
 }
 
-saveRDS(df, "../ICT/app/data/csv/ICT_aggr_regional.rds")
+saveRDS(df, "./data/csv/ICT_aggr_regional.rds")
 
 # save directProbCasesAboveGivenPerc which main role is to store info of every case in which Observed > DP
 
-saveRDS(directProbCasesAboveGivenPerc, "../ICT/app/data/csv/dp_cases_above_given.rds")
+saveRDS(directProbCasesAboveGivenPerc, "./data/csv/dp_cases_above_given.rds")
 
 
 # Create trips df
