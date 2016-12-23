@@ -1,8 +1,6 @@
-.Rproj.user
-.Rhistory
-.RData
+*.Rproj.user
+*.Rhistory
+*.RData
 ICT_aggr_reg.csv
-bl2014_p.Rds
-.RData
 .Rhistory
-bl2014_p.rds
+.RData
