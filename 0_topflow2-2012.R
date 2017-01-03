@@ -192,7 +192,7 @@ directProbCasesAboveGivenPerc <- data.frame(MS = numeric(0),
                                             equity = numeric(0),
                                             region = numeric(0))
 
-# TODO: directProbs temp values - should be replaced with the final values
+# directProbs values
 
 directProbs <- c(0.05, 0.1, 0.25, 0.5, 0.75, 1)
 

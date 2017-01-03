@@ -117,7 +117,7 @@ death_red <- aggregate(death_red[-c(1, 2, 3)], by=list(death_red$age.band, death
 colnames(death_red)[1:3] <- c("age.band", "gender", "regions")
 
 # Convert into percent by multiplying it with 100
-yll_red[5:32] <- round(yll_red[5:32] * 100, 2)
+yll_red[5:28] <- round(yll_red[5:28] * 100, 2)
 
 # td <- yll_red
 # td[5:32] <- round(yll_red[5:32] * 100, 3)
