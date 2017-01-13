@@ -101,9 +101,9 @@ flowgram <-function(baseline, MS,ebikes,equity, pcycl_baseline) {
   
   baseline[baseline$Cycled == 1,]$Pcyc <- 1
   
-  baseline[baseline$Cycled == 1,]$METh <- METcycling * baseline[baseline$Cycled == 1,]$newtime
+  #baseline[baseline$Cycled == 1,]$METh <- METcycling * baseline[baseline$Cycled == 1,]$newtime
   
-  baseline[baseline$Cycled == 1,]$MMETh <- (METcycling - 1) * baseline[baseline$Cycled == 1,]$newtime
+  #baseline[baseline$Cycled == 1,]$MMETh <- (METcycling - 1) * baseline[baseline$Cycled == 1,]$newtime
   
   baseline[baseline$Cycled != 1 & baseline$cyclist == 0 ,]$TripTotalTime1 <- 
     baseline[baseline$Cycled != 1 & baseline$cyclist == 0 ,]$TripTotalTime
