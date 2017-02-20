@@ -215,7 +215,7 @@ PAF <-
             
             PRA <- (sumPRR - sumPRRi) / sumPRR
             # cat(cn[k], " : ", size, " : " , unique_gender[j], " : ", unique_age_group[i], " : ", sumPRR, " : ", sumPRRi, " : ", PRA, "\n")
-            m[mi, 2 + k] = round(PRA, digits = 3)
+            m[mi, 2 + k] = round(PRA, digits = 6)
             
           }
           mi <- mi + 1
@@ -262,7 +262,7 @@ PAF <-
               
               PRA <- (sumPRR - sumPRRi) / sumPRR
               #cat(cn[k], " : ", size, " : " , unique_gender[j], " : ", unique_age_group[i], " : ", sumPRR, " : ", sumPRRi, " : ", PRA, "\n")
-              m[mi, 2 + k] = round(PRA, digits = 3)
+              m[mi, 2 + k] = round(PRA, digits = 6)
               
             }
             mi <- mi + 1
