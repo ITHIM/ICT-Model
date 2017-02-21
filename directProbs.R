@@ -14,12 +14,19 @@ directProbRRPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcycl_baselin
   
   totalNumberOfCyclistInBaselineSubset <- length(unique(baselineSubset[baselineSubset$Cycled == 1,]$ID))
   
-  # if observed proportion of cyclist in baselineSubset > DP value -> don't process, just return IDs of all cyclist, print info in a console.
+  # if observed rounded proportion of cyclist in baselineSubset >= DP value -> don't process, just return IDs of all cyclist, print info in a console.
   # These cases could be filtered out in UI
   
   shareOfCyclistInBaselineSubset <- totalNumberOfCyclistInBaselineSubset / length(unique(baselineSubset$ID))
   
-  if (shareOfCyclistInBaselineSubset > DP){
+  # double rounding to deal with eg. 0.0453004622496148 -> should be rounded to 0.04, while
+  # 0.0493522774759716 -> 0.05
+  
+  shareOfCyclistInBaselineSubset <- round(round(shareOfCyclistInBaselineSubset, digits = 3), digits = 2)
+
+  # >= because of rounding usage
+  
+  if (shareOfCyclistInBaselineSubset >= DP){
     
     # save that case in directProbCasesAboveGivenPerc
     
@@ -195,12 +202,19 @@ directProbProportionsPPLIDs <- function(baselineSubset, DP, ebikes, equity, pcyc
   
   totalNumberOfCyclistInBaselineSubset <- length(unique(baselineSubset[baselineSubset$Cycled == 1,]$ID))
   
-  # if observed proportion of cyclist in baselineSubset > DP value -> don't process, just return IDs of all cyclist, print info in a console.
+  # if observed rounded proportion of cyclist in baselineSubset >= DP value -> don't process, just return IDs of all cyclist, print info in a console.
   # These cases could be filtered out in UI
   
   shareOfCyclistInBaselineSubset <- totalNumberOfCyclistInBaselineSubset / length(unique(baselineSubset$ID))
   
-  if (shareOfCyclistInBaselineSubset > DP){
+  # double rounding to deal with eg. 0.0453004622496148 -> should be rounded to 0.04, while
+  # 0.0493522774759716 -> 0.05
+  
+  shareOfCyclistInBaselineSubset <- round(round(shareOfCyclistInBaselineSubset, digits = 3), digits = 2)
+  
+  # >= because of rounding usage
+  
+  if (shareOfCyclistInBaselineSubset >= DP){
     
     # save that case in directProbCasesAboveGivenPerc
     
