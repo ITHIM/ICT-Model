@@ -119,12 +119,13 @@ baseline[is.na(baseline)] <- 0
 
 #read NTS<> APS matching file
 nts.aps <- readRDS(file.path(datapath, 'nts.aps.rds'))
+nts.aps = as.data.frame(nts.aps)   #prevent using data.tables
 
 # subset ENERGY columns from APS and add to baseline
 selcols = c("IndividualID", "mets_sport_wk", "WalkTime",
             "CycleTime", "walkAPS", "cycleAPS")
 
-baseline= inner_join(baseline, nts.aps[, ], by= "IndividualID")
+baseline= inner_join(baseline, nts.aps[, selcols], by= "IndividualID")
 
 #add times cols. to baseline (used for travel time after cycle switch takes place)
 TripTotalTime1 <- 0
@@ -161,11 +162,8 @@ rm(randcycle)
 baseline$prob[baseline$TravDay==0 ] <- 0
 
 
-#keep bl as backup for future scenarios core values
-bl <- baseline
-
 #save PROCESSED baseline in main folder
-saveRDS(bl,file='bl2014_APS_p.rds')
+saveRDS(baseline,file='bl2014_APS_p.rds')
 rm(bl)
 
 ###################################  START CALCULATIONS on BASELINE #############################
