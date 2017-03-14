@@ -9,7 +9,9 @@ library(tcltk)
 
 ############   CALCULATE from BASELINE: Individuals
 #bl <- readRDS('bl2014_p.rds')  #needs to be bl2014_p.Rds 
-bl <- readRDS('bl2014_p_v2.rds')
+bl <- readRDS('bl2014_APS_p.rds')      #bl <- readRDS('bl2014_p_v2.rds')
+bl = dplyr::rename(bl, ID = IndividualID)
+
 
 # For some reason the age_group is not correctly recorded in the baseline line
 # Recalculate the age_group variable
