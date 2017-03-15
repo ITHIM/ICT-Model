@@ -168,10 +168,9 @@ mmet2RR <-
 
 
 mmet2RRVal <-function(val) {
-  if (val <= 2000)
+  if ((!is.na  (val) && !is.null( val) && val <= 2000))  {
     mmet2RR_mat[round(val) + 1, 2]
-  else
-    0
+    } else     0
 }
 
 

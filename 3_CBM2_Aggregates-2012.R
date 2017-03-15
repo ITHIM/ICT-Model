@@ -14,7 +14,7 @@ if (!exists("listOfScenarios") || length(listOfScenarios) != 24){
 }
 
 #read baseline (short walks already included)
-baseline <- readRDS('bl2014_p_v2.rds')
+baseline <- readRDS('bl2014_APS_p.rds')
 assign(as.character(listOfScenarios[1]), readRDS(paste0('./temp_data_folder/output/repo_version/', as.character(listOfScenarios[1]), '.rds')))
 if (nrow(baseline) != nrow(get(as.character(listOfScenarios[1])))){
   
@@ -25,13 +25,13 @@ if (nrow(baseline) != nrow(get(as.character(listOfScenarios[1])))){
   baseline <- rbind(baseline, bl1)
   
   #same for people w/o trips
-  fnotrips1= fnotrips
-  fnotrips1$HHoldGOR_B02ID <- 0
+  indiv.notrips1= indiv.notrips
+  indiv.notrips1$HHoldGOR_B02ID <- 0
   
-  fnotrips <- rbind(fnotrips, fnotrips1)
+  indiv.notrips <- rbind(indiv.notrips, indiv.notrips1)
   
   # Remove temporary variables
-  rm (bl1, fnotrips1)
+  rm (bl1, indiv.notrips1)
   
   #create regions list (to process regional aggregates)
   regions <- sort(unique(baseline$HHoldGOR_B02ID))
@@ -44,7 +44,7 @@ if (nrow(baseline) != nrow(get(as.character(listOfScenarios[1])))){
 }
 
 
-
+regions <- sort(unique(baseline$HHoldGOR_B02ID))
 
 
 #define parameters of interest (33 + 1)
@@ -67,20 +67,24 @@ aggr <- matrix(data=0, nrow = length(regions),ncol = length(params))
 colnames(aggr) <- params
 row.names(aggr) <- regions
 
+baseline <- rename(baseline, ID = IndividualID)
+indiv.notrips <- rename(indiv.notrips, ID = IndividualID)
+
 blreg <-  baseline       # ALREADY includes no trips data
-fnotripsreg <-  fnotrips # this variable used only for no-trips people calculations
+indiv.notrips1reg <-  indiv.notrips # this variable used only for no-trips people calculations
+
 
 # calculate 33 key figures (nat. & by region)
 for (i in regions) {
   
   blreg <-  baseline
-  fnotripsreg <-  fnotrips
+  indiv.notripsreg <-  indiv.notrips
   
   #filter data sources for region                      
   blreg <- subset(baseline, subset = baseline$HHoldGOR_B02ID==i)     #if (i!='all')
-  fnotripsreg <- subset(fnotrips, subset = fnotripsreg$HHoldGOR_B02ID==i)
+  indiv.notripsreg <- subset(indiv.notrips, subset = indiv.notripsreg$HHoldGOR_B02ID==i)
     
-  
+ 
   ichar <- as.character(i)
   
   aggr[ichar, 'region'] <-  i
@@ -107,24 +111,24 @@ for (i in regions) {
   aggr[ichar, 'no.nssec5'] <- length(unique(blreg$ID[blreg$NSSec_B03ID==5]))
   
   #Individuals with no trips
-  aggr[ichar, 'notripspeople'] <-length(unique(fnotripsreg$ID))
-  aggr[ichar, 'no.males.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$Sex_B01ID==1]))
-  aggr[ichar, 'no.females.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$Sex_B01ID==2]))
+  aggr[ichar, 'notripspeople'] <-length(unique(indiv.notripsreg$ID))
+  aggr[ichar, 'no.males.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$Sex_B01ID==1]))
+  aggr[ichar, 'no.females.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$Sex_B01ID==2]))
   
   #ethnicity & trips
-  aggr[ichar, 'no.white.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$EthGroupTS_B02ID==1]))
-  aggr[ichar, 'no.nonwhite.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$EthGroupTS_B02ID==2]))
+  aggr[ichar, 'no.white.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$EthGroupTS_B02ID==1]))
+  aggr[ichar, 'no.nonwhite.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$EthGroupTS_B02ID==2]))
   
   #car access & trips
-  aggr[ichar, 'no.caraccess.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$CarAccess_B01ID %in% c(1,2,3,4)]))
-  aggr[ichar, 'no.noncaraccess.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$CarAccess_B01ID %in% c(5,6)]))
+  aggr[ichar, 'no.caraccess.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$CarAccess_B01ID %in% c(1,2,3,4)]))
+  aggr[ichar, 'no.noncaraccess.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$CarAccess_B01ID %in% c(5,6)]))
   
   #NS-Sec & trips
-  aggr[ichar, 'no.nssec1.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$NSSec_B03ID==1]))
-  aggr[ichar, 'no.nssec2.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$NSSec_B03ID==2]))
-  aggr[ichar, 'no.nssec3.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$NSSec_B03ID==3]))
-  aggr[ichar, 'no.nssec4.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$NSSec_B03ID==4]))
-  aggr[ichar, 'no.nssec5.wotrips'] <- length(unique(fnotripsreg$ID[fnotripsreg$NSSec_B03ID==5]))
+  aggr[ichar, 'no.nssec1.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$NSSec_B03ID==1]))
+  aggr[ichar, 'no.nssec2.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$NSSec_B03ID==2]))
+  aggr[ichar, 'no.nssec3.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$NSSec_B03ID==3]))
+  aggr[ichar, 'no.nssec4.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$NSSec_B03ID==4]))
+  aggr[ichar, 'no.nssec5.wotrips'] <- length(unique(indiv.notripsreg$ID[indiv.notripsreg$NSSec_B03ID==5]))
   
   #cyclists in baseline
   aggr[ichar, 'ncyclists0'] <-length(unique(blreg$ID[blreg$Cycled==1]))  

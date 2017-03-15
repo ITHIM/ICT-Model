@@ -1,4 +1,3 @@
-
 rm(list=ls())
 timeStart<-Sys.time()
 
@@ -142,10 +141,10 @@ baseline$MMETh = (METwalking-1) * (baseline$SumWStageTime/60)+ (METcycling-1) * 
 
 #total P.A. mmets = 1.NTS person-level mmets    + 2.APS sport + 3.APS recreational W & C
 baseline$physical_activity_mmets =  (METwalking-1) * (baseline$WalkTime/60) + 
-                                (METcycling-1) * (baseline$CycleTime / 60)  +
-                                (METwalking-1) * (baseline$walkAPS)         +
-                                (METcycling-1) * (baseline$cycleAPS)        +
-                                baseline$mets_sport_wk
+  (METcycling-1) * (baseline$CycleTime / 60)  +
+  (METwalking-1) * (baseline$walkAPS)         +
+  (METcycling-1) * (baseline$cycleAPS)        +
+  baseline$mets_sport_wk
 
 baseline$health_mmets = baseline$physical_activity_mmets
 
@@ -161,9 +160,12 @@ rm(randcycle)
 
 baseline$prob[baseline$TravDay==0 ] <- 0
 
+# Rename IndividualID to ID
+baseline <- rename(baseline, ID = IndividualID)
+
 
 #save PROCESSED baseline in main folder
-saveRDS(baseline,file='bl2014_APS_p.rds')
+#saveRDS(baseline,file='bl2014_APS_p.rds')
 rm(bl)
 
 ###################################  START CALCULATIONS on BASELINE #############################
@@ -176,10 +178,6 @@ MMETh0 <- round(sum(baseline$MMETh), 1)
 # Miles to Kilometres, Grams to metric tonnes, 0.0001
 # Using new Christian's average CO2 value of 0.31 grams
 CO20 <- round(carMiles0 * 1.61 * (3.1 / 1.61) * 1e-1,2)   #(in Kg)
-
-# df <- data.frame()
-
-#i <- c(2,4,8,16,32,64)
 
 # DF which main role is to store info of every case in which Observed > DP. Used in UI to filter out mentioned cases (used in 1_flowgram2-2012)
 
@@ -201,6 +199,8 @@ n <- c(0,1)   #equity
 num = 1
 
 #keep only used variables
+baseline = dplyr::rename(baseline, ID = IndividualID)
+
 baseline <-baseline[ , c('Age_B01ID', 'Sex_B01ID', 'HHoldGOR_B02ID', 'CarAccess_B01ID',
                          'NSSec_B03ID', 'IndIncome2002_B02ID', 'EthGroupTS_B02ID', 'TripID', 'ID',
                          'MainMode_B03ID', 'MainMode_B04ID', 'MainMode_B11ID', 
@@ -209,7 +209,6 @@ baseline <-baseline[ , c('Age_B01ID', 'Sex_B01ID', 'HHoldGOR_B02ID', 'CarAccess_
                          'Age', 'Sex', 'age_group',
                          'TripTotalTime1', 'TripTravelTime1', 
                          'health_mmets', 'physical_activity_mmets', 'prob')]
-
 
 listOfScenarios <- list()
 
@@ -220,7 +219,7 @@ for (ebikes in m) {
       scenario_name <- paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep="")
       #assign(scenario_name,flowgram(baseline, MS,ebikes,equity, pcycl_baseline))
       tempSc <- flowgram(baseline, MS,ebikes,equity, pcycl_baseline)
-      saveRDS(tempSc, paste0('./temp_data_folder/output/repo_version/', scenario_name, '.rds'))
+      #saveRDS(tempSc, paste0('./temp_data_folder/output/repo_version/', scenario_name, '.rds'))
       
       listOfScenarios[[num]] <- scenario_name
       num <- num + 1
