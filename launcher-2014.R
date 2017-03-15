@@ -1,6 +1,9 @@
 rm(list=ls())
 timeStart<-Sys.time()
 
+# to avoid error on scenarios MS=1
+.libPaths("C:/Program Files/R/R-3.3.1/library")
+
 # Functions
 source('1_flowgram2-2012.R')  #scenarios generator
 source('pcyc21.R')            # cycling probabilities
