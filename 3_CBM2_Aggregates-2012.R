@@ -221,6 +221,6 @@ for (i in 2:ncol(df)){
   df[,i] <- as.numeric.factor(df[,i])
 }
 
-saveRDS(df,file='ICT_aggr_reg.rds')
+saveRDS(df,file='ICT_aggr_reg_APS.rds')
 
 cat('All done !')
