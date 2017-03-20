@@ -1,4 +1,4 @@
-#rm(list=ls())
+
 source('AggCalc.R')   
 source("healthcalculations/functions.R") # for as.numeric.factor
 
@@ -33,17 +33,11 @@ if (nrow(baseline) != nrow(get(as.character(listOfScenarios[1])))){
   # Remove temporary variables
   rm (bl1, indiv.notrips1)
   
-  #create regions list (to process regional aggregates)
-  regions <- sort(unique(baseline$HHoldGOR_B02ID))
   
-} else{
-  
-  #create regions list (to process regional aggregates)
-  regions <- sort(unique(baseline$HHoldGOR_B02ID))
-  regions <- c(0,regions)[-c(10,11)]    #regions <- c('all',regions)[-c(10,11)]
-}
+} 
 
 
+#create regions list (to process regional aggregates)
 regions <- sort(unique(baseline$HHoldGOR_B02ID))
 
 
@@ -66,9 +60,6 @@ aggr <- matrix(data=0, nrow = length(regions),ncol = length(params))
 #matrix names
 colnames(aggr) <- params
 row.names(aggr) <- regions
-
-baseline <- rename(baseline, ID = IndividualID)
-indiv.notrips <- rename(indiv.notrips, ID = IndividualID)
 
 blreg <-  baseline       # ALREADY includes no trips data
 indiv.notrips1reg <-  indiv.notrips # this variable used only for no-trips people calculations
@@ -222,5 +213,6 @@ for (i in 2:ncol(df)){
 }
 
 saveRDS(df,file='ICT_aggr_reg_APS.rds')
+save.image('after3_CBM.RData')
 
 cat('All done !')

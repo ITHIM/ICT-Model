@@ -4,6 +4,9 @@ timeStart<-Sys.time()
 # to avoid error on scenarios MS=1
 .libPaths("C:/Program Files/R/R-3.3.1/library")
 
+#to show things the right way
+options("scipen" = 20)
+
 # Functions
 source('1_flowgram2-2012.R')  #scenarios generator
 source('pcyc21.R')            # cycling probabilities
@@ -15,8 +18,8 @@ source('directProbs.R')       # used in 1_flowgram2-2012.R
 
 
 # Packages
-library(plyr)
-library(dplyr)  
+library(dplyr)
+library(plyr)  
 library(stringr)
 library(data.table)
 library(sqldf)
@@ -68,6 +71,10 @@ baseline <- bl
 #add people w/o trips to baseline
 indiv.notrips  <- readRDS(file.path(datapath, 'indiv.notrips.Rds') )
 
+# same as for baseline
+indiv.notrips <- dplyr::rename(indiv.notrips, ID = IndividualID)
+
+
 # Remove 85+ age group + Wales/Scotland (same as in baseline)
 indiv.notrips <- subset(indiv.notrips, subset = Age_B01ID < 21 & HHoldGOR_B02ID<10)
 
@@ -98,7 +105,7 @@ sel= indiv.notrips$Age_B01ID >= 16
 indiv.notrips$Age[sel] <- '60plus'
 
 # Add tripID variable to it
-# indiv.notrips$TripID <- c(max(baseline$TripID) + 1:nrow(indiv.notrips))
+indiv.notrips$TripID <- c(max(baseline$TripID) + 1:nrow(indiv.notrips))
 
 #baseline now IS complete= INDIVIDUALS [WITH +WITHOUT] TRIPS
 baseline <- rbind.fill(baseline, indiv.notrips)
@@ -164,11 +171,11 @@ rm(randcycle)
 baseline$prob[baseline$TravDay==0 ] <- 0
 
 # Rename IndividualID to ID
-baseline <- rename(baseline, ID = IndividualID)
+baseline <- dplyr::rename(baseline, ID = IndividualID)
 
 
 #save PROCESSED baseline in main folder
-#saveRDS(baseline,file='bl2014_APS_p.rds')
+saveRDS(baseline,file='bl2014_APS_p.rds')
 rm(bl)
 
 ###################################  START CALCULATIONS on BASELINE #############################
@@ -201,9 +208,6 @@ m <- c(0,1)   #ebikes
 n <- c(0,1)   #equity
 num = 1
 
-#keep only used variables
-baseline = dplyr::rename(baseline, ID = IndividualID)
-
 baseline <-baseline[ , c('Age_B01ID', 'Sex_B01ID', 'HHoldGOR_B02ID', 'CarAccess_B01ID',
                          'NSSec_B03ID', 'IndIncome2002_B02ID', 'EthGroupTS_B02ID', 'TripID', 'ID',
                          'MainMode_B03ID', 'MainMode_B04ID', 'MainMode_B11ID', 
@@ -218,11 +222,11 @@ listOfScenarios <- list()
 for (ebikes in m) {
   for (equity in n) {
     for  (MS in directProbs) { # all occurences of MS should be replaced
-      cat(ebikes, equity, MS, "\n") 
+      cat(MS, ebikes, equity, "\n") 
       scenario_name <- paste("MS",MS,"_ebik",ebikes,"_eq" ,equity,sep="")
       #assign(scenario_name,flowgram(baseline, MS,ebikes,equity, pcycl_baseline))
       tempSc <- flowgram(baseline, MS,ebikes,equity, pcycl_baseline)
-      #saveRDS(tempSc, paste0('./temp_data_folder/output/repo_version/', scenario_name, '.rds'))
+      saveRDS(tempSc, paste0('./temp_data_folder/output/repo_version/', scenario_name, '.rds'))
       
       listOfScenarios[[num]] <- scenario_name
       num <- num + 1
@@ -233,4 +237,8 @@ for (ebikes in m) {
 cat('All done! \n')
 
 timeEnd<-Sys.time()
+
+save.image('afterLauncher.RData')
 cat(difftime(timeEnd, timeStart, units='mins'), "\n")
+
+rm(cyclingspeed, pcycl_baseline, probCycling)
