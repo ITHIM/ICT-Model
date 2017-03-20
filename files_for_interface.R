@@ -11,8 +11,7 @@
   #bl <- readRDS('bl2014_p.rds')
   #bl <- readRDS('bl2014_p_v2.rds')
   bl <- readRDS('bl2014_APS_p.rds')  
-  bl = dplyr::rename(bl, ID = IndividualID)
-
+  
   # For some reason the age_group is not correctly recorded in the baseline line
   # Recalculate the age_group variable
   # Read nts age group lookup table
@@ -509,7 +508,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
 
 TripTotalTimeCalcs(tripstimedf, tripsdf)
 
-
+save.image('after_ffi_TripTotalTimeCalcs.RData')
 # Precalculate trips used in "Mode Share" tab
 
 tripsDFCalcs <- function(tripMode){

@@ -8,10 +8,7 @@ library(sqldf)
 library(tcltk)
 
 ############   CALCULATE from BASELINE: Individuals
-#bl <- readRDS('bl2014_p.rds')  #needs to be bl2014_p.Rds 
 bl <- readRDS('bl2014_APS_p.rds')      #bl <- readRDS('bl2014_p_v2.rds')
-bl = dplyr::rename(bl, ID = IndividualID)
-
 
 # For some reason the age_group is not correctly recorded in the baseline line
 # Recalculate the age_group variable
@@ -26,8 +23,8 @@ bl <- rbind(bl, bl1)
 
 rm(bl1)
 
-bl.indiv <- sqldf("Select ID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, HHoldGOR_B02ID from bl Group by ID,
-HHoldGOR_B02ID")
+bl.indiv <- sqldf("Select ID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, HHoldGOR_B02ID 
+                  FROM bl GROUP BY ID,  HHoldGOR_B02ID")
 
 carMiles <- carMilesR <- carMilesCycledAggr <- 
   milesCycled.pers <- METh <- METhincr <- MMETh <- CO2.Tm <- 
@@ -46,7 +43,9 @@ bl$MainMode_Reduced <- lookup$modefinal[match(bl$MainMode_B04ID, lookup$MainMode
 
 # METh0 <-  sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.METh) AS METh0 FROM bl GROUP BY bl.ID, bl.HHoldGOR_B02ID')
 
-TripTotalTime0 <- sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.TripTotalTime) AS TripTotalTime0 FROM bl GROUP BY bl.ID, bl.HHoldGOR_B02ID')
+TripTotalTime0 <- sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.TripTotalTime) AS TripTotalTime0 
+                          FROM bl 
+                          GROUP BY bl.ID, bl.HHoldGOR_B02ID')
 
 # Select only interested columns for the aggregate files
 # in a new local variable - so that baseline object 'bl' remains unchanged
@@ -106,6 +105,8 @@ colnames(PA_mmets)[scenarioStartingIndex:length(PA_mmets)] <- local_listOfScenar
 colnames(health_mmets)[scenarioStartingIndex:length(health_mmets)] <- local_listOfScenarios
 colnames(milesCycled.pers)[scenarioStartingIndex:length(milesCycled.pers)] <- local_listOfScenarios
 colnames(TripTotalTime1)[scenarioStartingIndex:length(TripTotalTime1)] <- local_listOfScenarios
+
+save.image('after6_CBM.RData')
 
 # Remove newly created local baseline file
 #rm(local_bl)
