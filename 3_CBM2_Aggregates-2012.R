@@ -212,7 +212,7 @@ for (i in 2:ncol(df)){
   df[,i] <- as.numeric.factor(df[,i])
 }
 
-saveRDS(df,file='ICT_aggr_reg_APS.rds')
+#saveRDS(df,file='ICT_aggr_reg_APS.rds')
 save.image('after3_CBM.RData')
 
 cat('All done !')
