@@ -170,7 +170,7 @@ rm(randcycle)
 
 baseline$prob[baseline$TravDay==0 ] <- 0
 
-# Rename IndividualID to ID
+# Rename IndividualI to ID
 baseline <- dplyr::rename(baseline, ID = IndividualID)
 
 
