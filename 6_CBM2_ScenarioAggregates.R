@@ -47,9 +47,11 @@ TripTotalTime0 <- sqldf ('SELECT bl.ID, bl.HHoldGOR_B02ID, sum(bl.TripTotalTime)
                           FROM bl 
                           GROUP BY bl.ID, bl.HHoldGOR_B02ID')
 
-# Select only interested columns for the aggregate files
+# Select only target columns for the aggregate files
 # in a new local variable - so that baseline object 'bl' remains unchanged
-local_bl <- subset(bl, select = c(ID, HHoldGOR_B02ID, TripDisIncSW, MainMode_B04ID, Cycled, MMETh, physical_activity_mmets, health_mmets, TripTotalTime1))
+local_bl <- subset(bl, select = c(ID, HHoldGOR_B02ID, TripDisIncSW, MainMode_B04ID, 
+                                  Cycled, MMETh, physical_activity_mmets, health_mmets, 
+                                  TripTotalTime1))
 rm(bl)
 local_bl <- arrange(local_bl, ID, HHoldGOR_B02ID)
 
