@@ -71,10 +71,6 @@ baseline <- bl
 #add people w/o trips to baseline
 indiv.notrips  <- readRDS(file.path(datapath, 'indiv.notrips.Rds') )
 
-# same as for baseline
-indiv.notrips <- dplyr::rename(indiv.notrips, ID = IndividualID)
-
-
 # Remove 85+ age group + Wales/Scotland (same as in baseline)
 indiv.notrips <- subset(indiv.notrips, subset = Age_B01ID < 21 & HHoldGOR_B02ID<10)
 
@@ -176,7 +172,7 @@ baseline <- dplyr::rename(baseline, ID = IndividualID)
 
 #save PROCESSED baseline in main folder
 saveRDS(baseline,file='bl2014_APS_p.rds')
-rm(bl)
+rm(bl, indiv.notrips)
 
 ###################################  START CALCULATIONS on BASELINE #############################
 
