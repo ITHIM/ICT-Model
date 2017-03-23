@@ -1,4 +1,4 @@
-context("datasets comparision: mean used, form of datasets: one column = one scenario, only region 0")
+context("datasets comparision: mean used, form of datasets: one column = one scenario, all regions")
 
 # which datasets should be compared
 
@@ -21,31 +21,37 @@ test_that("for every scenario means in both data versions are almost equal (form
     
     # read firstData and secondData
     
-    firstData <- readRDS(paste0(firstDataDir, ds))
-    secondData <- readRDS(paste0(secondDataDir, ds))
+    firstDataMain <- readRDS(paste0(firstDataDir, ds))
+    secondDataMain <- readRDS(paste0(secondDataDir, ds))
     
-    # subset datas: at the present moment compare only data for region = 0 and needed scenarios
+    # iterate over regions
     
-    if ('regions' %in% names(firstData)){ # in "deaths_reduction.rds" there is 'regions' column
+    for (region in regionsToTest){
       
-      firstData <- subset(firstData, regions == 0, select = scenariosToTest)
-      secondData <- subset(secondData, regions == 0, select = scenariosToTest)
+      # subset data files
       
-    } else {
-    
-      firstData <- subset(firstData, HHoldGOR_B02ID == 0, select = scenariosToTest)
-      secondData <- subset(secondData, HHoldGOR_B02ID == 0, select = scenariosToTest)
-    
-    }
-    
-    # for every scenario
-    
-    for (sc in scenariosToTest){
+      if ('regions' %in% names(firstDataMain)){ # in "deaths_reduction.rds" there is 'regions' column
+        
+        firstData <- subset(firstDataMain, regions == region, select = scenariosToTest)
+        secondData <- subset(secondDataMain, regions == region, select = scenariosToTest)
+        
+      } else {
       
-      firstDataSc <- subset(firstData, select = sc)
-      secondDatSc <- subset(secondData, select = sc)
+        firstData <- subset(firstDataMain, HHoldGOR_B02ID == region, select = scenariosToTest)
+        secondData <- subset(secondDataMain, HHoldGOR_B02ID == region, select = scenariosToTest)
       
-      expect_equal(firstDataSc, secondDatSc, info = paste0(ds, ': ', sc))
+      }
+      
+      # for every scenario
+      
+      for (sc in scenariosToTest){
+        
+        firstDataSc <- subset(firstData, select = sc)
+        secondDatSc <- subset(secondData, select = sc)
+        
+        expect_equal(mean(firstDataSc[,sc], na.rm = T), mean(secondDatSc[,sc], na.rm = T), info = paste0('|', ds, '| region: ', region, '| ', sc, '| tolerance: ', tolerance), tolerance = tolerance)
+        
+      }
       
     }
   }
