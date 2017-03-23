@@ -15,28 +15,34 @@ test_that("in ICT_aggr_regional.rds for every scenario means in both data versio
   
   # read firstData and secondData
   
-  firstData <- readRDS(paste0(firstDataDir, filename))
-  secondData <- readRDS(paste0(secondDataDir, filename))
+  firstDataMain <- readRDS(paste0(firstDataDir, filename))
+  secondDataMain <- readRDS(paste0(secondDataDir, filename))
   
-  # subset both data versions: at the present moment compare only data for region = 0 and needed scenarios
+  # iterate over scenarios
   
-  firstData <- subset(firstData, Region == 0 & Scenario %in% scenariosToTest)
-  secondData <- subset(secondData, Region == 0 & Scenario %in% scenariosToTest)
-  
-  # for every scenario
-  
-  for (sc in scenariosToTest){
+  for (region in regionsToTest){
     
-    # extract data
+    # subset both data versions
     
-    firstDataSc <- subset(firstData, Scenario == sc)
-    secondDatSc <- subset(secondData, Scenario == sc)
+    firstData <- subset(firstDataMain, Region == region & Scenario %in% scenariosToTest)
+    secondData <- subset(secondDataMain, Region == region & Scenario %in% scenariosToTest)
     
-    # for every column to be tested
+    # for every scenario
     
-    for (ct in colToBeTested){
+    for (sc in scenariosToTest){
       
-      expect_equal(firstDataSc[[ct]], secondDatSc[[ct]], info = paste0(sc, ': ', ct, ' tolerance: ', tolerance), tolerance = tolerance)
+      # extract data
+      
+      firstDataSc <- subset(firstData, Scenario == sc)
+      secondDatSc <- subset(secondData, Scenario == sc)
+      
+      # for every column to be tested
+      
+      for (ct in colToBeTested){
+        
+        expect_equal(firstDataSc[[ct]], secondDatSc[[ct]], info = paste0('Region: ', region, ': ', sc, ': ', ct, ' tolerance: ', tolerance), tolerance = tolerance)
+        
+      }
       
     }
     
