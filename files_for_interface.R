@@ -96,7 +96,7 @@ for (i in 2:ncol(yll_aggr)){
   df[["Years of Life Lost (YLL)"]][sindex:eindex] <- val
 }
 
-saveRDS(df, "./data/csv/ICT_aggr_regional_APS.rds")
+saveRDS(df, "./data/csv/ICT_aggr_regional.rds")
 
 # save directProbCasesAboveGivenPerc which main role is to store info of every case in which Observed > DP
 
