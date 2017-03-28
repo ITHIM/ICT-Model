@@ -1,130 +1,144 @@
-context("datasets comparision: mean used, form of datasets: files with precalcuated data, only region 0")
+context("datasets comparision: mean used, form of datasets: files with precalcuated data, all regions")
 
-test_that("in tripsdf_regional for every scenario results in both data versions are almost equal", {
+test_that("in tripsdf_regional for every scenario results in both data versions are almost equal (only full)", {
+
+  # iterate over regions
   
-  directoryWithData <- c('tripsdf_regional/full/0/')
+  for (region in regionsToTest){
   
-  # for every scenario
-  
-  for (sc in scenariosToTest){
+    directoryWithData <- paste0(c('tripsdf_regional/full/'), region, '/')
     
-    # read firstData and secondData
+    # for every scenario
     
-    firstData <- readRDS(paste0(firstDataDir, directoryWithData, sc, '.rds'))
-    secondData <- readRDS(paste0(secondDataDir, directoryWithData, sc, '.rds'))
-    
-    # sort both
-    
-    firstData <- firstData[with(firstData, order(fullScenarioData, freq, total_population, region)),]
-    secondData <- secondData[with(secondData, order(fullScenarioData, freq, total_population, region)),]
-    
-    # for every row
-    
-    for (rt in seq_len(nrow(firstData))){
+    for (sc in scenariosToTest){
       
-      # for every column
+      # read firstData and secondData
       
-      colsToBeTested <- c("fullScenarioData", "freq", "total_population")
+      firstData <- readRDS(paste0(firstDataDir, directoryWithData, sc, '.rds'))
+      secondData <- readRDS(paste0(secondDataDir, directoryWithData, sc, '.rds'))
       
-      for (ct in colsToBeTested){
+      # sort both
+      
+      firstData <- firstData[with(firstData, order(fullScenarioData, freq, total_population, region)),]
+      secondData <- secondData[with(secondData, order(fullScenarioData, freq, total_population, region)),]
+      
+      # for every row
+      
+      for (rt in seq_len(nrow(firstData))){
         
-        expect_equal(firstData[rt, ct], secondData[rt, ct], info = paste0(sc, ': ', ct, ': tolerance: ', tolerance), tolerance = tolerance)
+        # for every column
+        
+        colsToBeTested <- c("fullScenarioData", "freq", "total_population")
+        
+        for (ct in colsToBeTested){
+          
+          expect_equal(firstData[rt, ct], secondData[rt, ct], info = paste0('tripsdf_regional: |', sc, '| ', ct, '| region: |', region, '| tolerance: ', tolerance), tolerance = tolerance)
+          
+        }
         
       }
       
     }
-    
   }
 })
 
-test_that("in TripTotalTime1_regional for every scenario results in both data versions are almost equal - histogram subgroup", {
-  
-  directoryWithData <- c('TripTotalTime1_regional/full/0/histogram/')
+test_that("in TripTotalTime1_regional for every scenario results in both data versions are almost equal - histogram subgroup (only full)", {
 
-  # for every scenario
+  # iterate over regions
   
-  for (sc in scenariosToTest){
+  for (region in regionsToTest){
+  
+    directoryWithData <- paste0(c('TripTotalTime1_regional/full/'), region, c('/histogram/'))
+  
+    # for every scenario
     
-    # read firstData and secondData
-    
-    firstData <- readRDS(paste0(firstDataDir, directoryWithData, sc, '.rds'))
-    secondData <- readRDS(paste0(secondDataDir, directoryWithData, sc, '.rds'))
-    
-    # sort both
-    
-    firstData <- firstData[with(firstData, order(region, freq, umode, total_population)),]
-    secondData <- secondData[with(secondData, order(region, freq, umode, total_population)),]
-    
-    # for every row
-    
-    for (rt in seq_len(nrow(firstData))){
+    for (sc in scenariosToTest){
       
-      # for every column
+      # read firstData and secondData
       
-      colsToBeTested <- c("freq", "umode", "total_population", sc)
+      firstData <- readRDS(paste0(firstDataDir, directoryWithData, sc, '.rds'))
+      secondData <- readRDS(paste0(secondDataDir, directoryWithData, sc, '.rds'))
       
-      for (ct in colsToBeTested){
+      # sort both
+      
+      firstData <- firstData[with(firstData, order(region, freq, umode, total_population)),]
+      secondData <- secondData[with(secondData, order(region, freq, umode, total_population)),]
+      
+      # for every row
+      
+      for (rt in seq_len(nrow(firstData))){
         
-        if(is.character(firstData[[ct]])){
-          
-          expect_true(firstData[rt, ct] == secondData[rt, ct], info = paste0(sc, ': ', ct))
-          
-        } else {
+        # for every column
         
-          expect_equal(firstData[rt, ct], secondData[rt, ct], info = paste0(sc, ': ', ct, ': tolerance: ', tolerance), tolerance = tolerance)
+        colsToBeTested <- c("freq", "umode", "total_population", sc)
+        
+        for (ct in colsToBeTested){
           
+          if(is.character(firstData[[ct]])){
+            
+            expect_true(firstData[rt, ct] == secondData[rt, ct], info = paste0('TripTotalTime1_regional - histogram subgroup |', sc, '|', ct, '| region: |', region, '| row: |', rt))
+            
+          } else {
+          
+            expect_equal(firstData[rt, ct], secondData[rt, ct], info = paste0('TripTotalTime1_regional - histogram subgroup |', sc, '|', ct, '| region: |', region, '| row: |', rt, '| tolerance: ', tolerance), tolerance = tolerance)
+            
+          }
         }
+        
       }
       
     }
-    
   }
 })
 
 test_that("in TripTotalTime1_regional for every scenario results in both data versions are almost equal - other subgroup", {
+  # iterate over regions
   
-  directoryWithData <- c('TripTotalTime1_regional/full/0/other/')
-  
-  # for every scenario
-  
-  for (sc in scenariosToTest){
+  for (region in regionsToTest){
     
-    # read firstData and secondData
+    directoryWithData <- paste0(c('TripTotalTime1_regional/full/'), region, c('/other/'))
     
-    firstData <- readRDS(paste0(firstDataDir, directoryWithData, sc, '.rds'))
-    secondData <- readRDS(paste0(secondDataDir, directoryWithData, sc, '.rds'))
+    # for every scenario
     
-    # sort both
-    
-    firstData <- firstData[with(firstData, order(region, counts, umode, total_population)),]
-    secondData <- secondData[with(secondData, order(region, counts, umode, total_population)),]
-    
-    # for every row
-    
-    for (rt in seq_len(nrow(firstData))){
+    for (sc in scenariosToTest){
       
-      # for every column
+      # read firstData and secondData
       
-      colsToBeTested <- c("counts", "umode", "total_population", sc)
+      firstData <- readRDS(paste0(firstDataDir, directoryWithData, sc, '.rds'))
+      secondData <- readRDS(paste0(secondDataDir, directoryWithData, sc, '.rds'))
       
-      for (ct in colsToBeTested){
+      # sort both
+      
+      firstData <- firstData[with(firstData, order(region, counts, umode, total_population)),]
+      secondData <- secondData[with(secondData, order(region, counts, umode, total_population)),]
+      
+      # for every row
+      
+      for (rt in seq_len(nrow(firstData))){
         
-        if(is.character(firstData[[ct]])){
+        # for every column
+        
+        colsToBeTested <- c("counts", "umode", "total_population", sc)
+        
+        for (ct in colsToBeTested){
           
-          expect_true(firstData[rt, ct] == secondData[rt, ct], info = paste0(sc, ': ', ct))
-          
-        } else if (is.factor(firstData[[ct]])){
+          if(is.character(firstData[[ct]])){
             
-          expect_true(as.character(firstData[rt, ct]) == as.character(secondData[rt, ct]), info = paste0(sc, ': ', ct))
-          
-        } else {
-          
-          expect_equal(firstData[rt, ct], secondData[rt, ct], info = paste0(sc, ': ', ct, ': tolerance: ', tolerance), tolerance = tolerance)
-          
+            expect_true(firstData[rt, ct] == secondData[rt, ct], info = paste0('TripTotalTime1_regional - other subgroup | ', sc, '|', ct, '| region: |', region, '| row: |', rt))
+            
+          } else if (is.factor(firstData[[ct]])){
+              
+            expect_true(as.character(firstData[rt, ct]) == as.character(secondData[rt, ct]), paste0('TripTotalTime1_regional - other subgroup |', sc, '|', ct, '| region: |', region, '| row: |', rt))
+            
+          } else {
+            
+            expect_equal(firstData[rt, ct], secondData[rt, ct], info = paste0('TripTotalTime1_regional - other subgroup |', sc, '|', ct, '| region: |', region, '| row: |', rt, '|: tolerance: ', tolerance), tolerance = tolerance)
+            
+          }
         }
+        
       }
       
     }
-    
   }
 })

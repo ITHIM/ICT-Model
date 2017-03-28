@@ -195,7 +195,7 @@ rownames(df) <- NULL
 
 colnames(df) <-c('Scenario','MS','ebike','equity',
                  "Car Miles Per person (per week)","Car Miles Reduced Per person (per week)","Total Car Miles Cycled (per week)",
-                 "Total Miles Cycled (per week)", "Miles Cycled Per Male (per week)", "Miles Cycled Per Female (per week)", 
+                 "Total Miles Cycled Per Person (per week)", "Miles Cycled Per Male (per week)", "Miles Cycled Per Female (per week)", 
                  "Miles Cycled Per White Person (per week)", "Miles Cycled Per Non-White Person (per week)",
                  "Miles Cycled Per Person with Car-Access (per week)", "Miles Cycled Per Person with No Car-Access (per week)",
                  "Marginal METs Per Person (per week)",
