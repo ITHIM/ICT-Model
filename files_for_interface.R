@@ -508,7 +508,6 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
 
 TripTotalTimeCalcs(tripstimedf, tripsdf)
 
-save.image('after_ffi_TripTotalTimeCalcs.RData')
 # Precalculate trips used in "Mode Share" tab
 
 tripsDFCalcs <- function(tripMode){
@@ -705,3 +704,5 @@ tripsDFCalcs <- function(tripMode){
 }
 
 tripsDFCalcs(tripsdf)
+
+save.image('after_ff_interface1.RData')
