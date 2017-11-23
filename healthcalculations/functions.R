@@ -136,6 +136,9 @@ mean_cycle <-
   }
 mmet2RR <-
   function(m, cn){
+    # m <- mmets
+    # cn <- local_listOfScenarios
+    
     for (i in 1:length(cn)){
       lcn <- as.character(cn[i])
       # m[m[[lcn]] <= 2000,]
@@ -168,9 +171,10 @@ mmet2RR <-
 
 
 mmet2RRVal <-function(val) {
-  if ((!is.na  (val) && !is.null( val) && val <= 2000))  {
-    mmet2RR_mat[round(val) + 1, 2]
-    } else     0
+  if ((!is.null( val) && !is.na(val)))
+      mmet2RR_mat[which.min(abs(mmet2RR_mat$dose - val)), 2]
+  else
+    0
 }
 
 
