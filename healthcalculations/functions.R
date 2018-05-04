@@ -3,11 +3,17 @@ as.numeric.factor <-
 
 combine_health_and_pif <-
   function(pop, hc, hm){
+    
+    # pop <- pif
+    # hc <- gbd
+    # hm <- "yll"
     require(stringr)
     # yll <- combine_health_and_pif(pif, gbd, "yll")
     # m <- as.matrix(pop)
     m <- pop
     n <- pop
+    n$gbd <- NA
+    n$baseline_val <- NA
     #cn <- grep('mmet$',colnames(m), value = TRUE)
     cn <- append("baseline_mmet", grep('MS',names(pop), value = TRUE))
     
@@ -21,14 +27,8 @@ combine_health_and_pif <-
           age_with_removed_spaces <- str_replace_all(string=m[new_row, 1], pattern=" ", repl="")
           gender_with_removed_spaces <- str_replace_all(string=m[new_row, 2], pattern=" ", repl="")
           sub <- subset(as.data.frame(hc), gender == gender_with_removed_spaces & age ==  age_with_removed_spaces & region == uregions[reg])
-          
-          
-          #cat(nrow(sub), "-age-", age_with_removed_spaces, "-gender-",gender_with_removed_spaces, "-region-", uregions[reg], "\n")
           if (length(sub) > 0){
-            # cat(nrow(sub), " - ", m[j, 2], " : ",m[j, 1], " : ", i, " : ", j, cn[i], "\n")
             if (length(sub[[hm]]) > 0){
-              #cat(cn[i], " row: ", j, " - ", as.numeric(as.character(m[j, cn[i]])), " * ",as.numeric(as.character(sub[[hm]])) , "\n")
-              # cat("in if\n")
               val <- m[str_replace_all(m$age.band, pattern=" ", repl="") == age_with_removed_spaces & 
                          m$gender == gender_with_removed_spaces 
                        & m$regions == uregions[reg], ][[cn[i]]]
@@ -37,10 +37,21 @@ combine_health_and_pif <-
               baseline_val <- m[str_replace_all(m$age.band, pattern=" ", repl="") == age_with_removed_spaces & 
                                   m$gender == gender_with_removed_spaces 
                                 & m$regions == uregions[reg], ][[cn[1]]]
+              # cat(i, " ", j, " " , age_with_removed_spaces, " ", gender_with_removed_spaces, " ", uregions[reg], " " , cn[1], "  ", baseline_val, "\n")
+              # browser()
               
               n[str_replace_all(n$age.band, pattern=" ", repl="") == age_with_removed_spaces & 
                   n$gender == gender_with_removed_spaces 
                 & n$regions == uregions[reg], ][[cn[i]]] <- round((val * as.numeric(as.character(sub[[hm]]))) / baseline_val, 5)
+              
+              n[str_replace_all(n$age.band, pattern=" ", repl="") == age_with_removed_spaces & 
+                  n$gender == gender_with_removed_spaces 
+                & n$regions == uregions[reg], ][["gbd"]] <- as.numeric(as.character(sub[[hm]]))
+              
+              
+              n[str_replace_all(n$age.band, pattern=" ", repl="") == age_with_removed_spaces & 
+                  n$gender == gender_with_removed_spaces 
+                & n$regions == uregions[reg], ][["baseline_val"]] <- baseline_val
               
               # cat(cn[i], " row: ", new_row, " - ", val , " * ",as.numeric(as.character(sub[[hm]])), "  = ", (val * as.numeric(as.character(sub[[hm]]))) , "\n")
               m[str_replace_all(m$age.band, pattern=" ", repl="") == age_with_removed_spaces & 
@@ -171,10 +182,10 @@ mmet2RR <-
 
 
 mmet2RRVal <-function(val) {
-  if ((!is.null( val) && !is.na(val)))
+  if ((!is.null( val) && !is.na(val)) && val <= 35)
       mmet2RR_mat[which.min(abs(mmet2RR_mat$dose - val)), 2]
   else
-    0
+      mmet2RR_mat[which.min(abs(mmet2RR_mat$dose - 35)), 2]
 }
 
 
@@ -434,7 +445,7 @@ create_trips <-
   function (bl, lObj)
   {
     
-    bl <- subset(bl, select = c(ID, TripID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, MainMode_Reduced, Cycled, HHoldGOR_B02ID))
+    bl <- subset(bl, select = c(ID, TripID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, MainMode_Reduced, Cycled, HHoldGOR_B02ID, TripPurpose_B04ID))
     #cat("nrow bl: ", nrow(bl), "\n")
     
     for (i in 1:length(lObj)){
@@ -476,7 +487,7 @@ create_trips <-
 create_triptime <-
   function (bl, lObj)
   {
-    bl <- subset(bl, select = c(ID, TripID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, TripTotalTime1, Cycled, HHoldGOR_B02ID))
+    bl <- subset(bl, select = c(ID, TripID, Sex_B01ID, age_group, EthGroupTS_B02ID, NSSec_B03ID, TripTotalTime1, Cycled, HHoldGOR_B02ID, TripPurpose_B04ID))
     
     for (i in 1:length(lObj)){
       tbl <- bl
