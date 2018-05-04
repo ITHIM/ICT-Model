@@ -9,8 +9,8 @@ b_hmmets <- health_mmets
 local_listOfScenarios <- c('baseline', listOfScenarios)
 
 # Read baseline from the rds file
-bl <- readRDS('bl2014_APS_p.rds')      #bl <- readRDS('bl2014_p_v2.rds')
-bl = dplyr::rename(bl, ID = IndividualID)
+bl <- readRDS('bl2014_APS_p.rds')
+# bl = dplyr::rename(bl, ID = IndividualID)
 
 # For some reason the age_group is not correctly recorded in the baseline line
 # Recalculate the age_group variable
@@ -58,6 +58,8 @@ yll_dfs <- combine_health_and_pif(pif, gbd, "yll")
 
 yll <- as.data.frame(yll_dfs[1])
 yll_red <- as.data.frame(yll_dfs[2])
+
+reg_sum <- aggregate(yll$baseline_mmet, by=list(yll$regions),FUN=sum, na.rm=TRUE)
 
 
 # tdpif <- PAF(rr, T)
@@ -110,6 +112,10 @@ yll_red <- aggregate(yll_red[-c(1, 2, 3)], by=list(yll_red$age.band, yll_red$gen
 
 colnames(yll_red)[1:3] <- c("age.band", "gender", "regions")
 
+td <- aggregate(yll[-c(1, 2, 3)], by=list(yll$age.band, yll$gender, yll$regions),FUN=sum, na.rm=TRUE)
+
+colnames(td)[1:3] <- c("age.band", "gender", "regions")
+
 
 death_red$age.band <- reduced_age_lt$red.age.band[match(death_red$age.band, reduced_age_lt$age.band)]
 
@@ -124,5 +130,10 @@ yll_red[5:28] <- round(yll_red[5:28] * 100, 2)
 # td[5:32] <- round(yll_red[5:32] * 100, 3)
 yll_aggr <- aggregate(yll[-c(1, 2, 3)], by=list(yll$regions),FUN=sum, na.rm=TRUE)
 colnames(yll_aggr)[1:2] <- c("regions", "baseline")
+
+yll_red_aggr <- yll_aggr
+yll_red_aggr[,3:26] <- yll_red_aggr[,3:26] / yll_red_aggr$baseline
+yll_red_aggr[,3:26] <- round(yll_red_aggr[,3:26] * 100, 2)
+
 # Not working
 #yll_red <- calculate_health_reductions(pif, gbd, td, hm = "yll")
