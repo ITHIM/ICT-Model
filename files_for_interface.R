@@ -10,7 +10,7 @@
   # Read baseline from the rds file
   #bl <- readRDS('bl2014_p.rds')
   #bl <- readRDS('bl2014_p_v2.rds')
-  bl <- readRDS('bl2014_APS_p.rds')  
+  bl <- readRDS('bl2014_APS_p.rds')
   
   # For some reason the age_group is not correctly recorded in the baseline line
   # Recalculate the age_group variable
@@ -83,17 +83,42 @@ saveRDS(death_red, "./data/csv/deaths_reduction.rds")
 # Car miles cycled per week 	Marginal METs per person per week 	Years of Life Lost (YLL) 	
 # Car miles per person per week 	Car miles reduced per person per week 	CO2 (kg) from car travel per person per week
 
+#df <- readRDS('../ICT/app/data/csv/ICT_aggr_regional.rds')
+
+
 # Append yll column to the df
 df[["Years of Life Lost (YLL)"]] <- 0
-for (i in 2:ncol(yll_aggr)){
-  sindex <- ((i - 2) * 10 + 1)
-  eindex <- sindex + 9
-  #   cat(sindex, " - ", eindex, "\n")
-  # For baseline set yll to zero
-  val <- round(yll_aggr[1:10, i])
-  if (i == 2)
-    val <- 0
-  df[["Years of Life Lost (YLL)"]][sindex:eindex] <- val
+for (i in 1:10){
+  for (j in 3:ncol(yll_aggr)){
+    cname <- colnames(yll_aggr[j])
+    cregion <- yll_aggr[i,"regions"]
+    df[df$Scenario == cname & df$Region == cregion,]$`Years of Life Lost (YLL)` <- yll_aggr[i,j]
+  }
+}
+
+# # Append yll column to the df
+# df[["Years of Life Lost (YLL)"]] <- 0
+# for (i in 2:ncol(yll_aggr)){
+#   sindex <- ((i - 2) * 10 + 1)
+#   eindex <- sindex + 9
+#   #   cat(sindex, " - ", eindex, "\n")
+#   # For baseline set yll to zero
+#   val <- round(yll_aggr[1:10, i])
+#   if (i == 2)
+#     val <- 0
+#   df[["Years of Life Lost (YLL)"]][sindex:eindex] <- val
+# }
+
+
+# Append yll column to the df
+df[["Years of Life Lost (YLL) reduction (%)"]] <- 0
+for (i in 1:10){
+  for (j in 3:ncol(yll_red_aggr)){
+    cname <- colnames(yll_red_aggr[j])
+    cregion <- yll_red_aggr[i,"regions"]
+    df[df$Scenario == cname & df$Region == cregion,]$`Years of Life Lost (YLL) reduction (%)` <- yll_red_aggr[i,j]
+    # cat(cname, " ", cregion, " ", i , " ", j, " val ", yll_red_aggr[i,j])
+  }
 }
 
 saveRDS(df, "./data/csv/ICT_aggr_regional.rds")
@@ -165,15 +190,22 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
   
   aaSESs <- c(sort(unique(tripTime[, c("NSSec_B03ID")])), 'All')
   
+  # all possible purposes + 'All'
+  
+  aaPurposes <- c(sort(unique(tripTime[, c("TripPurpose_B04ID")])), 'All')
+  
   # all possible scenarios - not very elegant way
   
-  aaScenarios <- colnames(tripTime)[10:(length(colnames(tripTime))-1)]
+  aaScenarios <- colnames(tripTime)[11:(length(colnames(tripTime))-1)]
+  
+  #  as.data.frame(listOfScenarios) 
+  # colnames(tripTime)[10:(length(colnames(tripTime))-1)]
   
   print(aaScenarios)
   
   # all possible regions
   
-  aaRegions <- sort(unique(tripTime[, c("HHoldGOR_B02ID")]))
+  aaRegions <- 0#sort(unique(tripTime[, c("HHoldGOR_B02ID")]))
   #aud: aaRegions <- aaRegions[1:3] # ADDED FOR TESTING - 
   
   # for every region
@@ -224,11 +256,11 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
       # Remove all rows with NA in them
       locatTripModeData <- (subset(locatTripModeData, (X %in% temp$rn) ))
       
-      rm("temp")
+      #rm("temp")
       
       localtripData <- data[,c("X","TripTotalTime1", columnName)]
       
-      rm("data")
+      #rm("data")
       
       localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$TripTotalTime1) / localtripData$TripTotalTime1 ) * 100)
       
@@ -241,7 +273,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
       
       scTripTimeTraveldata <- localtripData
       
-      rm(list=c("localtripData", "locatTripModeData"))
+      #rm(list=c("localtripData", "locatTripModeData"))
       
       # calc freqs
       
@@ -308,9 +340,9 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
       
       # clean up mem
       
-      rm("scTripTimeTraveldata")
+      #rm("scTripTimeTraveldata")
       
-      gc()
+      # gc()
       
       # for filtered data
       
@@ -329,6 +361,8 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
             
             for (aaSES in aaSESs){
               
+              for (aaPurpose in aaPurposes){
+              
               data <- tripTimeRegion
               
               if (aaAgeGroup != 'All'){
@@ -344,6 +378,12 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
               if (aaEthnicity != "All"){
                 data <- subset(data, EthGroupTS_B02ID %in% as.integer(aaEthnicity))
               }
+              
+              if (aaPurpose != "All"){
+                data <- subset(data, TripPurpose_B04ID %in% as.integer(aaPurpose))
+              }
+              
+              
               data[is.na(data)] <- 0
               
               locatTripModeData <- tripModeRegion[,c("X","baseline", columnName)]
@@ -368,14 +408,14 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
               
               selectedRows <- tripTimeRegion[temp, ]
               
-              rm("temp")
+              #rm("temp")
               
               # Remove all rows with NA in them
               locatTripModeData <- (subset(locatTripModeData, (X %in% selectedRows$X) ))
               
               localtripData <- data[,c("X","TripTotalTime1", columnName)]
               
-              rm("data")
+              #rm("data")
               
               localtripData <- data.frame(rn = localtripData$X, diff = ((localtripData[[columnName]] - localtripData$TripTotalTime1) / localtripData$TripTotalTime1 ) * 100)
               
@@ -389,7 +429,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
               localtripData <- subset(localtripData, localtripData$baseline != localtripData[[columnName]])
               scFilteredTripTimeTraveldata <- localtripData
               
-              rm(list=c("localtripData", "locatTripModeData"))
+              #rm(list=c("localtripData", "locatTripModeData"))
               
               # calc freqs
               
@@ -419,6 +459,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
                 bc[,c('gender')] <- aaSex
                 bc[,c('ethnicity')] <- aaEthnicity
                 bc[,c('ses')] <- aaSES
+                bc[,c('purpose')] <- aaPurpose
                 
                 # add sample size
                 
@@ -454,6 +495,7 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
                 data[,c('gender')] <- aaSex
                 data[,c('ethnicity')] <- aaEthnicity
                 data[,c('ses')] <- aaSES
+                data[,c('purpose')] <- aaPurpose
                 
                 # add sample size
                 
@@ -463,11 +505,12 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
                 
               }
               
-              rm("scFilteredTripTimeTraveldata", "bc", "data")
+              #rm("scFilteredTripTimeTraveldata", "bc", "data")
               
-              gc()
+              #gc()
               
             }
+          }
             
           }
           
@@ -479,27 +522,27 @@ TripTotalTimeCalcs <- function(tripTime, tripMode){
       
       tempScenarioHistogramFreq[,c('region')] <- aaRegion
 
-      saveRDS(tempScenarioHistogramFreq, paste0(outputMainFolder, 'full/', aaRegion, '/histogram/', aaScenario, '.rds'))
+      saveRDS(tempScenarioHistogramFreq, paste0(outputMainFolder, 'full/', aaRegion, '/histogram/', aaScenario, '.rds'), compress = F)
       
       tempScenarioOtherFreq[,c('region')] <- aaRegion
       
-      saveRDS(tempScenarioOtherFreq, paste0(outputMainFolder, 'full/', aaRegion, '/other/', aaScenario, '.rds'))
+      saveRDS(tempScenarioOtherFreq, paste0(outputMainFolder, 'full/', aaRegion, '/other/', aaScenario, '.rds'), compress = F)
       
-      rm(list=c("tempScenarioHistogramFreq", "tempScenarioOtherFreq"))
+      #rm(list=c("tempScenarioHistogramFreq", "tempScenarioOtherFreq"))
       
       # for filtered scenario - add region column, add scenario values
       
       tempScenarioFilteredHistogramFreq[,c('region')] <- aaRegion
 
-      saveRDS(tempScenarioFilteredHistogramFreq, paste0(outputMainFolder, 'filtered/', aaRegion, '/histogram/', aaScenario, '.rds'))
+      saveRDS(tempScenarioFilteredHistogramFreq, paste0(outputMainFolder, 'filtered/', aaRegion, '/histogram/', aaScenario, '.rds'), compress = F)
       
       tempScenarioFilteredOtherFreq[,c('region')] <- aaRegion
       
-      saveRDS(tempScenarioFilteredOtherFreq, paste0(outputMainFolder, 'filtered/', aaRegion, '/other/', aaScenario, '.rds'))
+      saveRDS(tempScenarioFilteredOtherFreq, paste0(outputMainFolder, 'filtered/', aaRegion, '/other/', aaScenario, '.rds'), compress = F)
       
-      rm(list=c("tempScenarioFilteredHistogramFreq", "tempScenarioFilteredOtherFreq"))
+      #rm(list=c("tempScenarioFilteredHistogramFreq", "tempScenarioFilteredOtherFreq"))
       
-      gc()
+      #gc()
       
     }
     
